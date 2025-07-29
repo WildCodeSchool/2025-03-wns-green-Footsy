@@ -1,6 +1,8 @@
 services:
   frontend:
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
     ports: # hote:container
       - 23456:5173
     volumes:
@@ -10,7 +12,9 @@ services:
         condition: service_healthy
 
   backend:
-    build: ./server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
     ports: # hote:container
       - 12345:4000
     volumes:
