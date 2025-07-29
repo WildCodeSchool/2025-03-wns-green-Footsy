@@ -1,8 +1,10 @@
-import { buildSchema } from "type-graphql";
-import dataSource from "./config/db";
+import "reflect-metadata";
+
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+
+import dataSource from "./config/db";
 
 const port = Number.parseInt(process.env.PORT) ?? 4000;
 
