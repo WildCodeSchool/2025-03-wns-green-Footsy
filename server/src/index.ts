@@ -5,13 +5,14 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { buildSchema } from "type-graphql";
 
 import dataSource from "./config/db";
+import { UserResolver } from "./UserResolver";
 
-const port = Number.parseInt(process.env.PORT) ?? 4000;
+const port = parseInt(process.env.PORT || "4000", 10);
 
 async function startServer() {
   await dataSource.initialize();
   const schema = await buildSchema({
-    resolvers: [],
+    resolvers: [UserResolver],
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {
