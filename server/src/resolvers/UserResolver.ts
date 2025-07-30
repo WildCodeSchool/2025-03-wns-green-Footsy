@@ -3,22 +3,22 @@ import { User } from "../entities/User";
 
 @InputType()
 class UserInput {
-  @Field()
+  @Field(()=> String)
   first_name: string;
 
-  @Field()
+  @Field(()=> String)
   last_name: string;
 
-  @Field()
+  @Field(()=> String)
   email: string;
 
-  @Field()
+  @Field(()=> String)
   hashed_password: string;
 
-  @Field()
+  @Field(()=> Date)
   birthdate: Date;
 
-  @Field()
+  @Field(()=> String)
   avatar_id: string;
 }
 

@@ -9,11 +9,11 @@ export class Avatar extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
+  @Field(()=> String)
   @Column("varchar")
   title: string;
 
-  @Field()
+  @Field(()=> String)
   @Column("varchar")
   image: string;
 

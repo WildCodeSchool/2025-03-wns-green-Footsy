@@ -3,17 +3,17 @@ import { Avatar } from "../entities/Avatar";
 
 @InputType()
 class AvatarInput {  
-    @Field()
+    @Field(()=> String)
     title: string;
   
-    @Field()
+    @Field(()=> String)
     image: string;
 }
 
 @Resolver(Avatar)
 export class AvatarResolver {
   @Query(() => [Avatar])
-  async getAllAvatar() {
+  async getAllAvatars() {
     return Avatar.find();
   }
 
