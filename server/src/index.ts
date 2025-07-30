@@ -5,7 +5,7 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { buildSchema } from "type-graphql";
 
 import dataSource from "./config/db";
-import { UserResolver } from "./resolvers/UserResolver";
+import UserResolver from "./resolvers/UserResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 

@@ -1,41 +1,42 @@
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
-import { Field, InputType, Resolver, Arg, Mutation } from "type-graphql";
+import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 
 import { User } from "../entities/User";
 import UserService from "../services/UserService";
 
+import type { Avatar } from "../entities/Avatar";
 import type { UserServiceInterface } from "../services/UserService";
 
 @InputType()
-export class NewUserInput implements Partial<User> {
+class NewUserInput implements Partial<User> {
   @Field()
-  fisrtName: string;
+  first_name: string;
 
   @Field()
-  lastName: string;
-
-  @Field()
-  password: string;
+  last_name: string;
 
   @Field()
   email: string;
 
   @Field()
-  birthDate: Date;
+  password: string;
 
   @Field()
-  avatarId: number;
+  birthdate: Date;
+
+  @Field()
+  avatar: Avatar;
 }
 
 function getUserPublicProfile(user: User) {
   return {
     id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    mail: user.mail,
-    birthDate: user.birthDate,
-    avatarId: user.avatarId,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    mail: user.email,
+    birthDate: user.birthdate,
+    avatar: user.avatar,
   };
 }
 
@@ -45,17 +46,17 @@ type UserToken = {
   lastName: string;
   mail: string;
   birthDate: Date;
-  avatarId: number;
+  avatar: Avatar;
 };
 
 function getUserTokenContent(user: User): UserToken {
   return {
     id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    mail: user.mail,
-    birthDate: user.birthDate,
-    avatarId: user.avatarId,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    mail: user.email,
+    birthDate: user.birthdate,
+    avatar: user.avatar,
   };
 }
 
@@ -65,6 +66,17 @@ export default class UserResolver {
 
   constructor(userService: UserServiceInterface = new UserService()) {
     this.userService = userService;
+  }
+
+  @Query(() => [User])
+  async getAllUsers() {
+    return User.find();
+  }
+
+  @Query(() => [User])
+  async getUser(@Arg("id") id: number) {
+    const user = await User.findOneByOrFail({ id });
+    return user;
   }
 
   @Mutation(() => String)
