@@ -10,6 +10,7 @@ import {
 
 import Avatar from "./Avatar";
 import Friend from "./Friend";
+import Interaction from "./Interaction";
 
 @ObjectType()
 @Entity()
@@ -47,4 +48,8 @@ export default class User extends BaseEntity {
 
   @OneToMany(() => Friend, friend => friend.requested)
   receivedFriends: Friend[];
+
+  @Field(() => Interaction)
+  @ManyToOne(() => Interaction, (interaction) => interaction.users)
+  interaction: Interaction;
 }

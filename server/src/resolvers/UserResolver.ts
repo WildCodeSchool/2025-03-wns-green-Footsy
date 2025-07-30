@@ -10,28 +10,65 @@ import type Avatar from "../entities/Avatar";
 import type { UserServiceInterface } from "../services/UserService";
 
 @InputType()
-class UserInput {
-  @Field()
+export class NewUserInput {
+  @Field(() => String)
   first_name: string;
 
-  @Field()
+  @Field(() => String)
   last_name: string;
 
-  @Field()
+  @Field(() => String)
   email: string;
 
-  @Field()
-  hashed_password: string;
+  @Field(() => String)
+  password: string;
 
-  @Field()
+  @Field(() => Date)
   birthdate: Date;
 
-  @Field()
-  avatar_id: string;
+  @Field(() => AvatarInput)
+  avatar: AvatarInput;
+}
+
+function getUserPublicProfile(user: User) {
+  return {
+    id: user.id,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    mail: user.email,
+    birthDate: user.birthdate,
+    avatar: user.avatar,
+  };
+}
+
+type UserToken = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  mail: string;
+  birthDate: Date;
+  avatar: Avatar;
+};
+
+function getUserTokenContent(user: User): UserToken {
+  return {
+    id: user.id,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    mail: user.email,
+    birthDate: user.birthdate,
+    avatar: user.avatar,
+  };
 }
 
 @Resolver(User)
-export class UserResolver {
+export default class UserResolver {
+  private userService: UserServiceInterface;
+
+  constructor(userService: UserServiceInterface = new UserService()) {
+    this.userService = userService;
+  }
+
   @Query(() => [User])
   async getAllUsers() {
     return User.find();

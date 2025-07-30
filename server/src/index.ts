@@ -12,10 +12,6 @@ import FriendResolver from "./resolvers/FriendResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
-/**
- * Point d'entrée principal du serveur GraphQL
- * Initialise la base de données et démarre le serveur Apollo
- */
 async function startServer() {
   await dataSource
     .initialize()

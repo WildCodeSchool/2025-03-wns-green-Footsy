@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { Field, Int, ObjectType, Float } from "type-graphql";
 import Type from "./Type";
+import Interaction from "./Interaction";
 
 
 @ObjectType()
@@ -37,4 +38,8 @@ export default class Activity extends BaseEntity {
   @ManyToOne(() => Type, type => type.activities)
   @JoinColumn({ name: "type_id" })
   type: Type;
+
+  @Field(() => Interaction)
+  @ManyToOne(() => Interaction, (interaction) => interaction.activities)
+  interaction: Interaction;
 } 
