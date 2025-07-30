@@ -7,12 +7,12 @@ import User from "./User";
 @Entity()
 export default class Friend extends BaseEntity {
     @Field(()=> User)
-    @ManyToOne(() => User, user => user.sentFriends, { eager: true })
+    @ManyToOne(() => User, user => user.sentFriendRequests, { eager: true })
     @PrimaryColumn()
     requester: User;
 
     @Field(()=> User)
-    @ManyToOne(() => User, user => user.receivedFriends, { eager: true })
+    @ManyToOne(() => User, user => user.receivedFriendRequests, { eager: true })
     @PrimaryColumn()
     requested: User;
 

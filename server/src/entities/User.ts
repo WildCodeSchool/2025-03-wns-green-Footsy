@@ -44,10 +44,10 @@ export default class User extends BaseEntity {
   avatar: Avatar;
 
   @OneToMany(() => Friend, friend => friend.requester)
-  sentFriends: Friend[];
+  sentFriendRequests: Friend[];
 
   @OneToMany(() => Friend, friend => friend.requested)
-  receivedFriends: Friend[];
+  receivedFriendRequests: Friend[];
 
   @Field(() => Interaction)
   @ManyToOne(() => Interaction, (interaction) => interaction.users)
