@@ -1,35 +1,42 @@
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
-import { Avatar } from "./Avatar";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+
+import Avatar from "./Avatar";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
-  @Field()
+export default class User extends BaseEntity {
+  @Field(() => Number)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
+  @Field(() => String)
   @Column("varchar")
   first_name: string;
 
-  @Field()
+  @Field(() => String)
   @Column("varchar")
   last_name: string;
 
-  @Field()
+  @Field(() => String)
   @Column("varchar")
   email: string;
 
-  @Field()
+  @Field(() => String)
   @Column("varchar")
   hashed_password: string;
 
-  @Field()
+  @Field(() => Date)
   @Column("varchar")
   birthdate: Date;
 
- @Field(() => Avatar)
+  @Field(() => Avatar)
   @ManyToOne(() => Avatar, (avatar) => avatar.users)
-  avatar_id: Avatar;
+  avatar: Avatar;
 }

@@ -17,8 +17,8 @@ services:
       dockerfile: Dockerfile.dev
     ports: # hote:container
       - 5050:4000
-    # volumes:
-    #   - ./server/src/:/app/src/
+    volumes:
+      - ./server/src/:/app/src/
     healthcheck:
       test:
         [
