@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
 import { User } from "../entities/User";
-import { Activity } from "../entities/Activity";
-import { Type } from "../entities/Type";
-import { Category } from "../entities/Category";
+import Activity from "../entities/Activity";
+import Type from "../entities/Type";
+import Category from "../entities/Category";
 
 
 const dataSource = new DataSource({
@@ -12,7 +12,7 @@ const dataSource = new DataSource({
   username: process.env.DB_USER || "postgres",
   password: process.env.DB_PASSWORD || "password",
   database: process.env.DB_DATABASE || "db_footsy",
-  entities: [User, Activity, Type, Category], // Add Activity and Type entities
+  entities: [User, Activity, Type, Category],
   synchronize: true,
   logging: ["error", "query"],
 });

@@ -1,17 +1,12 @@
 import { Resolver, Query, Arg, Int } from "type-graphql";
-import { Type } from "../entities/Type";
+import Type from "../entities/Type";
 
 /**
- * Resolver for the Type entity
- * Handles all GraphQL operations related to activity types
  * TODO: Connect to ADEME API for real data
  */
 @Resolver()
-export class TypeResolver {
-  /**
-   * Get all activity types
-   * @returns List of all activity types (placeholder data)
-   */
+export default class TypeResolver {
+  
   @Query(() => [Type])
   async types(): Promise<Type[]> {
     // TODO: Replace with ADEME API call
@@ -22,11 +17,7 @@ export class TypeResolver {
     ] as Type[];
   }
 
-  /**
-   * Get an activity type by its ID
-   * @param id - Unique activity type identifier
-   * @returns The corresponding type or null if not found
-   */
+ 
   @Query(() => Type, { nullable: true })
   async type(@Arg("id", () => Int) id: number): Promise<Type | null> {
     // TODO: Replace with ADEME API call
