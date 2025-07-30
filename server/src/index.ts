@@ -7,8 +7,11 @@ import { buildSchema } from "type-graphql";
 import dataSource from "./config/db";
 import UserResolver from "./resolvers/UserResolver";
 import ActivityResolver from "./resolvers/ActivityResolver";
+import TypeResolver from "./resolvers/TypeResolver";
+import CategoryResolver from "./resolvers/CategoryResolver";
 import AvatarResolver from "./resolvers/AvatarResolver";
 import FriendResolver from "./resolvers/FriendResolver";
+import InteractionResolver from "./resolvers/InteractionResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
@@ -23,7 +26,7 @@ async function startServer() {
       process.exit(1);
     });
   const schema = await buildSchema({
-    resolvers: [UserResolver, ActivityResolver, AvatarResolver, FriendResolver],
+    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver, AvatarResolver, FriendResolver, InteractionResolver],
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {

@@ -15,10 +15,12 @@ export default class Activity extends BaseEntity {
   @Column("varchar", { length: 50 })
   title: string;
 
+  
   @Field(() => Float, { nullable: true })
   @Column("float", { nullable: true })
   quantity: number;
 
+  
   @Field(() => String)
   @Column("date")
   date: string;
