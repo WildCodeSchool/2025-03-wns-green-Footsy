@@ -1,11 +1,11 @@
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn, Unique } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
-import { User } from "./User";
+import User from "./User";
 
 @ObjectType()
 @Unique(["requested", "requested"])
 @Entity()
-export class Friend extends BaseEntity {
+export default class Friend extends BaseEntity {
     @Field(()=> User)
     @ManyToOne(() => User, user => user.sentFriends, { eager: true })
     @PrimaryColumn()

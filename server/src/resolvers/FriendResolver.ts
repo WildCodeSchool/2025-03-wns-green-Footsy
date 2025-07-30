@@ -1,5 +1,5 @@
 import { Field, InputType, Resolver } from "type-graphql";
-import { Friend } from "../entities/Friend";
+import Friend from "../entities/Friend";
 
 @InputType()
 class FriendInput {
@@ -15,6 +15,6 @@ class FriendInput {
 }
 
 @Resolver(Friend)
-export class FriendResolver {
+export default class FriendResolver {
   }
 

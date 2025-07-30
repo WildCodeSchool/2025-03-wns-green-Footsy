@@ -5,10 +5,10 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { buildSchema } from "type-graphql";
 
 import dataSource from "./config/db";
-import { UserResolver } from "./resolvers/UserResolver";
-import { ActivityResolver } from "./resolvers/ActivityResolver";
-import { AvatarResolver } from "./resolvers/AvatarResolver";
-import { FriendResolver } from "./resolvers/FriendResolver";
+import UserResolver from "./resolvers/UserResolver";
+import ActivityResolver from "./resolvers/ActivityResolver";
+import AvatarResolver from "./resolvers/AvatarResolver";
+import FriendResolver from "./resolvers/FriendResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 

@@ -1,11 +1,11 @@
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
-import { Avatar } from "./Avatar";
-import { Friend } from "./Friend"
+import Avatar from "./Avatar";
+import Friend from "./Friend"
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export default class User extends BaseEntity {
   @Field(()=> Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -32,7 +32,7 @@ export class User extends BaseEntity {
 
   @Field(() => Avatar)
   @ManyToOne(() => Avatar, (avatar) => avatar.users)
-  avatar_id: Avatar;
+  avatar: Avatar;
 
   @OneToMany(() => Friend, friend => friend.requester)
   sentFriends: Friend[];

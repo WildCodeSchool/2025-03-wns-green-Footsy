@@ -1,5 +1,5 @@
 import { Arg, Field, ID, InputType, Mutation, Query, Resolver } from "type-graphql";
-import { User } from "../entities/User";
+import User from "../entities/User";
 
 @InputType()
 class UserInput {
@@ -19,11 +19,11 @@ class UserInput {
   birthdate: Date;
 
   @Field(()=> String)
-  avatar_id: string;
+  avatar: string;
 }
 
 @Resolver(User)
-export class UserResolver {
+export default class UserResolver {
   @Query(() => [User])
   async getAllUsers() {
     return User.find();

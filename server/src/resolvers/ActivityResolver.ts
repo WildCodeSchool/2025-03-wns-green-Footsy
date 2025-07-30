@@ -1,42 +1,19 @@
 import { Resolver, Query, Mutation, Arg, Int, Float } from "type-graphql";
-import { Activity } from "../entities/Activity";
-import { Type } from "../entities/Type";
+import Activity from "../entities/Activity";
+import Type from "../entities/Type";
 
-/**
- * Resolver for the Activity entity
- * Handles all GraphQL operations related to activities
- */
 @Resolver()
-export class ActivityResolver {
-  /**
-   * Get all activities
-   * @returns List of all activities
-   */
+export default class ActivityResolver {
   @Query(() => [Activity])
   async activities(): Promise<Activity[]> {
     return await Activity.find();
   }
 
-  /**
-   * Get an activity by its ID
-   * @param id - Unique activity identifier
-   * @returns The corresponding activity or null if not found
-   */
   @Query(() => Activity, { nullable: true })
   async activity(@Arg("id", () => Int) id: number): Promise<Activity | null> {
     return await Activity.findOne({ where: { id } });
   }
 
-  /**
-   * Create a new activity
-   * @param title - Activity title
-   * @param quantity - Activity quantity (nullable)
-   * @param date - Activity date (format: YYYY-MM-DD)
-   * @param co2_equivalent - CO2 equivalent in kg
-   * @param user_id - User identifier
-   * @param type_id - Activity type identifier
-   * @returns The created activity
-   */
   @Mutation(() => Activity)
   async createActivity(
     @Arg("title", () => String) title: string,
@@ -46,7 +23,7 @@ export class ActivityResolver {
     @Arg("user_id", () => Int) user_id: number,
     @Arg("type_id", () => Int) type_id: number
   ): Promise<Activity> {
-    // Check if the type exists
+
     const type = await Type.findOne({ where: { id: type_id } });
     if (!type) throw new Error("Activity type not found");
 
@@ -61,17 +38,6 @@ export class ActivityResolver {
     return await activity.save();
   }
 
-  /**
-   * Update an existing activity
-   * @param id - Activity identifier
-   * @param title - New title (optional)
-   * @param quantity - New quantity (optional)
-   * @param date - New date (optional)
-   * @param co2_equivalent - New CO2 equivalent (optional)
-   * @param user_id - New user identifier (optional)
-   * @param type_id - New type identifier (optional)
-   * @returns The updated activity or null if not found
-   */
   @Mutation(() => Activity, { nullable: true })
   async updateActivity(
     @Arg("id", () => Int) id: number,
@@ -103,11 +69,6 @@ export class ActivityResolver {
     return await activity.save();
   }
 
-  /**
-   * Delete an activity
-   * @param id - Activity identifier
-   * @returns true if deleted successfully, false otherwise
-   */
   @Mutation(() => Boolean)
   async deleteActivity(@Arg("id", () => Int) id: number): Promise<boolean> {
     const activity = await Activity.findOne({ where: { id } });
