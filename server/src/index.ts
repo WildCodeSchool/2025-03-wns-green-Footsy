@@ -8,6 +8,7 @@ import dataSource from "./config/db";
 import { UserResolver } from "./resolvers/UserResolver";
 import { ActivityResolver } from "./resolvers/ActivityResolver";
 import { TypeResolver } from "./resolvers/TypeResolver";
+import { CategoryResolver } from "./resolvers/CategoryResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
@@ -18,7 +19,7 @@ const port = parseInt(process.env.PORT || "4000", 10);
 async function startServer() {
   await dataSource.initialize();
   const schema = await buildSchema({
-    resolvers: [UserResolver, ActivityResolver, TypeResolver], // Ajout du TypeResolver
+    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver], // Ajout du CategoryResolver
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {
