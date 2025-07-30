@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
-import { Avatar } from "../entities/Avatar";
-import { User } from "../entities/User";
+import Avatar from "../entities/Avatar";
+import User from "../entities/User";
 
 const dataSource = new DataSource({
   type: "postgres",

@@ -7,11 +7,11 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-import { Avatar } from "./Avatar";
+import Avatar from "./Avatar";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export default class User extends BaseEntity {
   @Field(() => Number)
   @PrimaryGeneratedColumn()
   id: number;

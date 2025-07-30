@@ -1,5 +1,5 @@
 import { Arg, Field, InputType, Query, Resolver } from "type-graphql";
-import { Avatar } from "../entities/Avatar";
+import Avatar from "../entities/Avatar";
 
 @InputType()
 export class AvatarInput {
@@ -14,7 +14,7 @@ export class AvatarInput {
 }
 
 @Resolver(Avatar)
-export class AvatarResolver {
+export default class AvatarResolver {
   @Query(() => [Avatar])
   async getAllAvatars() {
     return Avatar.find();

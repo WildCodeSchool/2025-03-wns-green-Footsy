@@ -5,6 +5,7 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { buildSchema } from "type-graphql";
 
 import dataSource from "./config/db";
+import AvatarResolver from "./resolvers/AvatarResolver";
 import UserResolver from "./resolvers/UserResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
@@ -20,7 +21,7 @@ async function startServer() {
       process.exit(1);
     });
   const schema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, AvatarResolver],
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {

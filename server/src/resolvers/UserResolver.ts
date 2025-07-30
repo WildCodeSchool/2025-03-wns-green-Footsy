@@ -3,14 +3,14 @@ import * as jwt from "jsonwebtoken";
 import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 
 import { AvatarInput } from "./AvatarResolver";
-import { User } from "../entities/User";
+import User from "../entities/User";
 import UserService from "../services/UserService";
 
-import type { Avatar } from "../entities/Avatar";
+import type Avatar from "../entities/Avatar";
 import type { UserServiceInterface } from "../services/UserService";
 
 @InputType()
-class NewUserInput {
+export class NewUserInput {
   @Field(() => String)
   first_name: string;
 
@@ -90,7 +90,7 @@ export default class UserResolver {
 
       const user = await this.userService.create({
         ...userData,
-        hashedPassword: hashedPassword,
+        password: hashedPassword,
       });
       const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
       return `${getUserPublicProfile(user)}; token=${token}`;
