@@ -1,19 +1,26 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Field, ObjectType } from "type-graphql";
+import User from "./User";
 import User from "./User";
 
 @ObjectType()
 @Entity()
 export default class Avatar extends BaseEntity {
-  @Field()
+  @Field(() => Number)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(()=> String)
+  @Field(() => String)
   @Column("varchar")
   title: string;
 
-  @Field(()=> String)
+  @Field(() => String)
   @Column("varchar")
   image: string;
 

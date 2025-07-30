@@ -17,7 +17,15 @@ const port = parseInt(process.env.PORT || "4000", 10);
  * Initialise la base de données et démarre le serveur Apollo
  */
 async function startServer() {
-  await dataSource.initialize();
+  await dataSource
+    .initialize()
+    .then(() => {
+      console.info("Database connection established");
+    })
+    .catch((error) => {
+      console.error("Error during Data Source initialization:", error);
+      process.exit(1);
+    });
   const schema = await buildSchema({
     resolvers: [UserResolver, ActivityResolver, AvatarResolver, FriendResolver],
   });
