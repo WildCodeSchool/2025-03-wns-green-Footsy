@@ -5,10 +5,11 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { buildSchema } from "type-graphql";
 
 import dataSource from "./config/db";
-import { UserResolver } from "./resolvers/UserResolver";
-import { ActivityResolver } from "./resolvers/ActivityResolver";
-import { TypeResolver } from "./resolvers/TypeResolver";
-import { CategoryResolver } from "./resolvers/CategoryResolver";
+import UserResolver from "./resolvers/UserResolver";
+import ActivityResolver from "./resolvers/ActivityResolver";
+import TypeResolver from "./resolvers/TypeResolver";
+import CategoryResolver from "./resolvers/CategoryResolver";
+import AvatarResolver from "./resolvers/AvatarResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
@@ -17,9 +18,17 @@ const port = parseInt(process.env.PORT || "4000", 10);
  * Initialise la base de données et démarre le serveur Apollo
  */
 async function startServer() {
-  await dataSource.initialize();
+  await dataSource
+    .initialize()
+    .then(() => {
+      console.info("Database connection established");
+    })
+    .catch((error) => {
+      console.error("Error during Data Source initialization:", error);
+      process.exit(1);
+    });
   const schema = await buildSchema({
-    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver], // Ajout du CategoryResolver
+    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver, AvatarResolver],
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {

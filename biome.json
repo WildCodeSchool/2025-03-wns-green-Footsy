@@ -48,8 +48,12 @@
     }
   },
   "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "double",
+      "enabled": true
     }
   },
   "assist": {
