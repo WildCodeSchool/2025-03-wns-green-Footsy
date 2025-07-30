@@ -11,4 +11,10 @@ export default class UserService implements UserServiceInterface {
     const user = User.create({ ...data, hashed_password: data.password });
     return user.save();
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return User.findOne({
+      ...data, email 
+    })
+  }
 }

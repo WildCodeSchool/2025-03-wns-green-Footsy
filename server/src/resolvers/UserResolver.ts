@@ -61,6 +61,16 @@ function getUserTokenContent(user: User): UserToken {
   };
 }
 
+@InputType()
+export class UserInput {
+  @Field(() => String)
+  email: string;
+
+  @Field(() => String)
+  password: string;
+}
+
+
 @Resolver(User)
 export default class UserResolver {
   private userService: UserServiceInterface;
@@ -98,5 +108,16 @@ export default class UserResolver {
       console.error(err);
       return err;
     }
+  }
+
+  @Mutation(() => String)
+  async login(@Arg("data", () => UserInput) userData: UserInput) {
+      try {
+      if (!process.env.JWT_SECRET)
+        throw new Error("Missing env variable: JWT_SECRET");
+
+      const user = await this.userService.findByMail
+
+      const hashedPassword = await argon2.hash(userData.password);
   }
 }
