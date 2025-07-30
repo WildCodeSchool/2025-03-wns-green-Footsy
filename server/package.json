@@ -14,7 +14,9 @@
   "description": "",
   "dependencies": {
     "@apollo/server": "^5.0.0",
+    "argon2": "^0.43.1",
     "graphql": "^16.11.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
     "reflect-metadata": "^0.2.1",
