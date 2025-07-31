@@ -1,68 +1,126 @@
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-SemiBoldItalic.woff") format("woff");
+  font-weight: 600;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-Italic.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+}
 :root {
-	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-	line-height: 1.5;
-	font-weight: 400;
+  --font-family: "Raleway", sans-serif;
 
-	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
-	background-color: #242424;
+  --font-size-h1: 6rem;
+  --font-size-h2: 4rem;
+  --font-size-h3: 3rem;
+  --font-size-h4: 2rem;
+  --font-size-h5: 1.5rem;
+  --font-size-body: 1rem;
 
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  --weight-bold: 700;
+  --weight-semibold: 600;
+  --weight-normal: 400;
+
+  --style-italic: italic;
+
+  --dark-green: #024a1a;
+  --green: #427d42;
+  --sea-green: #9bcba3;
+  --fir-green: #467620;
+  --lawn-green: #81a631;
+  --beige: #d0dcad;
+  --yellow: #ffd600;
+
+  --light-blue: #8cc2ec;
+  --blue: #5b8bb7;
+  --dark-blue: #011624;
+  --sea-blue: #06496f;
+  --white: #ffffff;
+  --black: #000000;
+
+  --color-dark: var(--dark-green);
+  --color-primary: var(--green);
+  --color-light: var(--beige);
+
+  --dark-mode-color-dark: var(--dark-blue);
+  --dark-mode-color-primary: var(--blue);
+  --dark-mode-color-light: var(--light-blue);
+
+  --transparent: rgba(0, 0, 0, 0);
 }
 
-a {
-	font-weight: 500;
-	color: #646cff;
-	text-decoration: inherit;
-}
-a:hover {
-	color: #535bf2;
-}
-
-body {
-	margin: 0;
-	display: flex;
-	place-items: center;
-	min-width: 320px;
-	min-height: 100vh;
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+a,
+span,
+button,
+li {
+  font-family: var(--font-family);
 }
 
 h1 {
-	font-size: 3.2em;
-	line-height: 1.1;
+  font-size: var(--font-size-h1);
+  font-weight: var(--weight-bold);
 }
 
-button {
-	border-radius: 8px;
-	border: 1px solid transparent;
-	padding: 0.6em 1.2em;
-	font-size: 1em;
-	font-weight: 500;
-	font-family: inherit;
-	background-color: #1a1a1a;
-	cursor: pointer;
-	transition: border-color 0.25s;
-}
-button:hover {
-	border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-	outline: 4px auto -webkit-focus-ring-color;
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--weight-bold);
 }
 
-@media (prefers-color-scheme: light) {
-	:root {
-		color: #213547;
-		background-color: #ffffff;
-	}
-	a:hover {
-		color: #747bff;
-	}
-	button {
-		background-color: #f9f9f9;
-	}
+h3 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--weight-semibold);
+  font-style: var(--style-italic);
+}
+
+h4 {
+  font-size: var(--font-size-h4);
+  font-weight: var(--weight-semibold);
+  font-style: var(--style-italic);
+}
+
+h5 {
+  font-size: var(--font-size-h5);
+  font-weight: var(--weight-normal);
+}
+
+p,
+a,
+span,
+button,
+li {
+  font-size: var(--font-size-body);
+  font-weight: var(--weight-normal);
 }
