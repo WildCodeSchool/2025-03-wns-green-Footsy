@@ -3,9 +3,9 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { StrictMode } from "react";
 
 import App from "./App";
-import SignUp from "./pages/SignUp";
 
 import "./index.css";
+import TestCharte from "./pages/TestsCharte";
 
 const router = createBrowserRouter([
   {
@@ -16,8 +16,8 @@ const router = createBrowserRouter([
         element: <h1>Welcome to the Home Page</h1>,
       },
       {
-        path: "/signup",
-        element: <SignUp />,
+        path: "/charte",
+        element: <TestCharte />,
       },
     ],
   },

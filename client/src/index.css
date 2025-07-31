@@ -82,6 +82,7 @@ h5,
 p,
 a,
 span,
+button,
 li {
   font-family: var(--font-family);
 }
@@ -116,6 +117,7 @@ h5 {
 p,
 a,
 span,
+button,
 li {
   font-size: var(--font-size-body);
   font-weight: var(--weight-normal);
