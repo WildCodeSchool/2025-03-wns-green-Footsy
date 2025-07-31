@@ -21,7 +21,7 @@ export default class Type extends BaseEntity {
   quantity_unit: string;
 
   @Field(() => Category)
-  @OneToOne(() => Category, category => category.types)
+  @ManyToOne(() => Category, category => category.types)
   @JoinColumn({ name: "category_id" })
   categories: Category[];
 
