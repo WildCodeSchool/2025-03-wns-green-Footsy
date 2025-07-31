@@ -1,6 +1,6 @@
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Field, InputType, Int, Mutation, Query, Resolver } from "type-graphql";
 
 import { AvatarInput } from "./AvatarResolver";
 import User from "../entities/User";
@@ -93,7 +93,7 @@ export default class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(@Arg("id", () => Number) id: number) {
+  async getUser(@Arg("id", () => Int) id: number) {
     const user = await User.findOneByOrFail({ id });
     return user;
   }
@@ -130,7 +130,7 @@ export default class UserResolver {
       );
   
       if (!user) {
-        throw new Error("Email ou mot de passe incorrect");
+        throw new Error("Incorrect email or password");
       }
   
       const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
@@ -138,7 +138,8 @@ export default class UserResolver {
       return `${JSON.stringify(getUserPublicProfile(user))}; token=${token}`;
     } catch (err) {
       console.error(err);
-      throw new Error("Erreur lors de la connexion");
+      throw new Error("Login error");
     }
   }
 }
+

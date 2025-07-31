@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, OneToOne } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
 import Activity from "./Activity";
 import Category from "./Category";
@@ -7,32 +7,25 @@ import Category from "./Category";
 @ObjectType()
 @Entity()
 export default class Type extends BaseEntity {
-  
+
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
- 
   @Field(() => String)
-  @Column("varchar")
+  @Column("varchar", { length: 50 })
   title: string;
 
-  
   @Field(() => String)
-  @Column("varchar")
+  @Column("varchar", { length: 10 })
   quantity_unit: string;
 
-  
-  @Field(() => Int)
-  @Column("int")
-  category_id: number;
-
-  
+  @Field(() => Category)
   @ManyToOne(() => Category, category => category.types)
   @JoinColumn({ name: "category_id" })
-  category: Category;
+  categories: Category[];
 
-  
-  @OneToMany(() => Activity, activity => activity.type)
+  @Field(() => Activity)
+  @OneToMany(() => Activity, (activity) => activity.type)
   activities: Activity[];
 }

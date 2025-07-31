@@ -5,22 +5,22 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import User from "./User";
 
 @ObjectType()
 @Entity()
 export default class Avatar extends BaseEntity {
-  @Field(() => Number)
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field(() => String)
-  @Column("varchar")
+  @Column("varchar", { length: 50 })
   title: string;
 
   @Field(() => String)
-  @Column("varchar")
+  @Column("varchar", { length: 50 })
   image: string;
 
   @Field(() => [User])

@@ -1,9 +1,9 @@
-import { Arg, Field, InputType, Query, Resolver } from "type-graphql";
+import { Arg, Field, InputType, Int, Query, Resolver } from "type-graphql";
 import Avatar from "../entities/Avatar";
 
 @InputType()
 export class AvatarInput {
-  @Field(() => Number)
+  @Field(() => Int)
   id: number;
 
   @Field(() => String)
@@ -20,7 +20,7 @@ export default class AvatarResolver {
     return Avatar.find();
   }
   @Query(() => [Avatar])
-  async getAvatar(@Arg("id", () => Number) id: number) {
+  async getAvatar(@Arg("id", () => Int) id: number): Promise<Avatar> {
     const avatar = await Avatar.findOneByOrFail({ id });
     return avatar;
   }

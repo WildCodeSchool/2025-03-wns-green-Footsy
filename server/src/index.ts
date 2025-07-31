@@ -10,13 +10,11 @@ import ActivityResolver from "./resolvers/ActivityResolver";
 import TypeResolver from "./resolvers/TypeResolver";
 import CategoryResolver from "./resolvers/CategoryResolver";
 import AvatarResolver from "./resolvers/AvatarResolver";
+import FriendResolver from "./resolvers/FriendResolver";
+import InteractionResolver from "./resolvers/InteractionResolver";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
-/**
- * Point d'entrée principal du serveur GraphQL
- * Initialise la base de données et démarre le serveur Apollo
- */
 async function startServer() {
   await dataSource
     .initialize()
@@ -28,7 +26,7 @@ async function startServer() {
       process.exit(1);
     });
   const schema = await buildSchema({
-    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver, AvatarResolver],
+    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver, AvatarResolver, FriendResolver, InteractionResolver],
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {
