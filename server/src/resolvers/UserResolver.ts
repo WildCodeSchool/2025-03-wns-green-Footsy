@@ -70,6 +70,16 @@ export class UserInput {
   password: string;
 }
 
+// VER PARA QUE SIRVE
+@InputType()
+export class LoginResponse {
+  @Field(() => String)
+  token: string;
+
+  @Field(() => User)
+  user: User;
+}
+
 
 @Resolver(User)
 export default class UserResolver {
@@ -112,12 +122,25 @@ export default class UserResolver {
 
   @Mutation(() => String)
   async login(@Arg("data", () => UserInput) userData: UserInput) {
-      try {
+    try {
       if (!process.env.JWT_SECRET)
         throw new Error("Missing env variable: JWT_SECRET");
-
-      const user = await this.userService.findByMail
-
-      const hashedPassword = await argon2.hash(userData.password);
+  
+      const user = await this.userService.findByEmailAndPassword(
+        userData.email,
+        userData.password
+      );
+  
+      if (!user) {
+        throw new Error("Email ou mot de passe incorrect");
+      }
+  
+      const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
+  
+      return `${JSON.stringify(getUserPublicProfile(user))}; token=${token}`;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Erreur lors de la connexion");
+    }
   }
 }
