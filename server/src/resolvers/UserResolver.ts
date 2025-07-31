@@ -70,7 +70,6 @@ export class UserInput {
   password: string;
 }
 
-// VER PARA QUE SIRVE
 @InputType()
 export class LoginResponse {
   @Field(() => String)
@@ -79,7 +78,6 @@ export class LoginResponse {
   @Field(() => User)
   user: User;
 }
-
 
 @Resolver(User)
 export default class UserResolver {
@@ -126,7 +124,7 @@ export default class UserResolver {
       if (!process.env.JWT_SECRET)
         throw new Error("Missing env variable: JWT_SECRET");
   
-      const user = await this.userService.findByEmailAndPassword(
+      const user = await this.userService.authenticateUser(
         userData.email,
         userData.password
       );

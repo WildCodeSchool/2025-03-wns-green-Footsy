@@ -7,7 +7,7 @@ import type { NewUserInput } from "../resolvers/UserResolver";
 export interface UserServiceInterface {
   create(data: NewUserInput): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
-  findByEmailAndPassword(email: string, password: string): Promise<User | null>;
+  authenticateUser(email: string, password: string): Promise<User>;
 }
 
 export default class UserService implements UserServiceInterface {
@@ -23,13 +23,18 @@ export default class UserService implements UserServiceInterface {
     });
   }
 
-  async findByEmailAndPassword(email: string, password: string): Promise<User | null> {
+  async authenticateUser(email: string, password: string): Promise<User> {
     const user = await this.findByEmail(email);
-    if (!user) return null;
+    if (!user) {
+      throw new Error("User not found");
+    }
   
-    const isPasswordValid = await argon2.verify(user.hashed_password, password);
-    if (!isPasswordValid) return null;
-
+    const isValidPassword = await argon2.verify(user.hashed_password, password);
+    if (!isValidPassword) {
+      throw new Error("Invalid password");
+    }
+  
     return user;
   }
+  
 }
