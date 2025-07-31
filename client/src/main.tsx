@@ -1,14 +1,17 @@
-import { createRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { StrictMode } from "react";
 
-import App from "./App";
-import TestCharte from "./pages/testsCharte/TestsCharte";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import "./index.css";
+import App from "./App";
 
 import ModeProvider from "./context/modeContext";
+
 import SignUp from "./pages/signUp/SignUp";
+import TestCharte from "./pages/testsCharte/TestsCharte";
+
+import "./reset.css";
+import "./index.css";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignUp />,
+      },
+      {
+        path: "login",
+        element: <p>This is login, i don't exist yet.</p>,
       },
       {
         path: "/charte",

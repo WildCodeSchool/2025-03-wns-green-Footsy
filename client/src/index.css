@@ -37,11 +37,10 @@
 :root {
   --font-family: "Raleway", sans-serif;
 
-  --font-size-h1: 6rem;
-  --font-size-h2: 4rem;
-  --font-size-h3: 3rem;
-  --font-size-h4: 2rem;
-  --font-size-h5: 1.5rem;
+  --font-size-h1: 3rem;
+  --font-size-h2: 2rem;
+  --font-size-h3: 2rem;
+  --font-size-h4: 1.5rem;
   --font-size-body: 1rem;
 
   --weight-bold: 700;
@@ -109,11 +108,6 @@ h4 {
   font-size: var(--font-size-h4);
   font-weight: var(--weight-semibold);
   font-style: var(--style-italic);
-}
-
-h5 {
-  font-size: var(--font-size-h5);
-  font-weight: var(--weight-normal);
 }
 
 p,
