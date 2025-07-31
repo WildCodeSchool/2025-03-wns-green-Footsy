@@ -13,7 +13,8 @@
 
   transition: all ease-in-out 0.2s;
 
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-weight: bold;
 
   &-light {
     background-color: var(--color-dark);
@@ -21,7 +22,7 @@
     color: var(--color-light);
 
     &:hover {
-      background-color: var(--color-primary);
+      color: var(--color-dark);
     }
   }
 
@@ -31,17 +32,27 @@
     color: var(--dark-mode-color-dark);
 
     &:hover {
-      background-color: var(--dark-mode-color-primary);
+      color: var(--dark-mode-color-light);
     }
   }
 
-  &-accent {
+  &-light-accent {
     background-color: var(--yellow);
     border-color: var(--yellow);
-    color: var(--white);
+    color: var(--color-dark);
+  }
+
+  &-dark-accent {
+    background-color: var(--yellow);
+    border-color: var(--yellow);
+    color: var(--dark-mode-color-dark);
 
     &:hover {
-      background-color: var(--color-beige);
+      color: var(--dark-mode-color-light);
     }
+  }
+
+  &:hover {
+    background-color: var(--transparent);
   }
 }

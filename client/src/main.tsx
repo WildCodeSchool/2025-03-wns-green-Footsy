@@ -5,7 +5,7 @@ import { StrictMode } from "react";
 import App from "./App";
 
 import "./index.css";
-import TestCharte from "./pages/TestsCharte";
+import TestCharte from "./pages/testsCharte/TestsCharte";
 
 const router = createBrowserRouter([
   {

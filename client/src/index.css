@@ -72,6 +72,8 @@
   --dark-mode-color-dark: var(--dark-blue);
   --dark-mode-color-primary: var(--blue);
   --dark-mode-color-light: var(--light-blue);
+
+  --transparent: rgba(0, 0, 0, 0);
 }
 
 h1,
