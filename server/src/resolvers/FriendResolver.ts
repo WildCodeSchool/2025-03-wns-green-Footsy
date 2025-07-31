@@ -4,14 +4,13 @@ import Friend from "../entities/Friend";
 @InputType()
 class FriendInput {
     @Field(()=> Int)
-    requester: number;
+    requester_id: number;
 
-    @Field(()=> Number)
-    requested: number;
+    @Field(()=> Int)
+    requested_id: number;
 
     @Field(() => Boolean)
     accepted: boolean;
-
 }
 
 @Resolver(Friend)

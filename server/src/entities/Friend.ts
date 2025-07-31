@@ -1,22 +1,26 @@
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn, Unique } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import User from "./User";
 
 @ObjectType()
-@Unique(["requested", "requested"])
+@Unique(["requester_id", "requested_id"])
 @Entity()
 export default class Friend extends BaseEntity {
-    @Field(()=> User)
-    @ManyToOne(() => User, user => user.sentFriendRequests, { eager: true })
-    @PrimaryColumn()
+    @Field(() => Int)
+    @PrimaryColumn({ type: "int" })
+    requester_id: number;
+
+    @Field(() => Int)
+    @PrimaryColumn({ type: "int" })
+    requested_id: number;
+
+    @ManyToOne(() => User, (user) => user.sentFriendRequests, { eager: true })
     requester: User;
 
-    @Field(()=> User)
-    @ManyToOne(() => User, user => user.receivedFriendRequests, { eager: true })
-    @PrimaryColumn()
+    @ManyToOne(() => User, (user) => user.receivedFriendRequests, { eager: true })
     requested: User;
 
-    @Field(()=> Boolean)
+    @Field(() => Boolean)
     @Column({ type: "boolean", default: "false" })
     accepted: boolean;
 }

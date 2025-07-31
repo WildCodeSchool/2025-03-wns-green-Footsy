@@ -32,7 +32,7 @@ export default class User extends BaseEntity {
   last_name: string;
 
   @Field(() => String)
-  @Column("unique")
+  @Column({ type: "varchar", unique: true, length: 50 })
   email: string;
 
   @Column("varchar", { length: 255 })

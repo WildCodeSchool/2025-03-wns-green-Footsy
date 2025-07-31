@@ -7,8 +7,8 @@ export class InteractionInput {
     @Field(() => Int)
     user_id: number;
 
-    @Field(() => Number)
-    activity_id: Activity;
+    @Field(() => Int)
+    activity_id: number;
 
     @Field(() => String)
     comment: string;

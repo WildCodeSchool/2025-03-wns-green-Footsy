@@ -3,6 +3,7 @@ import Activity from "../entities/Activity";
 import Type from "../entities/Type";
 import User from "../entities/User";
 import Interaction from "../entities/Interaction";
+import { InteractionInput } from "./InteractionResolver";
 
 @InputType()
 export class ActivityInput {
@@ -27,8 +28,8 @@ export class ActivityInput {
       @Field(() => Int)
       type_id: number;
     
-      @Field(() => Interaction)
-      interactions: Interaction[];
+      @Field(() => InteractionInput)
+      interactions: InteractionInput[];
 }
 
 @Resolver()
