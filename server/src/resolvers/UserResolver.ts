@@ -117,4 +117,29 @@ export default class UserResolver {
       return err;
     }
   }
+
+  @Mutation(() => String)
+  async login(@Arg("data", () => UserInput) userData: UserInput) {
+    try {
+      if (!process.env.JWT_SECRET)
+        throw new Error("Missing env variable: JWT_SECRET");
+  
+      const user = await this.userService.authenticateUser(
+        userData.email,
+        userData.password
+      );
+  
+      if (!user) {
+        throw new Error("Incorrect email or password");
+      }
+  
+      const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
+  
+      return `${JSON.stringify(getUserPublicProfile(user))}; token=${token}`;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Login error");
+    }
+  }
 }
+
