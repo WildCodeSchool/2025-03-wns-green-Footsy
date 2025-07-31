@@ -1,14 +1,23 @@
+import { useNavigate } from "react-router-dom";
 import MainButton from "../../components/mainButton/MainButton";
 
 import classes from "./TestsCharte.module.scss";
 
 export default function TestCharte() {
+  const navigate = useNavigate();
+
   return (
     <section className={`${classes["test-charte"]}`}>
       <p>This is a dev environment to test some chart components</p>
       <div className={`${classes["test-charte__light"]}`}>
         <p>Light mode Tests</p>
-        <MainButton mode="light" content="Short" />
+        <MainButton
+          mode="light"
+          content="Short"
+          onClick={() => {
+            navigate("/");
+          }}
+        />
         <MainButton mode="light" accent={true} content="Accent Color" />
       </div>
       <div className={`${classes["test-charte__dark"]}`}>
