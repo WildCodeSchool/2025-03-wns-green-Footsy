@@ -3,14 +3,17 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
 import Avatar from "./Avatar";
 import Friend from "./Friend";
 import Interaction from "./Interaction";
+import Activity from "./Activity";
 
 @ObjectType()
 @Entity()
@@ -40,7 +43,8 @@ export default class User extends BaseEntity {
   birthdate: Date;
 
   @Field(() => Avatar)
-  @ManyToOne(() => Avatar, (avatar) => avatar.users)
+  @OneToOne(() => Avatar, (avatar) => avatar.users)
+  @JoinColumn({ name: "avatar_id" })
   avatar: Avatar;
 
   @OneToMany(() => Friend, friend => friend.requester)
@@ -52,4 +56,8 @@ export default class User extends BaseEntity {
   @Field(() => Interaction)
   @ManyToOne(() => Interaction, (interaction) => interaction.users)
   interaction: Interaction;
+
+  @Field(() => Activity)
+  @OneToMany(() => Activity, (activity) => activity.users)
+  activities: Activity;
 }

@@ -1,8 +1,8 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne } from "typeorm";
 import { Field, Int, ObjectType, Float } from "type-graphql";
 import Type from "./Type";
 import Interaction from "./Interaction";
-
+import User from "./User";
 
 @ObjectType()
 @Entity()
@@ -15,12 +15,10 @@ export default class Activity extends BaseEntity {
   @Column("varchar", { length: 50 })
   title: string;
 
-  
   @Field(() => Float, { nullable: true })
   @Column("float", { nullable: true })
   quantity: number;
 
-  
   @Field(() => String)
   @Column("date")
   date: string;
@@ -29,14 +27,12 @@ export default class Activity extends BaseEntity {
   @Column("float")
   co2_equivalent: number;
 
-  @Field(() => Int)
-  @Column("int")
-  user_id: number;
+  @Field(() => User)
+  @OneToOne(() => User, user => user.activities)
+  @JoinColumn({ name: "user_id" })
+  users: User;
 
-  @Field(() => Int)
-  @Column("int")
-  type_id: number;
-
+  @Field(() => Type)
   @ManyToOne(() => Type, type => type.activities)
   @JoinColumn({ name: "type_id" })
   type: Type;
