@@ -1,9 +1,10 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -18,32 +19,31 @@ import Activity from "./Activity";
 @ObjectType()
 @Entity()
 export default class User extends BaseEntity {
-  @Field(() => Number)
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field(() => String)
-  @Column("varchar")
+  @Column("varchar", { length: 50 })
   first_name: string;
 
   @Field(() => String)
-  @Column("varchar")
+  @Column("varchar", { length: 50 })
   last_name: string;
 
   @Field(() => String)
-  @Column("varchar")
+  @Column("unique")
   email: string;
 
-  @Field(() => String)
-  @Column("varchar")
+  @Column("varchar", { length: 255 })
   hashed_password: string;
 
   @Field(() => Date)
-  @Column("varchar")
+  @Column("date")
   birthdate: Date;
 
   @Field(() => Avatar)
-  @OneToOne(() => Avatar, (avatar) => avatar.users)
+  @ManyToOne(() => Avatar, (avatar) => avatar.users, { nullable: false })
   @JoinColumn({ name: "avatar_id" })
   avatar: Avatar;
 
@@ -54,10 +54,10 @@ export default class User extends BaseEntity {
   receivedFriendRequests: Friend[];
 
   @Field(() => Interaction)
-  @ManyToOne(() => Interaction, (interaction) => interaction.users)
-  interaction: Interaction;
+  @OneToMany(() => Interaction, interaction => interaction.users)
+  interactions: Interaction[];
 
-  @Field(() => Activity)
-  @OneToMany(() => Activity, (activity) => activity.users)
-  activities: Activity;
+  @Field(() => [Activity])
+  @OneToMany(() => Activity, (activity) => activity.user)
+  activities: Activity[];
 }

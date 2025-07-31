@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, OneToMany } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import User from "./User";
 import Activity from "./Activity";
 
@@ -7,18 +7,18 @@ import Activity from "./Activity";
 @Entity()
 export default class Interaction extends BaseEntity {
     @Field(() => User)
-    @OneToMany(() => User, (user) => user.interaction)
+    @ManyToOne(() => User, user => user.interactions, { nullable: false })
     users: User[];
 
     @Field(() => Activity)
-    @OneToMany(() => Activity, (activity) => activity.interaction)
-    activities: User[];
+    @ManyToOne(() => Activity, activity => activity.interactions, { nullable: false })
+    activity: Activity[];
 
     @Field(() => String)
     @Column("text")
     comment: string;
 
     @Field(() => Date)
-    @Column("varchar")
+    @Column("date")
     comment_date: Date;
 }

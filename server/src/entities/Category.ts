@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
 import Type from "./Type";
 
@@ -17,6 +17,6 @@ export default class Category extends BaseEntity {
   title: string;
 
   @Field(() => Type)
-  @OneToMany(() => Type, type => type.category)
+  @ManyToOne(() => Type, type => type.categories, { nullable: false })
   types: Type[];
 } 

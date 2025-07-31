@@ -1,6 +1,6 @@
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Field, InputType, Int, Mutation, Query, Resolver } from "type-graphql";
 
 import { AvatarInput } from "./AvatarResolver";
 import User from "../entities/User";
@@ -75,7 +75,7 @@ export default class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(@Arg("id", () => Number) id: number) {
+  async getUser(@Arg("id", () => Int) id: number) {
     const user = await User.findOneByOrFail({ id });
     return user;
   }

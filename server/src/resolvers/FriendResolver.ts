@@ -1,9 +1,9 @@
-import { Field, InputType, Resolver } from "type-graphql";
+import { Field, InputType, Int, Resolver } from "type-graphql";
 import Friend from "../entities/Friend";
 
 @InputType()
 class FriendInput {
-    @Field(()=> Number)
+    @Field(()=> Int)
     requester: number;
 
     @Field(()=> Number)
