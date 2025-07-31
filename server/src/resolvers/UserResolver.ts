@@ -61,6 +61,24 @@ function getUserTokenContent(user: User): UserToken {
   };
 }
 
+@InputType()
+export class UserInput {
+  @Field(() => String)
+  email: string;
+
+  @Field(() => String)
+  password: string;
+}
+
+@InputType()
+export class LoginResponse {
+  @Field(() => String)
+  token: string;
+
+  @Field(() => User)
+  user: User;
+}
+
 @Resolver(User)
 export default class UserResolver {
   private userService: UserServiceInterface;
@@ -97,6 +115,30 @@ export default class UserResolver {
     } catch (err) {
       console.error(err);
       return err;
+    }
+  }
+
+  @Mutation(() => String)
+  async login(@Arg("data", () => UserInput) userData: UserInput) {
+    try {
+      if (!process.env.JWT_SECRET)
+        throw new Error("Missing env variable: JWT_SECRET");
+  
+      const user = await this.userService.authenticateUser(
+        userData.email,
+        userData.password
+      );
+  
+      if (!user) {
+        throw new Error("Email ou mot de passe incorrect");
+      }
+  
+      const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
+  
+      return `${JSON.stringify(getUserPublicProfile(user))}; token=${token}`;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Erreur lors de la connexion");
     }
   }
 }
