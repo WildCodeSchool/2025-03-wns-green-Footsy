@@ -61,6 +61,24 @@ function getUserTokenContent(user: User): UserToken {
   };
 }
 
+@InputType()
+export class UserInput {
+  @Field(() => String)
+  email: string;
+
+  @Field(() => String)
+  password: string;
+}
+
+@InputType()
+export class LoginResponse {
+  @Field(() => String)
+  token: string;
+
+  @Field(() => User)
+  user: User;
+}
+
 @Resolver(User)
 export default class UserResolver {
   private userService: UserServiceInterface;
