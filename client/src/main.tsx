@@ -3,9 +3,12 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { StrictMode } from "react";
 
 import App from "./App";
+import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./index.css";
-import TestCharte from "./pages/testsCharte/TestsCharte";
+
+import ModeProvider from "./context/modeContext";
+import SignUp from "./pages/signUp/SignUp";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +17,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <h1>Welcome to the Home Page</h1>,
+      },
+      {
+        path: "signup",
+        element: <SignUp />,
       },
       {
         path: "/charte",
@@ -30,6 +37,8 @@ if (rootElement == null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ModeProvider>
+      <RouterProvider router={router} />
+    </ModeProvider>
   </StrictMode>
 );
