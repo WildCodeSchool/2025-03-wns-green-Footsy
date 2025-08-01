@@ -10,7 +10,7 @@ export default function SignUpHeader() {
   const logoIconSrc = mode === "dark" ? logoIconDark : logoIcon;
 
   return (
-    <div className={classes["sign-up-header"]}>
+    <header className={classes["sign-up-header"]}>
       <img
         src={logoIconSrc}
         alt="Footsy"
@@ -23,6 +23,6 @@ export default function SignUpHeader() {
       >
         Inscription
       </h2>
-    </div>
+    </header>
   );
 }
