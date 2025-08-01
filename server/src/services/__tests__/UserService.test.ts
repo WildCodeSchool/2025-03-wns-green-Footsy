@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import UserService from '../UserService';
 
 jest.mock('argon2', () => ({
   verify: jest.fn(),
@@ -9,9 +10,18 @@ jest.mock('../../entities/User', () => ({
 }));
 
 describe('UserService', () => {
-  let userService;
-  let mockUser;
+  let userService: UserService;
+  let mockUser: {
+    id: number;
+    email: string;
+    hashed_password: string;
+    first_name: string;
+    last_name: string;
+    birthdate: Date;
+  };
+  // biome-ignore lint/suspicious/noImplicitAnyLet:
   let argon2;
+  // biome-ignore lint/suspicious/noImplicitAnyLet:
   let User;
 
   beforeEach(async () => {
