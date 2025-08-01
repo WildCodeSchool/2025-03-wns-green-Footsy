@@ -1,11 +1,17 @@
-import { createRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { StrictMode } from "react";
+
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import App from "./App";
 
-import "./index.css";
+import ModeProvider from "./context/modeContext";
+
+import SignUp from "./pages/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
+
+import "./reset.css";
+import "./index.css";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +20,14 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <h1>Welcome to the Home Page</h1>,
+      },
+      {
+        path: "signup",
+        element: <SignUp />,
+      },
+      {
+        path: "login",
+        element: <p>This is login, i don't exist yet.</p>,
       },
       {
         path: "/charte",
@@ -30,6 +44,8 @@ if (rootElement == null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ModeProvider>
+      <RouterProvider router={router} />
+    </ModeProvider>
   </StrictMode>
 );
