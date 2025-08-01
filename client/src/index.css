@@ -73,6 +73,8 @@
   --dark-mode-color-light: var(--light-blue);
 
   --transparent: rgba(0, 0, 0, 0);
+  --beige-transparent: #d0dcadb3;
+  --dark-blue-transparent: #011624b3;
 }
 
 h1,
