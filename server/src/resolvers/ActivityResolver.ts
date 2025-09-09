@@ -2,7 +2,6 @@ import { Resolver, Query, Mutation, Arg, Int, Float, InputType, Field } from "ty
 import Activity from "../entities/Activity";
 import Type from "../entities/Type";
 import User from "../entities/User";
-import Interaction from "../entities/Interaction";
 import { InteractionInput } from "./InteractionResolver";
 
 @InputType()
