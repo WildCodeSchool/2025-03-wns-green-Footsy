@@ -47,6 +47,57 @@ describe('UserService', () => {
     jest.clearAllMocks();
   });
 
+  describe('findByEmail', () => {
+    it('should return user when email exists', async () => {
+      // Arrange
+      const email = 'test@example.com';
+      User.findOne.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await userService.findByEmail(email);
+
+      // Assert
+      expect(User.findOne).toHaveBeenCalledWith({
+        where: { email },
+        relations: ['avatar']
+      });
+      expect(result).toEqual(mockUser);
+    });
+
+    it('should return null when email does not exist', async () => {
+      // Arrange
+      const email = 'nonexistent@example.com';
+      User.findOne.mockResolvedValue(null);
+
+      // Act
+      const result = await userService.findByEmail(email);
+
+      // Assert
+      expect(User.findOne).toHaveBeenCalledWith({
+        where: { email },
+        relations: ['avatar']
+      });
+      expect(result).toBeNull();
+    });
+
+    it('should handle database errors', async () => {
+      // Arrange
+      const email = 'test@example.com';
+      const dbError = new Error('Database connection failed');
+      User.findOne.mockRejectedValue(dbError);
+
+      // Act & Assert
+      await expect(userService.findByEmail(email))
+        .rejects
+        .toThrow('Database connection failed');
+
+      expect(User.findOne).toHaveBeenCalledWith({
+        where: { email },
+        relations: ['avatar']
+      });
+    });
+  });
+
   describe('authenticateUser', () => {
     it('should successfully authenticate user with valid credentials', async () => {
       
