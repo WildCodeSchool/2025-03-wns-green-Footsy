@@ -2,9 +2,10 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import * as jwt from "jsonwebtoken";
 import UserResolver from '../UserResolver';
 import type { UserServiceInterface } from '../../services/UserService';
+import User from '../../entities/User';
 
 jest.mock('jsonwebtoken', () => ({
-  sign: jest.fn(),
+  sign: jest.fn().mockReturnValue('mock-token'),
 }));
 
 // Mock UserService
@@ -16,14 +17,7 @@ const mockUserService: jest.Mocked<UserServiceInterface> = {
 
 describe('UserResolver', () => {
   let userResolver: UserResolver;
-  let mockUser: {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    birthdate: Date;
-    avatar: any;
-  };
+  let mockUser: User;
 
   beforeEach(() => {
     // Reset environment
@@ -39,8 +33,10 @@ describe('UserResolver', () => {
       first_name: 'Jane',
       last_name: 'Doe',
       birthdate: new Date('1990-08-04'),
+      hashed_password: 'hashedPassword123',
       avatar: { id: 1, url: 'avatar.jpg' },
-    };
+      activities: [],
+    } as unknown as User;
 
     // Clear all mocks
     jest.clearAllMocks();
@@ -55,7 +51,7 @@ describe('UserResolver', () => {
       };
       const mockToken = 'mock-jwt-token';
       
-      mockUserService.authenticateUser.mockResolvedValue(mockUser as any);
+      mockUserService.authenticateUser.mockResolvedValue(mockUser);
       (jwt.sign as jest.Mock).mockReturnValue(mockToken);
 
       // Act
@@ -133,7 +129,7 @@ describe('UserResolver', () => {
         password: 'validPassword123',
       };
       
-      mockUserService.authenticateUser.mockResolvedValue(mockUser as any);
+      mockUserService.authenticateUser.mockResolvedValue(mockUser);
       (jwt.sign as jest.Mock).mockImplementation(() => {
         throw new Error('JWT signing failed');
       });
@@ -151,7 +147,7 @@ describe('UserResolver', () => {
         password: 'validPassword123',
       };
       
-      mockUserService.authenticateUser.mockResolvedValue(null as any);
+      mockUserService.authenticateUser.mockResolvedValue(null);
 
       // Act & Assert
       await expect(userResolver.login(userData))

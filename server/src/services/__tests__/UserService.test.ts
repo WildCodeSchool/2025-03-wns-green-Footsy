@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import UserService from '../UserService';
+import User from '../../entities/User';
 
 jest.mock('argon2', () => ({
   verify: jest.fn(),
@@ -11,14 +12,7 @@ jest.mock('../../entities/User', () => ({
 
 describe('UserService', () => {
   let userService: UserService;
-  let mockUser: {
-    id: number;
-    email: string;
-    hashed_password: string;
-    first_name: string;
-    last_name: string;
-    birthdate: Date;
-  };
+  let mockUser: User;
   // biome-ignore lint/suspicious/noImplicitAnyLet:
   let argon2;
   // biome-ignore lint/suspicious/noImplicitAnyLet:
@@ -42,7 +36,9 @@ describe('UserService', () => {
       first_name: 'Jane',
       last_name: 'Doe',
       birthdate: new Date('1990-08-04'),
-    };
+      avatar: null,
+      activities: [],
+    } as unknown as User;
 
     jest.clearAllMocks();
   });
