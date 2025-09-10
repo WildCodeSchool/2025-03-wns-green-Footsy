@@ -7,9 +7,7 @@ import { createMockUser, createMockAvatar } from "../../__tests__/helpers";
 import type User from "../../entities/User";
 import type { UserServiceInterface } from "../../services/UserService";
 
-jest.mock("jsonwebtoken", () => ({
-  sign: jest.fn().mockReturnValue("mock-token"),
-}));
+jest.mock("jsonwebtoken");
 
 jest.mock("argon2", () => ({
   hash: jest.fn(),
@@ -34,6 +32,8 @@ describe("UserResolver", () => {
     // Mock data and functions
     userResolver = new UserResolver(mockUserService);
     mockUser = createMockUser();
+
+    (jwt.sign as jest.Mock).mockReturnValue("mock-token");
 
     const mockArgon2 = jest.mocked(require("argon2"));
     mockArgon2.hash.mockResolvedValue(
@@ -212,9 +212,7 @@ describe("UserResolver", () => {
 
       // Assert
       expect(result).toBeInstanceOf(Error);
-      expect((result as Error).message).toContain(
-        "Missing env variable: JWT_SECRET"
-      );
+      expect(result.message).toContain("Missing env variable: JWT_SECRET");
     });
 
     it("should handle user creation errors", async () => {
@@ -229,7 +227,7 @@ describe("UserResolver", () => {
 
       // Assert
       expect(result).toBeInstanceOf(Error);
-      expect((result as Error).message).toBe("Email already exists");
+      expect(result.message).toBe("Email already exists");
     });
 
     it("should hash the password before creating user", async () => {
@@ -305,7 +303,7 @@ describe("UserResolver", () => {
 
     // Assert
     expect(result).toBeInstanceOf(Error);
-    expect((result as Error).message).toBe("Invalid email format");
+    expect(result.message).toBe("Invalid email format");
   });
 
   it("should handle user with existing email in signup", async () => {
@@ -328,6 +326,6 @@ describe("UserResolver", () => {
 
     // Assert
     expect(result).toBeInstanceOf(Error);
-    expect((result as Error).message).toContain("UNIQUE constraint failed");
+    expect(result.message).toContain("UNIQUE constraint failed");
   });
 });
