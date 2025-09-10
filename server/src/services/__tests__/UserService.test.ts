@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import UserService from '../UserService';
+import User from '../../entities/User';
 
 jest.mock('argon2', () => ({
   verify: jest.fn(),
@@ -11,14 +12,7 @@ jest.mock('../../entities/User', () => ({
 
 describe('UserService', () => {
   let userService: UserService;
-  let mockUser: {
-    id: number;
-    email: string;
-    hashed_password: string;
-    first_name: string;
-    last_name: string;
-    birthdate: Date;
-  };
+  let mockUser: User;
   // biome-ignore lint/suspicious/noImplicitAnyLet:
   let argon2;
   // biome-ignore lint/suspicious/noImplicitAnyLet:
@@ -42,9 +36,62 @@ describe('UserService', () => {
       first_name: 'Jane',
       last_name: 'Doe',
       birthdate: new Date('1990-08-04'),
-    };
+      avatar: null,
+      activities: [],
+    } as unknown as User;
 
     jest.clearAllMocks();
+  });
+
+  describe('findByEmail', () => {
+    it('should return user when email exists', async () => {
+      // Arrange
+      const email = 'test@example.com';
+      User.findOne.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await userService.findByEmail(email);
+
+      // Assert
+      expect(User.findOne).toHaveBeenCalledWith({
+        where: { email },
+        relations: ['avatar']
+      });
+      expect(result).toEqual(mockUser);
+    });
+
+    it('should return null when email does not exist', async () => {
+      // Arrange
+      const email = 'nonexistent@example.com';
+      User.findOne.mockResolvedValue(null);
+
+      // Act
+      const result = await userService.findByEmail(email);
+
+      // Assert
+      expect(User.findOne).toHaveBeenCalledWith({
+        where: { email },
+        relations: ['avatar']
+      });
+      expect(result).toBeNull();
+    });
+
+    it('should handle database errors', async () => {
+      // Arrange
+      const email = 'test@example.com';
+      const dbError = new Error('Database connection failed');
+      User.findOne.mockRejectedValue(dbError);
+
+      // Act & Assert
+      await expect(userService.findByEmail(email))
+        .rejects
+        .toThrow('Database connection failed');
+
+      expect(User.findOne).toHaveBeenCalledWith({
+        where: { email },
+        relations: ['avatar']
+      });
+    });
   });
 
   describe('authenticateUser', () => {
