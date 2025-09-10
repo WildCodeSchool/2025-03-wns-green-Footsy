@@ -8,6 +8,8 @@ import App from "./App";
 import ModeProvider from "./context/modeContext";
 
 import SignUp from "./pages/signUp/SignUp";
+import Login from "./pages/login/Login";
+import Dashboard from "./pages/dashboard/Dashboard";
 import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
@@ -27,7 +29,11 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <p>This is login, i don't exist yet.</p>,
+        element: <Login />,
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard />,
       },
       {
         path: "/charte",
