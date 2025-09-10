@@ -13,4 +13,7 @@ COPY *.config.js ./
 COPY tsconfig.app.json ./
 COPY tsconfig.node.json ./
 
+ENV VITE_HOST=0.0.0.0
+ENV VITE_PORT=5173
+
 CMD ["npm", "run", "dev"]

@@ -7,6 +7,14 @@ services:
       - 8080:5173
     volumes:
       - ./client/src/:/app/src/
+      - ./client/package.json:/app/package.json
+      - ./client/vite.config.ts:/app/vite.config.ts
+      - ./client/tsconfig.json:/app/tsconfig.json
+    environment:
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT=5173
+    stdin_open: true
+    tty: true
     depends_on:
       backend:
         condition: service_healthy
