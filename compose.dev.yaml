@@ -10,9 +10,10 @@ services:
       - ./client/package.json:/app/package.json
       - ./client/vite.config.ts:/app/vite.config.ts
       - ./client/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
     environment:
-      - VITE_HOST=0.0.0.0
-      - VITE_PORT=5173
+      - CHOKIDAR_USEPOLLING=true  # Force le polling
+      - WATCHPACK_POLLING=true
     stdin_open: true
     tty: true
     depends_on:
