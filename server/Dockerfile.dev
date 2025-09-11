@@ -8,6 +8,5 @@ COPY tsconfig.json ./
 
 RUN npm install --include=dev
 
-COPY src src
-
+# On ne copie plus `src`, car on le monte en volume
 CMD ["npm", "run", "dev"]
