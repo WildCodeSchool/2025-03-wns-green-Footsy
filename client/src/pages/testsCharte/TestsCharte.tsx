@@ -1,14 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import MainButton from "../../components/MainButton/MainButton";
 
 import classes from "./TestsCharte.module.scss";
 import Footer from "../../layout/footer/Footer";
 import NavBar from "../../layout/navbar/NavBar";
+import MainButton from "../../components/mainButton/MainButton";
 
 export default function TestCharte() {
   const navigate = useNavigate();
 
   return (
+    
     <section className={`${classes["test-charte"]}`}>
       <p>This is a dev environment to test some chart components</p>
       <div className={`${classes["test-charte__light"]}`}>
