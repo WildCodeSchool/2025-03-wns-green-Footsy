@@ -5,6 +5,7 @@ import SignUpHeader from "../../components/signUpHeader/SignUpHeader";
 import { useMode } from "../../context/modeContext";
 
 import classes from "./SignUp.module.scss";
+import SignUpForm from "../../components/signUpForm/SignUpForm";
 
 export default function SignUp() {
   const { mode } = useMode();
@@ -17,7 +18,7 @@ export default function SignUp() {
           classes[`sign-up__content--${mode}`]
         }`}
       >
-        {/* <SignUpForm /> */}
+        <SignUpForm />
         <Link
           to="/login"
           className={`${classes["sign-up__content__link"]} ${

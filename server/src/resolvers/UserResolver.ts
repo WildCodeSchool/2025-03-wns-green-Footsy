@@ -1,6 +1,14 @@
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
-import { Arg, Field, InputType, Int, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Field,
+  InputType,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 
 import { AvatarInput } from "./AvatarResolver";
 import User from "../entities/User";
@@ -123,18 +131,18 @@ export default class UserResolver {
     try {
       if (!process.env.JWT_SECRET)
         throw new Error("Missing env variable: JWT_SECRET");
-  
+
       const user = await this.userService.authenticateUser(
         userData.email,
         userData.password
       );
-  
+
       if (!user) {
         throw new Error("Incorrect email or password");
       }
-  
+
       const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
-  
+
       return `${JSON.stringify(getUserPublicProfile(user))}; token=${token}`;
     } catch (err) {
       console.error(err);
@@ -142,4 +150,3 @@ export default class UserResolver {
     }
   }
 }
-

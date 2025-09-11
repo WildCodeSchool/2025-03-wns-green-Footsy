@@ -1,0 +1,12 @@
+name: server-tests-workflow
+
+on: pull_request
+
+jobs:
+  test-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Goto server and run tests
+        run: cd server && npm i && npm test
