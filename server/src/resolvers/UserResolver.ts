@@ -122,7 +122,9 @@ export default class UserResolver {
       return `${getUserPublicProfile(user)}; token=${token}`;
     } catch (err) {
       console.error(err);
-      return err;
+      if (err instanceof Error && err.message.includes("duplicate key"))
+        throw new Error("Email already in use");
+      throw new Error("Signup error");
     }
   }
 

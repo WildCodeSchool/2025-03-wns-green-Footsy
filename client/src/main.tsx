@@ -15,6 +15,7 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 import "./reset.css";
 import "./index.css";
 import { HttpLink } from "@apollo/client";
+import { Flip, ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +58,18 @@ createRoot(rootElement).render(
     <ModeProvider>
       <ApolloProvider client={client}>
         <RouterProvider router={router} />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          limit={5}
+          // hideProgressBar={false}
+          // newestOnTop={false}
+          closeOnClick
+          // rtl={false}
+          pauseOnHover
+          theme="colored"
+          transition={Flip}
+        />
       </ApolloProvider>
     </ModeProvider>
   </StrictMode>

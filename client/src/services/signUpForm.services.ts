@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export type SignUpFormData = {
   name?: string;
   surname?: string;
@@ -12,51 +14,6 @@ export type FormErrors = {
   emailMismatch: boolean;
   passwordMismatch: boolean;
 };
-
-export const formFields = [
-  {
-    label: "Nom",
-    type: "text",
-    id: "name",
-    placeholder: "Doe",
-  },
-  {
-    label: "Prénom",
-    type: "text",
-    id: "surname",
-    placeholder: "Jane",
-  },
-  {
-    label: "Date de naissance",
-    type: "date",
-    id: "birthdate",
-    placeholder: "",
-  },
-  {
-    label: "Mail",
-    type: "email",
-    id: "email",
-    placeholder: "jane.doe@exemple.com",
-  },
-  {
-    label: "Confirmer le mail",
-    type: "email",
-    id: "confirmEmail",
-    placeholder: "jane.doe@exemple.com",
-  },
-  {
-    label: "Mot de passe",
-    type: "password",
-    id: "password",
-    placeholder: "motDePasse1234",
-  },
-  {
-    label: "Confirmer le mot de passe",
-    type: "password",
-    id: "confirmPassword",
-    placeholder: "motDePasse1234",
-  },
-];
 
 export const handleChange = (
   event: React.ChangeEvent<HTMLInputElement>,
@@ -102,7 +59,9 @@ export const handleSubmit = async (
   event.preventDefault();
 
   if (errors.emailMismatch || errors.passwordMismatch) {
-    alert("Veuillez corriger les erreurs avant de soumettre le formulaire.");
+    toast.error(
+      "Veuillez corriger les erreurs avant de soumettre le formulaire."
+    );
     return;
   }
 
@@ -113,7 +72,7 @@ export const handleSubmit = async (
     !formData.email ||
     !formData.password
   ) {
-    alert("Veuillez remplir tous les champs.");
+    toast.error("Veuillez remplir tous les champs.");
     return;
   }
 
@@ -136,9 +95,12 @@ export const handleSubmit = async (
       },
     });
 
-    alert("Inscription réussie !");
+    toast.info("Inscription réussie !");
   } catch (error) {
-    console.error("Erreur lors de l'inscription :", error);
-    alert("Erreur lors de l'inscription. Veuillez réessayer.");
+    if (error instanceof Error && error.message === "Email already in use") {
+      toast.error("Cette adresse e-mail est déjà utilisée.");
+      return;
+    }
+    toast.error("Erreur lors de l'inscription. Veuillez réessayer.");
   }
 };

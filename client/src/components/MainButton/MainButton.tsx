@@ -5,6 +5,7 @@ interface MainButtonProps {
   accent?: boolean;
   content: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: "button" | "submit";
 }
 
 export default function MainButton({
@@ -12,10 +13,11 @@ export default function MainButton({
   accent = false,
   content,
   onClick,
+  type = "button",
 }: MainButtonProps) {
   return (
     <button
-      type="button"
+      type={type}
       className={`${classes.button} ${
         classes[`button-${mode}${accent === true ? "-accent" : ""}`]
       }`}

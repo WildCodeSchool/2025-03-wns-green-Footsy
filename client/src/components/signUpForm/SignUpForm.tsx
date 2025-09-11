@@ -1,18 +1,65 @@
-import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
+import { useState } from "react";
 
+import { SIGN_UP } from "../../graphql/operations";
+import { useMode } from "../../context/modeContext";
 import {
   handleChange,
   handleSubmit,
-  formFields,
   type SignUpFormData,
   type FormErrors,
 } from "../../services/signUpForm.services";
 
-import FormField from "./FormField";
-import { SIGN_UP } from "../../graphql/operations";
+import FormField from "../formField/FormField";
+import MainButton from "../mainButton/MainButton";
+
+import classes from "./SignUpForm.module.scss";
+
+const formFields = [
+  {
+    label: "Nom",
+    type: "text",
+    id: "name",
+    placeholder: "Doe",
+  },
+  {
+    label: "Prénom",
+    type: "text",
+    id: "surname",
+    placeholder: "Jane",
+  },
+  {
+    label: "Date de naissance",
+    type: "date",
+    id: "birthdate",
+  },
+  {
+    label: "Mail",
+    type: "email",
+    id: "email",
+    placeholder: "jane.doe@exemple.com",
+  },
+  {
+    label: "Confirmer le mail",
+    type: "email",
+    id: "confirmEmail",
+  },
+  {
+    label: "Mot de passe",
+    type: "password",
+    id: "password",
+    placeholder: "motDePasse1234",
+  },
+  {
+    label: "Confirmer le mot de passe",
+    type: "password",
+    id: "confirmPassword",
+  },
+];
 
 export default function SignUpForm() {
+  const { mode } = useMode();
+
   const [formData, setFormData] = useState<SignUpFormData>({});
   const [errors, setErrors] = useState<FormErrors>({
     emailMismatch: false,
@@ -26,6 +73,7 @@ export default function SignUpForm() {
       onSubmit={(event) =>
         handleSubmit(event, formData, errors, signUpMutation)
       }
+      className={classes["sign-up-form"]}
     >
       {formFields.map((field) => (
         <div key={field.id}>
@@ -42,22 +90,28 @@ export default function SignUpForm() {
           />
           {field.id === "confirmEmail" && errors.emailMismatch && (
             <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
-              Les adresses e-mail ne correspondent pas
+              Les adresses e-mail ne sont pas identiques
             </p>
           )}
           {field.id === "confirmPassword" && errors.passwordMismatch && (
             <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
-              Les mots de passe ne correspondent pas
+              Les mots de passe ne sont pas identiques
             </p>
           )}
         </div>
       ))}
-      <button type="submit" disabled={loading}>
-        {loading ? "Inscription en cours..." : "S'inscrire"}
-      </button>
+      <div className={classes["sign-up-form__submit"]}>
+        <MainButton
+          type="submit"
+          content={loading ? "En cours..." : "INSCRIS-TOI"}
+          mode={mode}
+        />
+      </div>
       {error && (
         <p style={{ color: "red", fontSize: "14px", margin: "10px 0" }}>
-          Erreur: {error.message}
+          {error.message === "Email already in use"
+            ? "Cette adresse e-mail est déjà utilisée."
+            : "Une erreur est survenue lors de l'inscription. Veuillez réessayer."}
         </p>
       )}
     </form>
