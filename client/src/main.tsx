@@ -1,3 +1,5 @@
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import { StrictMode } from "react";
 
 import { createRoot } from "react-dom/client";
@@ -14,6 +16,7 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
+import { HttpLink } from "@apollo/client";
 
 const router = createBrowserRouter([
   {
@@ -48,10 +51,19 @@ if (rootElement == null) {
   throw new Error(`Your HTML Document should contain a <div id="root"></div>`);
 }
 
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: import.meta.env.VITE_URL_GRAPHQL || "http://localhost:5050/",
+  }),
+  cache: new InMemoryCache(),
+});
+
 createRoot(rootElement).render(
   <StrictMode>
     <ModeProvider>
-      <RouterProvider router={router} />
+      <ApolloProvider client={client}>
+        <RouterProvider router={router} />
+      </ApolloProvider>
     </ModeProvider>
   </StrictMode>
 );
