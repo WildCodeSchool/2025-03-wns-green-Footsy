@@ -1,17 +1,12 @@
 import { describe, it, expect, vi, beforeEach, type MockedFunction } from 'vitest';
+import { ApolloClient } from '@apollo/client';
 import { login, parseLoginResponse, saveToken, getToken, removeToken } from '../authService';
 
-
-interface GraphQLResponse {
-  data?: {
-    login: string;
-  };
-  errors?: Array<{ message: string }>;
-}
-
-// Mock fetch globally
-const mockFetch = vi.fn() as MockedFunction<typeof fetch>;
-global.fetch = mockFetch;
+// Mock Apollo Client
+const mockMutate = vi.fn();
+const mockApolloClient = {
+  mutate: mockMutate,
+} as unknown as ApolloClient;
 
 // Mock localStorage
 const localStorageMock = {
@@ -95,74 +90,58 @@ describe('authService', () => {
 
   describe('login function', () => {
     it('should make successful login request', async () => {
-      const mockResponse: GraphQLResponse = {
+      const mockResponse = {
         data: {
           login: '{"id":1,"firstName":"John","lastName":"Doe","mail":"john@example.com"}; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
         }
       };
 
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve(mockResponse),
-      } as Response);
+      mockMutate.mockResolvedValueOnce(mockResponse);
 
-      const result = await login('john@example.com', 'password123');
+      const result = await login(mockApolloClient, 'john@example.com', 'password123');
 
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:5050/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: `
-          mutation Login($data: UserInput!) {
-            login(data: $data)
-          }
-        `,
-          variables: {
-            data: {
-              email: 'john@example.com',
-              password: 'password123',
-            },
+      expect(mockMutate).toHaveBeenCalledWith({
+        mutation: expect.any(Object),
+        variables: {
+          data: {
+            email: 'john@example.com',
+            password: 'password123',
           },
-        }),
+        },
       });
 
       expect(result).toBe(mockResponse.data?.login);
     });
 
     it('should throw error when login fails', async () => {
-      const mockError: GraphQLResponse = {
-        errors: [{ message: 'Invalid credentials' }]
+      const mockError = {
+        error: { message: 'Invalid credentials' }
       };
 
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve(mockError),
-      } as Response);
+      mockMutate.mockResolvedValueOnce(mockError);
 
-      await expect(login('invalid@example.com', 'wrongpassword')).rejects.toThrow('Login failed');
+      await expect(login(mockApolloClient, 'invalid@example.com', 'wrongpassword')).rejects.toThrow('Login failed');
     });
 
     it('should throw error when network request fails', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+      mockMutate.mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(login('john@example.com', 'password123')).rejects.toThrow('Network error');
+      await expect(login(mockApolloClient, 'john@example.com', 'password123')).rejects.toThrow('Network error');
     });
   });
 
   describe('integration test', () => {
     it('should complete full login flow', async () => {
-      const mockResponse: GraphQLResponse = {
+      const mockResponse = {
         data: {
           login: '{"id":1,"firstName":"John","lastName":"Doe","mail":"john@example.com"}; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
         }
       };
 
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve(mockResponse),
-      } as Response);
+      mockMutate.mockResolvedValueOnce(mockResponse);
 
       // Test the full flow
-      const loginResult = await login('john@example.com', 'password123');
+      const loginResult = await login(mockApolloClient, 'john@example.com', 'password123');
       const { user, token } = parseLoginResponse(loginResult);
       
       saveToken(token);

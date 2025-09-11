@@ -1,34 +1,27 @@
-const API_URL = "http://localhost:5050/graphql";
+import { ApolloClient } from "@apollo/client";
+import { LOGIN } from "../graphql/operations";
 
-export const login = async (email: string, password: string) => {
+type LoginResponse = {
+  login: string;
+};
+
+export const login = async (apolloClient: ApolloClient, email: string, password: string) => {
   try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query: `
-          mutation Login($data: UserInput!) {
-            login(data: $data)
-          }
-        `,
-        variables: {
-          data: {
-            email,
-            password,
-          },
+    const result = await apolloClient.mutate({
+      mutation: LOGIN,
+      variables: {
+        data: {
+          email,
+          password,
         },
-      }),
+      },
     });
 
-    const result = await response.json();
-
-    if (result.errors) {
+    if (result.error) {
       throw new Error("Login failed");
     }
 
-    return result.data.login;
+    return (result.data as LoginResponse).login;
   } catch (error) {
     console.error("Login error:", error);
     throw error;

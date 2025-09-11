@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login, saveToken, parseLoginResponse } from "../../services/authService";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+import { LOGIN } from "../../graphql/operations";
+import { saveToken, parseLoginResponse } from "../../services/authService";
 
 // TODO: Implement styles
 
@@ -10,6 +12,13 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  const apolloClient = new ApolloClient({
+    link: new HttpLink({
+      uri: import.meta.env.VITE_URL_GRAPHQL || "http://localhost:5050/graphql",
+    }),
+    cache: new InMemoryCache(),
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,17 +26,35 @@ export default function Login() {
     setLoading(true);
     
     try {
-      const result = await login(email, password);
-      console.log("Login successful:", result);
+      const result = await apolloClient.mutate({
+        mutation: LOGIN,
+        variables: {
+          data: { email, password }
+        }
+      });
       
-      const { token } = parseLoginResponse(result);
+      console.log("Login successful:", result.data);
+      
+      const { token } = parseLoginResponse((result.data as any).login);
       
       saveToken(token);
       
       navigate("/dashboard");
-    } catch (error) {
-      setError("Login failed. Please check your credentials and try again.");
+    } catch (error: any) {
       console.error("Login error:", error);
+      
+      // Extract more specific error message
+      let errorMessage = "Login failed. Please check your credentials and try again.";
+      
+      if (error?.graphQLErrors?.length > 0) {
+        errorMessage = error.graphQLErrors[0].message;
+      } else if (error?.networkError) {
+        errorMessage = "Network error. Please check your connection.";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
