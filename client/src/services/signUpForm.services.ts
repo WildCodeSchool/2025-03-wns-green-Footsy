@@ -92,10 +92,12 @@ export const handleChange = (
   }
 };
 
-export const handleSubmit = (
+export const handleSubmit = async (
   event: React.FormEvent,
   formData: SignUpFormData,
-  errors: FormErrors
+  errors: FormErrors,
+  // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
+  signUpMutation: any
 ) => {
   event.preventDefault();
 
@@ -115,9 +117,28 @@ export const handleSubmit = (
     return;
   }
 
-  // Ajouter la logique pour envoyer les données au serveur
+  try {
+    await signUpMutation({
+      variables: {
+        data: {
+          first_name: formData.surname,
+          last_name: formData.name,
+          email: formData.email,
+          birthdate: new Date(formData.birthdate),
+          password: formData.password,
+          avatar: {
+            // TO DO: add avatar selection feature
+            id: 1,
+            title: "Avatar par défaut",
+            image: "default-avatar.png",
+          },
+        },
+      },
+    });
 
-  console.log("Données du formulaire :", formData);
-
-  alert("Formulaire soumis avec succès !");
+    alert("Inscription réussie !");
+  } catch (error) {
+    console.error("Erreur lors de l'inscription :", error);
+    alert("Erreur lors de l'inscription. Veuillez réessayer.");
+  }
 };

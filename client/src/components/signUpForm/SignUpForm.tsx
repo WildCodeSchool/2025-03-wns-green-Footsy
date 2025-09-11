@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMutation } from "@apollo/client/react";
 
 import {
   handleChange,
@@ -9,6 +10,7 @@ import {
 } from "../../services/signUpForm.services";
 
 import FormField from "./FormField";
+import { SIGN_UP } from "../../graphql/operations";
 
 export default function SignUpForm() {
   const [formData, setFormData] = useState<SignUpFormData>({});
@@ -17,8 +19,14 @@ export default function SignUpForm() {
     passwordMismatch: false,
   });
 
+  const [signUpMutation, { loading, error }] = useMutation(SIGN_UP);
+
   return (
-    <form onSubmit={(event) => handleSubmit(event, formData, errors)}>
+    <form
+      onSubmit={(event) =>
+        handleSubmit(event, formData, errors, signUpMutation)
+      }
+    >
       {formFields.map((field) => (
         <div key={field.id}>
           <FormField
@@ -44,7 +52,14 @@ export default function SignUpForm() {
           )}
         </div>
       ))}
-      <button type="submit">S'inscrire</button>
+      <button type="submit" disabled={loading}>
+        {loading ? "Inscription en cours..." : "S'inscrire"}
+      </button>
+      {error && (
+        <p style={{ color: "red", fontSize: "14px", margin: "10px 0" }}>
+          Erreur: {error.message}
+        </p>
+      )}
     </form>
   );
 }
