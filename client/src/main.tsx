@@ -9,6 +9,7 @@ import ModeProvider from "./context/modeContext";
 
 import SignUp from "./pages/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
+import Home from "./pages/home/Home";
 
 import "./reset.css";
 import "./index.css";
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <h1>Welcome to the Home Page</h1>,
+        element: <Home />,
       },
       {
         path: "signup",
