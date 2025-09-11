@@ -1,0 +1,38 @@
+.sign-up {
+  min-height: 100vh;
+  min-width: 100vw;
+  z-index: -1;
+
+  &__link {
+      display: inline-block;
+      font-weight: bold;
+      text-decoration: none;
+      text-align: right;
+      width: 100%;
+
+      &--light {
+        color: var(--color-dark);
+      }
+
+      &--dark {
+        color: var(--color-dark-mode-light);
+      }
+    }
+
+  &__title {
+    width: 100%;
+    text-align: center;
+
+    @media (max-width: 1023px) {
+      display: none;
+    }
+
+    &--light {
+      color: var(--color-dark);
+    }
+
+    &--dark {
+      color: var(--color-dark-mode-light);
+    }
+  }
+}

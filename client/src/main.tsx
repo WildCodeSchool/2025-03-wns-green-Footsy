@@ -7,7 +7,7 @@ import App from "./App";
 
 import ModeProvider from "./context/modeContext";
 
-import SignUp from "./pages/signUp/SignUp";
+import SignUp from "./pages/auth/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
@@ -27,10 +27,18 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <p>This is login, i don't exist yet.</p>,
+        element: <h1>Login Page - To be implemented</h1>,
       },
       {
-        path: "/charte",
+        path: "credits",
+        element: <h1>Credits Page - To be implemented</h1>,
+      },
+      {
+        path: "CGU",
+        element: <h1>CGU Page - To be implemented</h1>,
+      },
+      {
+        path: "charte",
         element: <TestCharte />,
       },
     ],

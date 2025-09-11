@@ -1,0 +1,15 @@
+.nav-bar{
+    &__link {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 0.5rem;
+
+        &--light {
+            color: var(--color-dark);
+        }
+
+        &--dark {
+            color: var(--color-dark-mode-light);
+        }
+    }
+}
