@@ -10,6 +10,8 @@ import App from "./App";
 import ModeProvider from "./context/modeContext";
 
 import SignUp from "./pages/signUp/SignUp";
+import Login from "./pages/login/Login";
+import Dashboard from "./pages/dashboard/Dashboard";
 import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
@@ -30,11 +32,11 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <h1>Login Page - To be implemented</h1>,
+        element: <Login />,
       },
       {
         path: "dashboard",
-        element: <h1>Dashboard Page - To be implemented</h1>,
+        element: <Dashboard />,
       },
       {
         path: "credits",
