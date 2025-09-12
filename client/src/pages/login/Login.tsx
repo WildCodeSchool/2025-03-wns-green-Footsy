@@ -4,6 +4,10 @@ import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { LOGIN } from "../../graphql/operations";
 import { saveToken, parseLoginResponse } from "../../services/authService";
 
+type LoginResponse = {
+  login: string;
+};
+
 // TODO: Implement styles
 
 export default function Login() {
@@ -35,7 +39,7 @@ export default function Login() {
       
       console.log("Login successful:", result.data);
       
-      const { token } = parseLoginResponse((result.data as any).login);
+      const { token } = parseLoginResponse((result.data as LoginResponse).login);
       
       saveToken(token);
       
