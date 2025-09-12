@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useMode } from "../../context/modeContext";
 import { SIGN_UP } from "../../graphql/operations";
@@ -20,6 +21,7 @@ import MainButton from "../mainButton/MainButton";
 import classes from "./SignUpForm.module.scss";
 
 export default function SignUpForm() {
+  const navigate = useNavigate();
   const { mode } = useMode();
 
   const [formData, setFormData] = useState<SignUpFormData>({});
@@ -39,9 +41,19 @@ export default function SignUpForm() {
 
   return (
     <form
-      onSubmit={(event) =>
-        handleSubmit(event, formData, errors, signUpMutation)
-      }
+      onSubmit={async (event) => {
+        event.preventDefault();
+        const result = await handleSubmit(
+          event,
+          formData,
+          errors,
+          signUpMutation
+        );
+
+        if (result === "success") {
+          navigate("/login");
+        }
+      }}
       className={classes["sign-up-form"]}
     >
       <div className={classes["sign-up-form__header"]}>

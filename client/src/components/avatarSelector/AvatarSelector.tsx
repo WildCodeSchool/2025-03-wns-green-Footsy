@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 
 import { GET_ALL_AVATARS } from "../../graphql/operations";
 
-import { getAvatarImageUrl } from "../../services/avatarSelector.services";
 import type { Avatar } from "../../types/Avatar.types";
 import { Loader } from "../loader/Loader";
 import classes from "./AvatarSelector.module.scss";
@@ -16,6 +15,16 @@ type AvatarSelectorProps = {
   selectedAvatar?: Avatar;
   onAvatarSelect: (avatar: Avatar) => void;
   label?: string;
+};
+
+const avatarImages = import.meta.glob("../../assets/img/avatar/*.png", {
+  eager: true,
+  as: "url",
+}) as Record<string, string>;
+
+export const getAvatarImageUrl = (imageName: string): string => {
+  const imagePath = `../../assets/img/avatar/${imageName}`;
+  return avatarImages[imagePath] || "";
 };
 
 export default function AvatarSelector({

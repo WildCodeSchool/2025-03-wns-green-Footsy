@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import type { Avatar } from "../types/Avatar.types";
@@ -96,8 +95,6 @@ export const handleSubmit = async (
   // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
   signUpMutation: any
 ) => {
-  const navigate = useNavigate();
-
   event.preventDefault();
 
   if (errors.emailMismatch || errors.passwordMismatch) {
@@ -139,7 +136,7 @@ export const handleSubmit = async (
 
     toast.info("Inscription réussie !");
 
-    navigate("/login");
+    return "success";
   } catch (error) {
     if (error instanceof Error && error.message === "Email already in use") {
       toast.error("Cette adresse e-mail est déjà utilisée.");
