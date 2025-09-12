@@ -15,3 +15,9 @@ export const GET_ALL_AVATARS = gql`
     }
   }
 `;
+
+export const LOGIN = gql`
+  mutation Login($data: UserInput!) {
+    login(data: $data)
+  }
+`;
