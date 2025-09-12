@@ -1,27 +1,22 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 
-import { SIGN_UP } from "../../graphql/operations";
 import { useMode } from "../../context/modeContext";
+import { SIGN_UP } from "../../graphql/operations";
 import {
   handleChange,
   handleSubmit,
-  type SignUpFormData,
   type FormErrors,
+  type SignUpFormData,
 } from "../../services/signUpForm.services";
 
+import AvatarSelector, { type Avatar } from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
 import MainButton from "../mainButton/MainButton";
 
 import classes from "./SignUpForm.module.scss";
 
 const formFields = [
-  {
-    label: "Nom",
-    type: "text",
-    id: "name",
-    placeholder: "Doe",
-  },
   {
     label: "Prénom",
     type: "text",
@@ -68,6 +63,13 @@ export default function SignUpForm() {
 
   const [signUpMutation, { loading, error }] = useMutation(SIGN_UP);
 
+  const handleAvatarSelect = (avatar: Avatar) => {
+    setFormData((prev) => ({
+      ...prev,
+      avatar,
+    }));
+  };
+
   return (
     <form
       onSubmit={(event) =>
@@ -75,6 +77,29 @@ export default function SignUpForm() {
       }
       className={classes["sign-up-form"]}
     >
+      <div className={classes["sign-up-form__header"]}>
+        <div className={classes["sign-up-form__avatar"]}>
+          <AvatarSelector
+            selectedAvatar={formData.avatar}
+            onAvatarSelect={handleAvatarSelect}
+            label="Choisir votre avatar"
+          />
+        </div>
+        <div className={classes["sign-up-form__name"]}>
+          <FormField
+            label="Nom"
+            type="text"
+            id="name"
+            name="name"
+            value={(formData.name as string) ?? ""}
+            onChange={(event) =>
+              handleChange(event, formData, setFormData, setErrors)
+            }
+            placeholder="Doe"
+          />
+        </div>
+      </div>
+
       {formFields.map((field) => (
         <div key={field.id}>
           <FormField
@@ -82,7 +107,11 @@ export default function SignUpForm() {
             type={field.type}
             id={field.id}
             name={field.id}
-            value={formData[field.id as keyof typeof formData] ?? ""}
+            value={
+              field.id === "avatar"
+                ? ""
+                : (formData[field.id as keyof typeof formData] as string) ?? ""
+            }
             onChange={(event) =>
               handleChange(event, formData, setFormData, setErrors)
             }
@@ -100,6 +129,7 @@ export default function SignUpForm() {
           )}
         </div>
       ))}
+
       <div className={classes["sign-up-form__submit"]}>
         <MainButton
           type="submit"

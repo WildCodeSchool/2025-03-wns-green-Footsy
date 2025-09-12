@@ -1,6 +1,24 @@
 .sign-up-form {
   margin-bottom: 1rem;
 
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: stretch;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+  }
+
+  &__name {
+    flex: 1;
+  }
+
   &__error-msg {
     color: red;
   }

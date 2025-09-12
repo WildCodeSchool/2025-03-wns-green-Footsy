@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import type { Avatar } from "../components/avatarSelector/AvatarSelector";
 
 export type SignUpFormData = {
   name?: string;
@@ -8,6 +9,7 @@ export type SignUpFormData = {
   confirmEmail?: string;
   password?: string;
   confirmPassword?: string;
+  avatar?: Avatar;
 };
 
 export type FormErrors = {
@@ -70,9 +72,10 @@ export const handleSubmit = async (
     !formData.surname ||
     !formData.birthdate ||
     !formData.email ||
-    !formData.password
+    !formData.password ||
+    !formData.avatar
   ) {
-    toast.error("Veuillez remplir tous les champs.");
+    toast.error("Veuillez remplir tous les champs et sélectionner un avatar.");
     return;
   }
 
@@ -86,10 +89,9 @@ export const handleSubmit = async (
           birthdate: new Date(formData.birthdate),
           password: formData.password,
           avatar: {
-            // TO DO: add avatar selection feature
-            id: 1,
-            title: "Avatar par défaut",
-            image: "default-avatar.png",
+            id: formData.avatar.id,
+            title: formData.avatar.title,
+            image: formData.avatar.image,
           },
         },
       },
