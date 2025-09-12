@@ -8,7 +8,8 @@
 		"test:watch": "jest --watch",
 		"compile": "tsc",
 		"start": "npm run compile && node ./dist/index.js",
-		"dev": "tsx watch src/index.ts"
+		"dev": "tsx watch src/index.ts",
+		"seed": "tsx src/seeders/Seeder.ts"
 	},
 	"author": "",
 	"license": "ISC",
