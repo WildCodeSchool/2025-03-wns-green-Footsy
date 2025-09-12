@@ -3,58 +3,36 @@
   min-width: 100vw;
   z-index: -1;
 
-  &--light {
-    background-image: url("../../assets/img/illus/background.png");
-    background-size: cover;
-  }
-
-  &__content {
-    margin: 1rem;
-    padding: 2rem;
-    position: relative;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      filter: blur(10px);
-      background-color: var(--beige-transparent);
-    }
+  &__link {
+    display: inline-block;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: right;
+    width: 100%;
 
     &--light {
-      &::before {
-        background-color: var(--beige-transparent);
-      }
+      color: var(--color-dark);
     }
 
     &--dark {
-      &::before {
-        background-color: var(--dark-blue-transparent);
-      }
+      color: var(--color-dark-mode-light);
+    }
+  }
+
+  &__title {
+    width: 100%;
+    text-align: center;
+
+    @media (max-width: 1023px) {
+      display: none;
     }
 
-    * {
-      position: relative;
+    &--light {
+      color: var(--color-dark);
     }
 
-    &__link {
-      display: inline-block;
-      font-weight: bold;
-      text-decoration: none;
-      text-align: right;
-      width: 100%;
-
-      &--light {
-        color: var(--color-dark);
-      }
-
-      &--dark {
-        color: var(--color-dark-mode-light);
-      }
+    &--dark {
+      color: var(--color-dark-mode-light);
     }
   }
 }

@@ -1,0 +1,33 @@
+.form-content {
+  margin: 1rem;
+  padding: 2rem;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    filter: blur(10px);
+    background-color: var(--beige-transparent);
+  }
+
+  &--light {
+    &::before {
+      background-color: var(--beige-transparent);
+    }
+  }
+
+  &--dark {
+    &::before {
+      background-color: var(--dark-blue-transparent);
+    }
+  }
+
+  * {
+    position: relative;
+  }
+}

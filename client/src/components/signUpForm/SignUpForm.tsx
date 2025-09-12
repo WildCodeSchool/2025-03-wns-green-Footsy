@@ -10,11 +10,12 @@ import {
   type SignUpFormData,
 } from "../../services/signUpForm.services";
 
-import AvatarSelector, { type Avatar } from "../avatarSelector/AvatarSelector";
+import AvatarSelector from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
 import MainButton from "../mainButton/MainButton";
 
 import classes from "./SignUpForm.module.scss";
+import type { Avatar } from "../../types/Avatar.types";
 
 const formFields = [
   {

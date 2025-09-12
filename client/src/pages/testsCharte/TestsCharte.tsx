@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import MainButton from "../../components/MainButton/MainButton";
 
 import classes from "./TestsCharte.module.scss";
+import Footer from "../../layout/footer/Footer";
+import NavBar from "../../layout/navbar/NavBar";
 
 export default function TestCharte() {
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ export default function TestCharte() {
         <MainButton mode="dark" content="This is a longer and dark button" />
         <MainButton mode="dark" accent={true} content="Accent Color" />
       </div>
+      <NavBar />
+      <Footer />
     </section>
   );
 }

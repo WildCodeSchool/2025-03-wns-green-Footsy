@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import type { Avatar } from "../components/avatarSelector/AvatarSelector";
+import type { Avatar } from "../types/Avatar.types";
 
 export type SignUpFormData = {
   name?: string;

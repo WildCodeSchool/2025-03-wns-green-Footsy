@@ -5,3 +5,13 @@ export const SIGN_UP = gql`
     signup(data: $data)
   }
 `;
+
+export const GET_ALL_AVATARS = gql`
+  query GetAllAvatars {
+    getAllAvatars {
+      id
+      title
+      image
+    }
+  }
+`;

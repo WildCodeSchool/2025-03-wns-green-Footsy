@@ -1,52 +1,52 @@
 const Avatars = [
   {
     id: 1,
-    image: "icon-greta.png",
+    image: "/src/assets/img/avatar/icon-greta.png",
     title: "Greta",
   },
   {
     id: 2,
-    image: "icon-hugo-clement.png",
+    image: "/src/assets/img/avatar/icone-hugo-clement.png",
     title: "Hugo Clément",
   },
   {
     id: 3,
-    image: "icon-jane-goodall.png",
+    image: "/src/assets/img/avatar/icone-jane-goodall.png",
     title: "Jane Goodall",
   },
   {
     id: 4,
-    image: "icon-lorax.png",
+    image: "/src/assets/img/avatar/icone-lorax.png",
     title: "Lorax",
   },
   {
     id: 5,
-    image: "icon-mononoke.png",
+    image: "/src/assets/img/avatar/icone-mononoke.png",
     title: "Mononoke",
   },
   {
     id: 6,
-    image: "icon-paul-watson.png",
+    image: "/src/assets/img/avatar/icone-paul-watson.png",
     title: "Paul Watson",
   },
   {
     id: 7,
-    image: "icon-pocahontas.png",
+    image: "/src/assets/img/avatar/icone-pocahontas.png",
     title: "Pocahontas",
   },
   {
     id: 8,
-    image: "icon-totoro.png",
+    image: "/src/assets/img/avatar/icone-totoro.png",
     title: "Totoro",
   },
   {
     id: 9,
-    image: "icon-wall.png",
-    title: "Wall-e",
+    image: "/src/assets/img/avatar/icone-wall.png",
+    title: "Wall-E",
   },
   {
     id: 10,
-    image: "icon-wangari.png",
+    image: "/src/assets/img/avatar/icone-wangari.png",
     title: "Wangari Maathai",
   },
 ];

@@ -1,36 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@apollo/client/react";
 
-import greta from "../../assets/img/avatar/icon-greta.png";
-import hugoClement from "../../assets/img/avatar/icone-hugo-clement.png";
-import janeGoodall from "../../assets/img/avatar/icone-jane-goodall.png";
-import lorax from "../../assets/img/avatar/icone-lorax.png";
-import mononoke from "../../assets/img/avatar/icone-mononoke.png";
-import paulWatson from "../../assets/img/avatar/icone-paul-watson.png";
-import pocahontas from "../../assets/img/avatar/icone-pocahontas.png";
-import totoro from "../../assets/img/avatar/icone-totoro.png";
-import wall from "../../assets/img/avatar/icone-wall.png";
-import wangari from "../../assets/img/avatar/icone-wangari.png";
+import { GET_ALL_AVATARS } from "../../graphql/operations";
 
 import classes from "./AvatarSelector.module.scss";
 
-export type Avatar = {
-  id: number;
-  title: string;
-  image: string;
-};
-
-const avatars: Avatar[] = [
-  { id: 1, title: "Greta", image: greta },
-  { id: 2, title: "Hugo Clément", image: hugoClement },
-  { id: 3, title: "Jane Goodall", image: janeGoodall },
-  { id: 4, title: "Lorax", image: lorax },
-  { id: 5, title: "Mononoke", image: mononoke },
-  { id: 6, title: "Paul Watson", image: paulWatson },
-  { id: 7, title: "Pocahontas", image: pocahontas },
-  { id: 8, title: "Totoro", image: totoro },
-  { id: 9, title: "Wall-E", image: wall },
-  { id: 10, title: "Wangari", image: wangari },
-];
+import type { Avatar } from "../../types/Avatar.types";
 
 type AvatarSelectorProps = {
   selectedAvatar?: Avatar;
@@ -38,12 +13,21 @@ type AvatarSelectorProps = {
   label?: string;
 };
 
+interface GetAllAvatarsData {
+  getAllAvatars: Avatar[];
+}
+
 export default function AvatarSelector({
-  selectedAvatar = { id: 5, title: "Mononoke", image: mononoke },
+  selectedAvatar,
   onAvatarSelect,
 }: AvatarSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const { data, loading, error } = useQuery<GetAllAvatarsData>(GET_ALL_AVATARS);
+  const avatars: Avatar[] = data?.getAllAvatars || [];
+
+  const currentAvatar = selectedAvatar || avatars[4];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -69,6 +53,15 @@ export default function AvatarSelector({
     setIsOpen(false);
   };
 
+  // TO DO: Mettre en page les pages de chargement et d'erreur
+  if (loading) {
+    return <div>Chargement des avatars...</div>;
+  }
+
+  if (error) {
+    return <div>Erreur lors du chargement des avatars</div>;
+  }
+
   return (
     <div className={classes["avatar-selector"]} ref={dropdownRef}>
       <button
@@ -78,8 +71,8 @@ export default function AvatarSelector({
         aria-expanded={isOpen}
       >
         <img
-          src={selectedAvatar.image}
-          alt={selectedAvatar.title}
+          src={currentAvatar.image}
+          alt={currentAvatar.title}
           className={classes["avatar-selector__current-image"]}
         />
       </button>
@@ -87,16 +80,16 @@ export default function AvatarSelector({
       {isOpen && (
         <div className={classes["avatar-selector__dropdown"]}>
           <div className={classes["avatar-selector__grid"]}>
-            {avatars.map((avatar) => (
+            {avatars.map((avatar: Avatar) => (
               <option
                 key={avatar.id}
                 className={`${classes["avatar-selector__option"]} ${
-                  selectedAvatar?.id === avatar.id
+                  currentAvatar?.id === avatar.id
                     ? classes["avatar-selector__option--selected"]
                     : ""
                 }`}
                 onClick={() => handleAvatarClick(avatar)}
-                aria-selected={selectedAvatar?.id === avatar.id}
+                aria-selected={currentAvatar?.id === avatar.id}
               >
                 <img
                   src={avatar.image}
@@ -111,5 +104,3 @@ export default function AvatarSelector({
     </div>
   );
 }
-
-export { avatars };
