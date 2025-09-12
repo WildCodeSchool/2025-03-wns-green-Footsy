@@ -12,8 +12,10 @@ services:
       - ./client/tsconfig.json:/app/tsconfig.json
       - /app/node_modules
     environment:
-      - CHOKIDAR_USEPOLLING=true  # Force le polling
+      - CHOKIDAR_USEPOLLING=true # Force le polling
       - WATCHPACK_POLLING=true
+    env_file:
+      - .env
     stdin_open: true
     tty: true
     depends_on:
@@ -24,10 +26,12 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile.dev
-    ports: # hote:container
+    command: npm run dev           # lance ton script dev (hot reload)
+    ports:
       - 5050:4000
     volumes:
-      - ./server/src/:/app/src/
+      - ./server/src:/app/src      # monte ton code source
+      - /app/node_modules          # évite d’écraser node_modules dans le conteneur
     healthcheck:
       test:
         [
@@ -39,6 +43,8 @@ services:
       DB_DATABASE: ${DB_DATABASE}
       DB_USER: ${DB_USER}
       DB_HOST: ${DB_HOST}
+    env_file:
+      - .env
     depends_on:
       database:
         condition: service_healthy
@@ -58,5 +64,7 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_HOST: ${DB_HOST}
+    env_file:
+      - .env
     volumes:
       - ./database:/var/lib/postgresql/data
