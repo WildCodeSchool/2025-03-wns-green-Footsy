@@ -1,48 +1,71 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMode } from "../../context/modeContext";
+
 import classes from "./NavBar.module.scss";
 
+import footprint from "../../assets/img/logos_icons/footprint.png";
+import footprint_dark from "../../assets/img/logos_icons/footprint_dark.png";
+
 export default function NavBar() {
+  const navigate = useNavigate();
   const { mode } = useMode();
-  return <nav className="nav-bar">
-    <h1 className={`${classes["nav-bar__title"]} ${classes[`nav-bar__title--${mode}`]}`}>This is the navbar</h1>
 
-        // !!! PASSER LES LinkS EN BOUTONS !!!
+  const footprintIcon = mode === "dark" ? footprint_dark : footprint;
 
-    <Link
-      to="/credits"
-      className={`${classes["nav-bar__Link"]} ${classes[`nav-bar__Link--${mode}`]
+  return <nav className="navbar">
+     <button
+      type="button"
+      onClick={() => {
+        navigate("/dashboard");
+      }}
+      className={`${classes["navbar__button"]} ${classes[`navbar__button--${mode}`]
         }`}
     >
       dashboard
-    </Link>
-    <Link
-      to="/credits"
-      className={`${classes["nav-bar__Link"]} ${classes[`nav-bar__Link--${mode}`]
+    </button>
+    <button
+      type="button"
+      onClick={() => {
+        navigate("/dashboard");
+      }}
+      className={`${classes["navbar__button"]} ${classes[`navbar__button--${mode}`]
         }`}
     >
       history
-    </Link>
-    <Link
-      to="/credits"
-      className={`${classes["nav-bar__Link"]} ${classes[`nav-bar__Link--${mode}`]
+    </button>
+    <button
+      type="button"
+      onClick={() => {
+        navigate("/dashboard");
+      }}
+      className={`${classes["navbar__button"]} ${classes[`navbar__button--${mode}`]
         }`}
     >
-      add
-    </Link>
-    <Link
-      to="/credits"
-      className={`${classes["nav-bar__Link"]} ${classes[`nav-bar__Link--${mode}`]
+      <img
+        src={footprintIcon}
+        alt="footprint"
+        className={classes["navbar__img"]}
+      />
+    </button>
+    <button
+      type="button"
+      onClick={() => {
+        navigate("/dashboard");
+      }}
+      className={`${classes["navbar__button"]} ${classes[`navbar__button--${mode}`]
         }`}
     >
       community
-    </Link>
-    <Link
-      to="/credits"
-      className={`${classes["nav-bar__Link"]} ${classes[`nav-bar__Link--${mode}`]
+    </button>
+    <button
+      type="button"
+      onClick={() => {
+        navigate("/dashboard");
+      }}
+      className={`${classes["navbar__button"]} ${classes[`navbar__button--${mode}`]
         }`}
     >
       informations
-    </Link>
+    </button>
   </nav>;
 }

@@ -1,4 +1,16 @@
-.nav-bar{
+.navbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;  
+    align-items: center;
+    
+    background: linear-gradient(
+    to bottom,
+    var(--transparent),
+    var(--beige),
+    var(--beige)
+  );
+
     &__link {
         text-decoration: none;
         font-weight: bold;
@@ -11,5 +23,17 @@
         &--dark {
             color: var(--color-dark-mode-light);
         }
+    }
+
+    &__button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        }
+
+    &__img {
+         width: 4rem;
+        height: 4rem; 
+        object-fit: contain; 
     }
 }
