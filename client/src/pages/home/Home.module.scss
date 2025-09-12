@@ -11,13 +11,6 @@
     background-position: center;
   }
 
-  &--dark {
-    background-image: url("../../assets/img/illus/first_page_dark.png");
-    background-size: cover;
-    background-position: center;
-    filter: brightness(0.7);
-  }
-
   // Header Section
   &__header {
     display: flex;
@@ -50,10 +43,6 @@
 
       &--light {
         color: var(--color-dark);
-      }
-
-      &--dark {
-        color: var(--color-dark-mode-light);
       }
     }
   }
@@ -115,11 +104,6 @@
       background-color: var(--color-dark);
       color: var(--white);
     }
-
-    &--dark {
-      background-color: var(--color-dark-mode-light);
-      color: var(--color-dark);
-    }
   }
 }
 
@@ -128,12 +112,6 @@
   .home {
     &--light {
       background-image: url("../../assets/img/illus/background_desktop_img.png");
-      background-size: cover;
-      background-position: center;
-    }
-
-    &--dark {
-      background-image: url("../../assets/img/illus/background_desktop_dark.png");
       background-size: cover;
       background-position: center;
     }
