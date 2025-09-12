@@ -4,7 +4,7 @@ import { useMode } from "../../context/modeContext";
 
 import classes from "./FormField.module.scss";
 
-interface FormFieldProps {
+type FormFieldProps = {
   label: string;
   type: string;
   id: string;
@@ -13,7 +13,7 @@ interface FormFieldProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   required?: boolean;
-}
+};
 
 export default function FormField({
   label,

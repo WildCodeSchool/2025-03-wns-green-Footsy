@@ -1,6 +1,20 @@
-import { describe, it, expect, vi, beforeEach, type MockedFunction } from 'vitest';
-import { ApolloClient } from '@apollo/client';
-import { login, parseLoginResponse, saveToken, getToken, removeToken } from '../authService';
+import type { ApolloClient } from "@apollo/client";
+import {
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type MockedFunction,
+  vi,
+} from "vitest";
+
+import {
+  getToken,
+  login,
+  parseLoginResponse,
+  removeToken,
+  saveToken,
+} from "../authService";
 
 // Mock Apollo Client
 const mockMutate = vi.fn();
@@ -25,16 +39,16 @@ Object.defineProperty(global, 'localStorage', {
 describe('authService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     localStorage.clear();
   });
 
   describe('parseLoginResponse', () => {
     it('should parse valid login response correctly', () => {
       const mockResponse = '{"id":1,"firstName":"John","lastName":"Doe","mail":"john@example.com"}; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-      
+
       const result = parseLoginResponse(mockResponse);
-      
+
       expect(result).toEqual({
         user: {
           id: 1,
@@ -48,13 +62,13 @@ describe('authService', () => {
 
     it('should throw error for invalid response format', () => {
       const invalidResponse = 'invalid-format';
-      
+
       expect(() => parseLoginResponse(invalidResponse)).toThrow('Failed to parse login response');
     });
 
     it('should throw error for malformed JSON', () => {
       const malformedResponse = 'invalid-json; token=some-token';
-      
+
       expect(() => parseLoginResponse(malformedResponse)).toThrow('Failed to parse login response');
     });
   });
@@ -62,10 +76,10 @@ describe('authService', () => {
   describe('token management', () => {
     it('should save and retrieve token from localStorage', () => {
       const testToken = 'test-token-123';
-      
+
       saveToken(testToken);
       expect(localStorageMock.setItem).toHaveBeenCalledWith('token', testToken);
-      
+
       localStorageMock.getItem.mockReturnValue(testToken);
       const retrievedToken = getToken();
       expect(localStorageMock.getItem).toHaveBeenCalledWith('token');
@@ -74,10 +88,10 @@ describe('authService', () => {
 
     it('should remove token from localStorage', () => {
       const testToken = 'test-token-123';
-      
+
       localStorageMock.getItem.mockReturnValue(testToken);
       expect(getToken()).toBe(testToken);
-      
+
       removeToken();
       expect(localStorageMock.removeItem).toHaveBeenCalledWith('token');
     });
@@ -143,14 +157,14 @@ describe('authService', () => {
       // Test the full flow
       const loginResult = await login(mockApolloClient, 'john@example.com', 'password123');
       const { user, token } = parseLoginResponse(loginResult);
-      
+
       saveToken(token);
 
       // Verify everything worked
       expect(user.firstName).toBe('John');
       expect(user.lastName).toBe('Doe');
       expect(user.mail).toBe('john@example.com');
-      
+
       // Mock the getItem to return the token saved
       localStorageMock.getItem.mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
       expect(getToken()).toBe('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');

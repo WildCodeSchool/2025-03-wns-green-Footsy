@@ -4,54 +4,20 @@ import { useState } from "react";
 import { useMode } from "../../context/modeContext";
 import { SIGN_UP } from "../../graphql/operations";
 import {
+  type FormErrors,
+  formFields,
   handleChange,
   handleSubmit,
-  type FormErrors,
   type SignUpFormData,
 } from "../../services/signUpForm.services";
+import type { Avatar } from "../../types/Avatar.types";
 
 import AvatarSelector from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
+import { Loader } from "../loader/Loader";
 import MainButton from "../mainButton/MainButton";
 
 import classes from "./SignUpForm.module.scss";
-import type { Avatar } from "../../types/Avatar.types";
-
-const formFields = [
-  {
-    label: "Prénom",
-    type: "text",
-    id: "surname",
-    placeholder: "Jane",
-  },
-  {
-    label: "Date de naissance",
-    type: "date",
-    id: "birthdate",
-  },
-  {
-    label: "Mail",
-    type: "email",
-    id: "email",
-    placeholder: "jane.doe@exemple.com",
-  },
-  {
-    label: "Confirmer le mail",
-    type: "email",
-    id: "confirmEmail",
-  },
-  {
-    label: "Mot de passe",
-    type: "password",
-    id: "password",
-    placeholder: "motDePasse1234",
-  },
-  {
-    label: "Confirmer le mot de passe",
-    type: "password",
-    id: "confirmPassword",
-  },
-];
 
 export default function SignUpForm() {
   const { mode } = useMode();
@@ -109,9 +75,7 @@ export default function SignUpForm() {
             id={field.id}
             name={field.id}
             value={
-              field.id === "avatar"
-                ? ""
-                : (formData[field.id as keyof typeof formData] as string) ?? ""
+              (formData[field.id as keyof typeof formData] as string) ?? ""
             }
             onChange={(event) =>
               handleChange(event, formData, setFormData, setErrors)
@@ -140,7 +104,7 @@ export default function SignUpForm() {
       <div className={classes["sign-up-form__submit"]}>
         <MainButton
           type="submit"
-          content={loading ? "En cours..." : "INSCRIS-TOI"}
+          content={loading ? <Loader /> : "INSCRIS-TOI"}
           mode={mode}
         />
       </div>

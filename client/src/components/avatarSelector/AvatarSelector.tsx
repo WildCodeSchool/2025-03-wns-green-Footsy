@@ -1,20 +1,15 @@
-import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@apollo/client/react";
+import { useEffect, useRef, useState } from "react";
 
 import { GET_ALL_AVATARS } from "../../graphql/operations";
 
+import { getAvatarImageUrl } from "../../services/avatarSelector.services";
+import type { Avatar } from "../../types/Avatar.types";
+import { Loader } from "../loader/Loader";
 import classes from "./AvatarSelector.module.scss";
 
-import type { Avatar } from "../../types/Avatar.types";
-
-const avatarImages = import.meta.glob("../../assets/img/avatar/*.png", {
-  eager: true,
-  as: "url",
-}) as Record<string, string>;
-
-const getAvatarImageUrl = (imageName: string): string => {
-  const imagePath = `../../assets/img/avatar/${imageName}`;
-  return avatarImages[imagePath] || "";
+type GetAllAvatarsData = {
+  getAllAvatars: Avatar[];
 };
 
 type AvatarSelectorProps = {
@@ -22,10 +17,6 @@ type AvatarSelectorProps = {
   onAvatarSelect: (avatar: Avatar) => void;
   label?: string;
 };
-
-interface GetAllAvatarsData {
-  getAllAvatars: Avatar[];
-}
 
 export default function AvatarSelector({
   selectedAvatar,
@@ -63,13 +54,12 @@ export default function AvatarSelector({
     setIsOpen(false);
   };
 
-  // TO DO: Mettre en page les chargements et erreurs
   if (loading) {
-    return <div>Chargement des avatars...</div>;
+    return <Loader />;
   }
 
   if (error) {
-    return <div>Erreur lors du chargement des avatars</div>;
+    return <div>Erreur</div>;
   }
 
   return (

@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 import type { Avatar } from "../types/Avatar.types";
 
 export type SignUpFormData = {
@@ -16,6 +18,42 @@ export type FormErrors = {
   emailMismatch: boolean;
   passwordMismatch: boolean;
 };
+
+export const formFields = [
+  {
+    label: "Prénom",
+    type: "text",
+    id: "surname",
+    placeholder: "Jane",
+  },
+  {
+    label: "Date de naissance",
+    type: "date",
+    id: "birthdate",
+  },
+  {
+    label: "Mail",
+    type: "email",
+    id: "email",
+    placeholder: "jane.doe@exemple.com",
+  },
+  {
+    label: "Confirmer le mail",
+    type: "email",
+    id: "confirmEmail",
+  },
+  {
+    label: "Mot de passe",
+    type: "password",
+    id: "password",
+    placeholder: "motDePasse1234",
+  },
+  {
+    label: "Confirmer le mot de passe",
+    type: "password",
+    id: "confirmPassword",
+  },
+];
 
 export const handleChange = (
   event: React.ChangeEvent<HTMLInputElement>,
@@ -58,6 +96,8 @@ export const handleSubmit = async (
   // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
   signUpMutation: any
 ) => {
+  const navigate = useNavigate();
+
   event.preventDefault();
 
   if (errors.emailMismatch || errors.passwordMismatch) {
@@ -98,6 +138,8 @@ export const handleSubmit = async (
     });
 
     toast.info("Inscription réussie !");
+
+    navigate("/login");
   } catch (error) {
     if (error instanceof Error && error.message === "Email already in use") {
       toast.error("Cette adresse e-mail est déjà utilisée.");
