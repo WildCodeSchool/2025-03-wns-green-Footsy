@@ -1,0 +1,26 @@
+.footer {
+display: none;
+
+@media (min-width: 1024px) {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  padding: 0.5rem 3rem 0.5rem 0.5rem;
+  background-color: var(--color-dark);
+
+  &__link {
+    display: inline-block;
+      text-decoration: none;
+      text-align: right;
+      padding: 0.5rem;
+
+    &--light {
+      color: var(--color-light);
+    }
+
+    &--dark {
+      color: var(--color-dark-mode-light);
+    }
+  }
+}
+}

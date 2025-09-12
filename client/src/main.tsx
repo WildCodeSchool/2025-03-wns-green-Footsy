@@ -30,10 +30,22 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <p>This is login, i don't exist yet.</p>,
+        element: <h1>Login Page - To be implemented</h1>,
       },
       {
-        path: "/charte",
+        path: "dashboard",
+        element: <h1>Dashboard Page - To be implemented</h1>,
+      },
+      {
+        path: "credits",
+        element: <h1>Credits Page - To be implemented</h1>,
+      },
+      {
+        path: "CGU",
+        element: <h1>CGU Page - To be implemented</h1>,
+      },
+      {
+        path: "charte",
         element: <TestCharte />,
       },
     ],

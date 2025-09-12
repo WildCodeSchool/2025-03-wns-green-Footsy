@@ -1,33 +1,36 @@
 import { Link } from "react-router-dom";
 
-import SignUpHeader from "../../components/signUpHeader/SignUpHeader";
+import Header from "../../layout/header/Header";
 
 import { useMode } from "../../context/modeContext";
 
 import classes from "./SignUp.module.scss";
-import SignUpForm from "../../components/signUpForm/SignUpForm";
+import FormLayout from "../../layout/form-layout/FormLayout";
+import FormContent from "../../layout/form-content/FormContent";
 
 export default function SignUp() {
   const { mode } = useMode();
 
   return (
-    <section className={`${classes["sign-up"]} ${classes[`sign-up--${mode}`]}`}>
-      <SignUpHeader />
-      <div
-        className={`${classes["sign-up__content"]} ${
-          classes[`sign-up__content--${mode}`]
-        }`}
-      >
-        <SignUpForm />
+    <FormLayout>
+      {<Header children={"Inscription"} />}
+      <FormContent>
+        <h2
+          className={`${classes["sign-up__title"]} ${classes[`sign-up__title--${mode}`]
+            }`}
+        >
+          Inscription
+        </h2>
+        {/* <SignUpForm /> */}
+
         <Link
           to="/login"
-          className={`${classes["sign-up__content__link"]} ${
-            classes[`sign-up__content__link--${mode}`]
-          }`}
+          className={`${classes["sign-up__link"]} ${classes[`sign-up__link--${mode}`]
+            }`}
         >
           Déjà un compte ?
         </Link>
-      </div>
-    </section>
+      </FormContent>
+    </FormLayout>
   );
 }
