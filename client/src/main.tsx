@@ -39,7 +39,15 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "/charte",
+        path: "credits",
+        element: <h1>Credits Page - To be implemented</h1>,
+      },
+      {
+        path: "CGU",
+        element: <h1>CGU Page - To be implemented</h1>,
+      },
+      {
+        path: "charte",
         element: <TestCharte />,
       },
     ],

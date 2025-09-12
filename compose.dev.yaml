@@ -26,10 +26,12 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile.dev
-    ports: # hote:container
+    command: npm run dev           # lance ton script dev (hot reload)
+    ports:
       - 5050:4000
     volumes:
-      - ./server/src/:/app/src/
+      - ./server/src:/app/src      # monte ton code source
+      - /app/node_modules          # évite d’écraser node_modules dans le conteneur
     healthcheck:
       test:
         [
