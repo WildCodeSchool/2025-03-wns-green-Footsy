@@ -1,5 +1,5 @@
 FROM node:lts-alpine
-WORKDIR /app/server
+WORKDIR /app
 
 RUN apk --no-cache add curl
 
