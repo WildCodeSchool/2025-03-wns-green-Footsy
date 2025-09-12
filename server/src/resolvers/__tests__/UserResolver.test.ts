@@ -207,27 +207,22 @@ describe("UserResolver", () => {
       // Arrange
       delete process.env.JWT_SECRET;
 
-      // Act
-      const result = await userResolver.signup(newUserData);
-
-      // Assert
-      expect(result).toBeInstanceOf(Error);
-      expect(result.message).toContain("Missing env variable: JWT_SECRET");
+      // Act & Assert
+      await expect(userResolver.signup(newUserData)).rejects.toThrow(
+        "Signup error"
+      );
     });
 
     it("should handle user creation errors", async () => {
       // Arrange
-
       mockUserService.create.mockRejectedValue(
         new Error("Email already exists")
       );
 
-      // Act
-      const result = await userResolver.signup(newUserData);
-
-      // Assert
-      expect(result).toBeInstanceOf(Error);
-      expect(result.message).toBe("Email already exists");
+      // Act & Assert
+      await expect(userResolver.signup(newUserData)).rejects.toThrow(
+        "Signup error"
+      );
     });
 
     it("should hash the password before creating user", async () => {
@@ -298,12 +293,10 @@ describe("UserResolver", () => {
 
     mockUserService.create.mockRejectedValue(new Error("Invalid email format"));
 
-    // Act
-    const result = await userResolver.signup(newUserDataFail);
-
-    // Assert
-    expect(result).toBeInstanceOf(Error);
-    expect(result.message).toBe("Invalid email format");
+    // Act & Assert
+    await expect(userResolver.signup(newUserDataFail)).rejects.toThrow(
+      "Signup error"
+    );
   });
 
   it("should handle user with existing email in signup", async () => {
@@ -318,14 +311,12 @@ describe("UserResolver", () => {
     };
 
     mockUserService.create.mockRejectedValue(
-      new Error("UNIQUE constraint failed: user.email")
+      new Error("duplicate key value violates unique constraint")
     );
 
-    // Act
-    const result = await userResolver.signup(newUserDataFail);
-
-    // Assert
-    expect(result).toBeInstanceOf(Error);
-    expect(result.message).toContain("UNIQUE constraint failed");
+    // Act & Assert
+    await expect(userResolver.signup(newUserDataFail)).rejects.toThrow(
+      "Email already in use"
+    );
   });
 });
