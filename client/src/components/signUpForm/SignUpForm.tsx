@@ -130,14 +130,6 @@ export default function SignUpForm() {
           )}
         </div>
       ))}
-
-      <div className={classes["sign-up-form__submit"]}>
-        <MainButton
-          type="submit"
-          content={loading ? "En cours..." : "INSCRIS-TOI"}
-          mode={mode}
-        />
-      </div>
       {error && (
         <p style={{ color: "red", fontSize: "14px", margin: "10px 0" }}>
           {error.message === "Email already in use"
@@ -145,6 +137,13 @@ export default function SignUpForm() {
             : "Une erreur est survenue lors de l'inscription. Veuillez réessayer."}
         </p>
       )}
+      <div className={classes["sign-up-form__submit"]}>
+        <MainButton
+          type="submit"
+          content={loading ? "En cours..." : "INSCRIS-TOI"}
+          mode={mode}
+        />
+      </div>
     </form>
   );
 }

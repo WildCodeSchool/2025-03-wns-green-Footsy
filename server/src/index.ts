@@ -26,7 +26,15 @@ async function startServer() {
       process.exit(1);
     });
   const schema = await buildSchema({
-    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver, AvatarResolver, FriendResolver, InteractionResolver],
+    resolvers: [
+      UserResolver,
+      ActivityResolver,
+      TypeResolver,
+      CategoryResolver,
+      AvatarResolver,
+      FriendResolver,
+      InteractionResolver,
+    ],
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {

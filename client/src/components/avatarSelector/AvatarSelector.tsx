@@ -7,6 +7,16 @@ import classes from "./AvatarSelector.module.scss";
 
 import type { Avatar } from "../../types/Avatar.types";
 
+const avatarImages = import.meta.glob("../../assets/img/avatar/*.png", {
+  eager: true,
+  as: "url",
+}) as Record<string, string>;
+
+const getAvatarImageUrl = (imageName: string): string => {
+  const imagePath = `../../assets/img/avatar/${imageName}`;
+  return avatarImages[imagePath] || "";
+};
+
 type AvatarSelectorProps = {
   selectedAvatar?: Avatar;
   onAvatarSelect: (avatar: Avatar) => void;
@@ -53,7 +63,7 @@ export default function AvatarSelector({
     setIsOpen(false);
   };
 
-  // TO DO: Mettre en page les pages de chargement et d'erreur
+  // TO DO: Mettre en page les chargements et erreurs
   if (loading) {
     return <div>Chargement des avatars...</div>;
   }
@@ -71,7 +81,7 @@ export default function AvatarSelector({
         aria-expanded={isOpen}
       >
         <img
-          src={currentAvatar.image}
+          src={getAvatarImageUrl(currentAvatar.image)}
           alt={currentAvatar.title}
           className={classes["avatar-selector__current-image"]}
         />
@@ -92,7 +102,7 @@ export default function AvatarSelector({
                 aria-selected={currentAvatar?.id === avatar.id}
               >
                 <img
-                  src={avatar.image}
+                  src={getAvatarImageUrl(avatar.image)}
                   alt={avatar.title}
                   className={classes["avatar-selector__option-image"]}
                 />
