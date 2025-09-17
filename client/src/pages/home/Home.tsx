@@ -31,7 +31,7 @@ export default function Home() {
               type="button"
               className={`${classes["home__button"]} ${classes["home__button--light"]}`}
             >
-              COUCOU TER
+              COUCOU TER BIS
             </button>
           </Link>
         </div>

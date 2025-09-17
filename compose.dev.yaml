@@ -2,7 +2,7 @@ services:
   frontend:
     build:
       context: ./client
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     command: sh -c "npm run build"
     ports: # hote:container
       - 8080:5173
@@ -79,7 +79,7 @@ services:
       - frontend
     restart: always
     ports:
-      - ${GATEWAY_PORT:-8000}:80
+      - ${GATEWAY_PORT:-8002}:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - web-client-build:/web-client-build
