@@ -26,7 +26,7 @@ export default function Home() {
         <div className={classes["home__actions"]}>
           <Link to="/signup" className={classes["home__actions__link"]}>
             <button className={`${classes["home__button"]} ${classes["home__button--light"]}`}>
-              Commencer
+              COUCOU
             </button>
           </Link>
         </div>
