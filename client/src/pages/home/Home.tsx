@@ -31,7 +31,7 @@ export default function Home() {
               type="button"
               className={`${classes["home__button"]} ${classes["home__button--light"]}`}
             >
-              Commencer
+              Commencer STAGING
             </button>
           </Link>
         </div>
