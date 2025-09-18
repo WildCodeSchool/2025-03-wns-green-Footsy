@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-
 import classes from "./TestsCharte.module.scss";
 import Footer from "../../layout/footer/Footer";
 import NavBar from "../../layout/navbar/NavBar";
