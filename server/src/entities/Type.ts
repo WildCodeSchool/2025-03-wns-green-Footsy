@@ -33,7 +33,7 @@ export default class Type extends BaseEntity {
   category: Category;
 
   @Field(() => Int)
-  @Column()
+  @Column("number")
   category_id: number;
 
   @Field(() => [Activity])

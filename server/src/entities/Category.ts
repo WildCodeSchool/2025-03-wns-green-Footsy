@@ -21,6 +21,6 @@ export default class Category extends BaseEntity {
   title: string;
 
   @Field(() => Type)
-  @ManyToOne(() => Type, (type) => type.categories, { nullable: true })
+  @ManyToOne(() => Type, (type) => type.category, { nullable: true })
   types: Type[];
 }

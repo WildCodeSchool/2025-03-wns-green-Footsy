@@ -58,6 +58,15 @@ export class UpdateActivityInput {
   type_id?: number;
 }
 
+@InputType()
+class ActivityFilterInput {
+  @Field(() => Int)
+  user_id: number;
+
+  @Field(() => Int, { nullable: true })
+  category_id?: number;
+}
+
 @Resolver()
 export default class ActivityResolver {
   @Query(() => [Activity])
@@ -70,6 +79,26 @@ export default class ActivityResolver {
     @Arg("id", () => Int) id: number
   ): Promise<Activity | null> {
     return await Activity.findOne({ where: { id } });
+  }
+
+  @Query(() => [Activity])
+  async getActivitiesByUserIdAndFilters(
+    @Arg("data", () => ActivityFilterInput) data: ActivityFilterInput
+  ): Promise<Activity[]> {
+    const { user_id, category_id } = data;
+    const user = await User.findOne({ where: { id: user_id } });
+    if (!user) throw new Error("User not found");
+
+    const whereClause: {
+      user: { id: number };
+      type?: { category: { id: number } };
+    } = { user: { id: user_id } };
+
+    if (category_id !== undefined) {
+      whereClause.type = { category: { id: category_id } };
+    }
+
+    return await Activity.find({ where: whereClause });
   }
 
   @Mutation(() => Activity)
