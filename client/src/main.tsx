@@ -40,6 +40,22 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
+        path: "history",
+        element: <h1>History Page - To be implemented</h1>,
+      },
+    {
+        path: "add-activity",
+        element: <h1>Activity Page - To be implemented</h1>,
+      },
+      {
+        path: "community",
+        element: <h1>Community Page - To be implemented</h1>,
+      },
+      {
+        path: "information",
+        element: <h1>Informations Page - To be implemented</h1>,
+      },
+      {
         path: "credits",
         element: <h1>Credits Page - To be implemented</h1>,
       },
