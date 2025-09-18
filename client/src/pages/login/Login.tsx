@@ -4,13 +4,19 @@ import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { LOGIN } from "../../graphql/operations";
 import { saveToken, parseLoginResponse } from "../../services/authService";
 
+import Header from "../../layout/header/Header";
+import { useMode } from "../../context/modeContext";
+import classes from "./Login.module.scss";
+import FormLayout from "../../layout/form-layout/FormLayout";
+import FormContent from "../../layout/form-content/FormContent";
+import CarbonCalculator from "../../components/CarbonCalculator/CarbonCalculator";
+
 type LoginResponse = {
   login: string;
 };
 
-// TODO: Implement styles
-
 export default function Login() {
+  const { mode } = useMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -66,57 +72,56 @@ export default function Login() {
   
 
   return (
-    <section className="">
-      <div
-        className=""
-      >
-        <h1 className="">
-          Bienvenue !
-        </h1>
+    <FormLayout>
+      <Header children={"Connexion"} />
+      <div className={classes["login__container"]}>
+        <CarbonCalculator />
+        
+        <FormContent>
+          <h2
+            className={`${classes["login__title"]} ${classes[`login__title--${mode}`]}`}
+          >
+            Connexion
+          </h2>
 
-        <h2 className="">
-          Qu'est-ce que footsy ?
-        </h2>
-        <p className="">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu turpis ut metus luctus fringilla. Integer ac elit ut nisl volutpat tempus pretium ut metus.
-        </p>
-        <h2 className="">
-          Se connecter
-        </h2>
+          <form onSubmit={handleSubmit} className={classes["login__form"]}>
+            {error && <div className={`${classes["login__error"]} ${classes[`login__error--${mode}`]}`}>{error}</div>}
+            
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
+              required
+            />
+            
+            <input
+              type="password"
+              placeholder="Mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
+              required
+            />
+            
+            <button 
+              type="submit" 
+              disabled={loading}
+              className={`${classes["login__button"]} ${classes[`login__button--${mode}`]}`}
+            >
+              {loading ? "Connexion..." : "Connexion"}
+            </button>
+          </form>
 
-        <form onSubmit={handleSubmit}>
-          {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
-          
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          
-          <button type="submit" disabled={loading}>
-            {loading ? "Connexion..." : "Connexion"}
-          </button>
-        </form>
-
-        <div className="">
           <Link
             to="/signup"
-            className=""
+            className={`${classes["login__link"]} ${classes[`login__link--${mode}`]}`}
           >
-            Vous n'avez pas de compte ? Inscrivez-vous ici !      
+            Vous n'avez pas de compte ? Inscrivez-vous ici !
           </Link>
-        </div>
+        </FormContent>
       </div>
-    </section>
+    </FormLayout>
   );
 }
