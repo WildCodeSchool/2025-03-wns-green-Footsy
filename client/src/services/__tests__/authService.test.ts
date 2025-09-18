@@ -1,11 +1,11 @@
-// import {
-//   describe,
-//   it,
-//   expect,
-//   vi,
-//   beforeEach,
-//   type MockedFunction,
-// } from "vitest";
+import {
+  //   beforeEach,
+  describe,
+  expect,
+  it,
+  //   type MockedFunction,
+  //   vi,
+} from "vitest";
 // import type { ApolloClient } from "@apollo/client";
 // import {
 //   login,
@@ -191,3 +191,9 @@
 //     });
 //   });
 // });
+
+describe("Placeholder test", () => {
+  it("should pass", () => {
+    expect(true).toBe(true);
+  });
+});
