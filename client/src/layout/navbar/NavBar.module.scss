@@ -1,4 +1,6 @@
 .navbar {
+    .mobile {
+    display: block;
     max-width: 100vw;
     margin: 0;
     position: relative;
@@ -8,9 +10,6 @@
     var(--color-light),
     var(--color-light)
   );
-
-    .mobile {
-    display: block;
     @media (min-width: 1024px) {
       display: none;
     }
@@ -18,6 +17,10 @@
 
   .desktop {
     display: none;
+    position: fixed; 
+    right: 0;       
+    top: 0; 
+    background-color: var(--sea-green);
     @media (min-width: 1024px) {
       display: block;
     }

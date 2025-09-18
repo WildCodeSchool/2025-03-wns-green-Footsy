@@ -1,29 +1,45 @@
 .navbardesktop {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    max-width: 100vw;
-    margin: 0;
-    padding: 0;
-    gap: 0,25rem;
+    height: 100vh;
+    width: 17rem;
 
     &__button {
-    background: none;
-    border: none;
-    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    width: 17rem;
+    background-color: var(--color-dark);;
+    border:0.01rem solid var(--sea-green);
+    cursor: pointer;
+    padding: 1rem
     }
 
     &__img {
-      width: 3rem;
-      height: 3rem;
+      width: 1.5rem;
+      height: 1.5rem;
       object-fit: contain;
     }
 
-    &__footprint {
+    h5 {
+      color: white;
+      text-align: left;
+      padding-left: 1rem;
+    }
+
+    &__footprintbutton {
+      background-color: var(--color-dark-green);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem;
+    }
+
+    &__footprinticon {
       width: 6rem;
       height: 6rem;
       object-fit: contain;

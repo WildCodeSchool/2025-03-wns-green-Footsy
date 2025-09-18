@@ -28,6 +28,18 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
 
   return (
     <section className={classes.navbardesktop}>
+       <button
+        type="button"
+        onClick={() => navigate("/add-activity")}
+        className={classes.navbardesktop__footprintbutton}
+      >
+        <img
+          src={footprintIcon}
+          alt="footprint"
+          className={classes.navbardesktop__footprinticon}
+        />
+      </button>
+      <div>
       <button
         type="button"
         onClick={() => navigate("/dashboard")}
@@ -38,6 +50,7 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
           alt="dashboard-icon"
           className={classes.navbardesktop__img}
         />
+        <h5>Tableau de bord</h5>
       </button>
       <button
         type="button"
@@ -49,17 +62,7 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
           alt="history-icon"
           className={classes.navbardesktop__img}
         />
-      </button>
-      <button
-        type="button"
-        onClick={() => navigate("/add-activity")}
-        className={classes.navbardesktop__button}
-      >
-        <img
-          src={footprintIcon}
-          alt="footprint"
-          className={classes.navbardesktop__footprint}
-        />
+        <h5>Mon historique</h5>
       </button>
       <button
         type="button"
@@ -71,6 +74,7 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
           alt="community-icon"
           className={classes.navbardesktop__img}
         />
+        <h5>Communauté carbone</h5>
       </button>
       <button
         type="button"
@@ -82,7 +86,9 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
           alt="information-icon"
           className={classes.navbardesktop__img}
         />
+        <h5>En savoir plus</h5>
       </button>
+      </div>
     </section>
   );
 }
