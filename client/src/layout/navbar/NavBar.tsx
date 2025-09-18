@@ -8,13 +8,13 @@ export default function NavBar() {
   const { mode } = useMode();
 
   return (
-    <nav className={`${classes.navbar} ${classes[`navbar--${mode}`]}`}>
+    <section className={`${classes.navbar} ${classes[`navbar--${mode}`]}`}>
       <div className={classes.mobile}>
         <NavBarMobile mode={mode} />
         </div>
       <div className={classes.desktop}>
         <NavBarDesktop mode={mode} />
         </div>
-    </nav>
+    </section>
   );
 }
