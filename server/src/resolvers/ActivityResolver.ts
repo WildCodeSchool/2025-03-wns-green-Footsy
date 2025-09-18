@@ -61,12 +61,14 @@ export class UpdateActivityInput {
 @Resolver()
 export default class ActivityResolver {
   @Query(() => [Activity])
-  async activities(): Promise<Activity[]> {
+  async getAllActivities(): Promise<Activity[]> {
     return await Activity.find();
   }
 
   @Query(() => Activity, { nullable: true })
-  async activity(@Arg("id", () => Int) id: number): Promise<Activity | null> {
+  async getActivityById(
+    @Arg("id", () => Int) id: number
+  ): Promise<Activity | null> {
     return await Activity.findOne({ where: { id } });
   }
 
