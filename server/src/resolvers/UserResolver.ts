@@ -10,12 +10,11 @@ import {
   Resolver,
 } from "type-graphql";
 
-import { AvatarInput } from "./AvatarResolver";
-import User from "../entities/User";
-import UserService from "../services/UserService";
-
 import type Avatar from "../entities/Avatar";
+import User from "../entities/User";
 import type { UserServiceInterface } from "../services/UserService";
+import UserService from "../services/UserService";
+import { AvatarInput } from "./AvatarResolver";
 
 @InputType()
 export class NewUserInput {
@@ -101,7 +100,7 @@ export default class UserResolver {
   }
 
   @Query(() => User)
-  async getUser(@Arg("id", () => Int) id: number) {
+  async getUserById(@Arg("id", () => Int) id: number) {
     const user = await User.findOneByOrFail({ id });
     return user;
   }

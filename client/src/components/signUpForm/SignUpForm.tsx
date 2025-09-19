@@ -24,7 +24,9 @@ export default function SignUpForm() {
   const navigate = useNavigate();
   const { mode } = useMode();
 
-  const [formData, setFormData] = useState<SignUpFormData>({});
+  const [formData, setFormData] = useState<SignUpFormData>({
+    avatar: { id: 5, title: "Mononoke", image: "mononoke.png" },
+  });
   const [errors, setErrors] = useState<FormErrors>({
     emailMismatch: false,
     passwordMismatch: false,
