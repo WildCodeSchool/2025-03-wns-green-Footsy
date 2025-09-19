@@ -1,7 +1,6 @@
 import Activity from "../entities/Activity";
 import Avatar from "../entities/Avatar";
 import Category from "../entities/Category";
-import type Interaction from "../entities/Interaction";
 import Type from "../entities/Type";
 import User from "../entities/User";
 
@@ -52,74 +51,38 @@ export const createMockUser = ({
   return user;
 };
 
-export const createMockCategory = ({
-  id,
-  title,
-  types,
-}: {
-  id?: number;
-  title?: string;
-  types?: Type[];
-} = {}): Category => {
-  const category = new Category();
-  category.id = id ?? 1;
-  category.title = title ?? "Transport";
-  category.types = types ?? [];
-  return category;
-};
+export const createMockCategory = (
+  overrides: Partial<Category> = {}
+): Category =>
+  Object.assign(new Category(), {
+    id: 1,
+    title: "Transport",
+    types: [],
+    ...overrides,
+  });
 
-export const createMockType = ({
-  id,
-  title,
-  quantity_unit,
-  category_id,
-  category,
-  activities,
-}: {
-  id?: number;
-  title?: string;
-  quantity_unit?: string;
-  category_id?: number;
-  category?: Category;
-  activities?: Activity[];
-} = {}): Type => {
-  const type = new Type();
-  type.id = id ?? 1;
-  type.title = title ?? "Car";
-  type.quantity_unit = quantity_unit ?? "km";
-  type.category_id = category_id ?? 1;
-  type.category = category ?? createMockCategory();
-  type.activities = activities ?? [];
-  return type;
-};
+export const createMockType = (overrides: Partial<Type> = {}): Type =>
+  Object.assign(new Type(), {
+    id: 1,
+    title: "Car",
+    quantity_unit: "km",
+    category_id: 1,
+    category: createMockCategory(),
+    activities: [],
+    ...overrides,
+  });
 
-export const createMockActivity = ({
-  id,
-  title,
-  quantity,
-  date,
-  co2_equivalent,
-  user,
-  type,
-  interactions,
-}: {
-  id?: number;
-  title?: string;
-  quantity?: number;
-  date?: Date;
-  co2_equivalent?: number;
-  user?: User;
-  type?: Type;
-  interactions?: Interaction[];
-} = {}): Activity => {
-  const activity = new Activity();
-  activity.id = id ?? 1;
-  activity.title = title ?? "Trip to work";
-  activity.quantity = quantity ?? 10.5;
-  activity.date = date ?? new Date("2024-01-15");
-  activity.co2_equivalent = co2_equivalent ?? 2.5;
-  activity.user = user ?? createMockUser();
-  activity.type = type ?? createMockType();
-  activity.interactions = interactions ?? [];
-  return activity;
-};
+export const createMockActivity = (
+  overrides: Partial<Activity> = {}
+): Activity =>
+  Object.assign(new Activity(), {
+    id: 1,
+    title: "Trip to work",
+    quantity: 10.5,
+    date: new Date("2024-01-15"),
+    co2_equivalent: 2.5,
+    user: createMockUser(),
+    type: createMockType(),
+    interactions: [],
+    ...overrides,
+  });
