@@ -38,21 +38,15 @@ export default class ActivityResolver {
     return await Activity.find();
   }
 
-  @Query(() => Activity, { nullable: true })
-  async activity(@Arg("id", () => Int) id: number): Promise<Activity | null> {
-    return await Activity.findOne({ where: { id } });
+  @Query(() => [Activity])
+  async activitiesByUserId(@Arg("userId", () => Int) userId: number): Promise<Activity[]> {
+    return await Activity.find({ where: { user: { id: userId } } });
   }
 
   @Mutation(() => Activity)
-  async createActivity(
-    @Arg("data", () => ActivityInput) data: ActivityInput
-  ): Promise<Activity> {
-
-    const user = await User.findOne({ where: { id: data.user_id } });
-    if (!user) throw new Error("User not found");
-
-    const type = await Type.findOne({ where: { id: data.type_id } });
-    if (!type) throw new Error("Type not found");
+  async createActivity(@Arg("data", () => ActivityInput) data: ActivityInput): Promise<Activity> {
+    const user = await User.findOneByOrFail({ id: data.user_id });
+    const type = await Type.findOneByOrFail({ id: data.type_id });
 
     const activity = Activity.create({
       ...data,
@@ -64,37 +58,19 @@ export default class ActivityResolver {
 
   @Mutation(() => Activity, { nullable: true })
   async updateActivity(
-    @Arg("data", () => ActivityInput) data: ActivityInput
+    @Arg("id", () => Int) id: number,
+    @Arg("data", () => ActivityInput) data: Partial<ActivityInput>
   ): Promise<Activity | null> {
-    const activity = await Activity.findOne({ where: { id: data.id } });
+  const activity = await Activity.findOne({ where: { id: data.id } });
     if (!activity) return null;
 
-    if (data.title !== undefined) { activity.title = data.title };
-    if (data.quantity !== undefined) { activity.quantity = data.quantity };
-    if (data.date !== undefined) { activity.date = new Date(data.date) };
-    if (data.co2_equivalent !== undefined) { activity.co2_equivalent = data.co2_equivalent };
-
-    if (data.user_id !== undefined) {
-      const user = await User.findOne({ where: { id: data.user_id } });
-      if (!user) throw new Error("User not found");
-      activity.user = user;
-    }
-
-    if (data.type_id !== undefined) {
-      const type = await Type.findOne({ where: { id: data.type_id } });
-      if (!type) throw new Error("Type not found");
-      activity.type = type;
-    }
-
+    Object.assign(activity, data);
     return await activity.save();
   }
 
   @Mutation(() => Boolean)
   async deleteActivity(@Arg("id", () => Int) id: number): Promise<boolean> {
-    const activity = await Activity.findOne({ where: { id } });
-    if (!activity) return false;
-
-    await activity.remove();
-    return true;
+    const result = await Activity.delete(id);
+    return result.affected !== 0;
   }
-} 
+}
