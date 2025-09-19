@@ -11,6 +11,7 @@
     cursor: pointer;
     transition: border-color 0.2s;
     padding: 0;
+    position: relative;
 
     &:hover {
       border-color: var(--color-primary);
@@ -26,6 +27,29 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  &__edit-icon {
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    width: 1.5rem;
+    height: 1.5rem;
+
+    cursor: pointer;
+    background-color: var(--color-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0px solid transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &-image {
+      width: 12px;
+      height: 12px;
+      object-fit: contain;
+    }
   }
 
   &__dropdown {
@@ -60,6 +84,10 @@
     cursor: pointer;
     transition: all 0.2s;
     z-index: 10;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
       background-color: var(--sea-green);
@@ -80,5 +108,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 100%;
+    display: block;
   }
 }

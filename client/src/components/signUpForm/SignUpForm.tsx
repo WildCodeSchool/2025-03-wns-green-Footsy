@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useMode } from "../../context/modeContext";
-import { SIGN_UP } from "../../graphql/operations";
+import { LOGIN, SIGN_UP } from "../../graphql/operations";
 import {
   type FormErrors,
   formFields,
@@ -25,7 +25,7 @@ export default function SignUpForm() {
   const { mode } = useMode();
 
   const [formData, setFormData] = useState<SignUpFormData>({
-    avatar: { id: 5, title: "Mononoke", image: "mononoke.png" },
+    avatar: { id: 5, title: "Mononoke", image: "icon-mononoke.png" },
   });
   const [errors, setErrors] = useState<FormErrors>({
     emailMismatch: false,
@@ -33,6 +33,7 @@ export default function SignUpForm() {
   });
 
   const [signUpMutation, { loading, error }] = useMutation(SIGN_UP);
+  const [loginMutation] = useMutation(LOGIN);
 
   const handleAvatarSelect = (avatar: Avatar) => {
     setFormData((prev) => ({
@@ -53,7 +54,12 @@ export default function SignUpForm() {
         );
 
         if (result === "success") {
-          navigate("/login");
+          await loginMutation({
+            variables: {
+              data: { email: formData.email, password: formData.password },
+            },
+          });
+          navigate("/dashboard");
         }
       }}
       className={classes["sign-up-form"]}

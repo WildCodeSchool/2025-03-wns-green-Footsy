@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client/react";
 import { useEffect, useRef, useState } from "react";
 
+import editIcon from "../../assets/img/logos_icons/edit.png";
 import { GET_ALL_AVATARS } from "../../graphql/operations";
 
 import type { Avatar } from "../../types/Avatar.types";
@@ -24,7 +25,9 @@ const avatarImages = import.meta.glob("../../assets/img/avatar/*.png", {
 
 export const getAvatarImageUrl = (imageName: string): string => {
   const imagePath = `../../assets/img/avatar/${imageName}`;
-  return avatarImages[imagePath] || "";
+  const imageUrl = avatarImages[imagePath];
+
+  return imageUrl || "";
 };
 
 export default function AvatarSelector({
@@ -84,28 +87,37 @@ export default function AvatarSelector({
           alt={currentAvatar.title}
           className={classes["avatar-selector__current-image"]}
         />
+        <div className={classes["avatar-selector__edit-icon"]}>
+          <img
+            src={editIcon}
+            alt="Modifier l'avatar"
+            className={classes["avatar-selector__edit-icon-image"]}
+          />
+        </div>
       </button>
 
       {isOpen && (
         <div className={classes["avatar-selector__dropdown"]}>
           <div className={classes["avatar-selector__grid"]}>
             {avatars.map((avatar: Avatar) => (
-              <option
+              <button
                 key={avatar.id}
+                type="button"
                 className={`${classes["avatar-selector__option"]} ${
                   currentAvatar?.id === avatar.id
                     ? classes["avatar-selector__option--selected"]
                     : ""
                 }`}
                 onClick={() => handleAvatarClick(avatar)}
-                aria-selected={currentAvatar?.id === avatar.id}
+                aria-pressed={currentAvatar?.id === avatar.id}
               >
                 <img
                   src={getAvatarImageUrl(avatar.image)}
                   alt={avatar.title}
                   className={classes["avatar-selector__option-image"]}
+                  loading="eager"
                 />
-              </option>
+              </button>
             ))}
           </div>
         </div>
