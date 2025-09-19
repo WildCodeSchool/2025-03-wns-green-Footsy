@@ -2,4 +2,8 @@
 **/node_modules/
 database
 
+.env
+
+**/logs/
+logs/
 *logs*
