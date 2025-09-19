@@ -1,7 +1,16 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne, OneToMany } from "typeorm";
-import { Field, Int, ObjectType, Float } from "type-graphql";
-import Type from "./Type";
+import { Field, Float, Int, ObjectType } from "type-graphql";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+
 import Interaction from "./Interaction";
+import Type from "./Type";
 import User from "./User";
 
 @ObjectType()
@@ -28,16 +37,18 @@ export default class Activity extends BaseEntity {
   co2_equivalent: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, user => user.activities, { nullable: false })
+  @ManyToOne(() => User, (user) => user.activities, { nullable: false })
   @JoinColumn({ name: "user_id" })
   user: User;
 
   @Field(() => Type)
-  @ManyToOne(() => Type, type => type.activities, { nullable: false })
+  @ManyToOne(() => Type, (type) => type.activities, { nullable: false })
   @JoinColumn({ name: "type_id" })
   type: Type;
 
   @Field(() => Interaction)
-  @OneToMany(() => Interaction, interaction => interaction.activity)
+  @OneToMany(() => Interaction, (interaction) => interaction.activity, {
+    nullable: true,
+  })
   interactions: Interaction[];
-} 
+}
