@@ -1,4 +1,7 @@
+import Activity from "../entities/Activity";
 import Avatar from "../entities/Avatar";
+import Category from "../entities/Category";
+import Type from "../entities/Type";
 import User from "../entities/User";
 
 export const createMockAvatar = ({
@@ -47,3 +50,39 @@ export const createMockUser = ({
   user.avatar = avatar ?? createMockAvatar();
   return user;
 };
+
+export const createMockCategory = (
+  overrides: Partial<Category> = {}
+): Category =>
+  Object.assign(new Category(), {
+    id: 1,
+    title: "Transport",
+    types: [],
+    ...overrides,
+  });
+
+export const createMockType = (overrides: Partial<Type> = {}): Type =>
+  Object.assign(new Type(), {
+    id: 1,
+    title: "Car",
+    quantity_unit: "km",
+    category_id: 1,
+    category: createMockCategory(),
+    activities: [],
+    ...overrides,
+  });
+
+export const createMockActivity = (
+  overrides: Partial<Activity> = {}
+): Activity =>
+  Object.assign(new Activity(), {
+    id: 1,
+    title: "Trip to work",
+    quantity: 10.5,
+    date: new Date("2024-01-15"),
+    co2_equivalent: 2.5,
+    user: createMockUser(),
+    type: createMockType(),
+    interactions: [],
+    ...overrides,
+  });
