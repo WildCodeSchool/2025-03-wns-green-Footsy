@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../../graphql/operations";
 import { saveToken, parseLoginResponse } from "../../services/authService";
 
@@ -10,6 +10,7 @@ import classes from "./Login.module.scss";
 import FormLayout from "../../layout/form-layout/FormLayout";
 import FormContent from "../../layout/form-content/FormContent";
 import CarbonCalculator from "../../components/CarbonCalculator/CarbonCalculator";
+import Footer from "../../layout/footer/Footer";
 
 type LoginResponse = {
   login: string;
@@ -20,24 +21,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
-  const apolloClient = new ApolloClient({
-    link: new HttpLink({
-      uri: import.meta.env.VITE_URL_GRAPHQL || "http://localhost:5050/graphql",
-    }),
-    cache: new InMemoryCache(),
-  });
+  const [loginMutation, { loading }] = useMutation(LOGIN);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
     
     try {
-      const result = await apolloClient.mutate({
-        mutation: LOGIN,
+      const result = await loginMutation({
         variables: {
           data: { email, password }
         }
@@ -65,15 +58,13 @@ export default function Login() {
       }
       
       setError(errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
   
 
   return (
     <FormLayout>
-      <Header children={"Connexion"} />
+      <Header>Connexion</Header>
       <div className={classes["login__container"]}>
         <CarbonCalculator />
         
@@ -87,23 +78,31 @@ export default function Login() {
           <form onSubmit={handleSubmit} className={classes["login__form"]}>
             {error && <div className={`${classes["login__error"]} ${classes[`login__error--${mode}`]}`}>{error}</div>}
             
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
-              required
-            />
+            <div className={classes["login__field"]}>
+              <label className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}>
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
+                required
+              />
+            </div>
             
-            <input
-              type="password"
-              placeholder="Mot de passe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
-              required
-            />
+            <div className={classes["login__field"]}>
+              <label className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}>
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
+                required
+              />
+            </div>
             
             <button 
               type="submit" 
@@ -122,6 +121,8 @@ export default function Login() {
           </Link>
         </FormContent>
       </div>
+      
+      <Footer />
     </FormLayout>
   );
 }
