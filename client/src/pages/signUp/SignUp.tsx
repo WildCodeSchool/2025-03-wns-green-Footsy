@@ -13,7 +13,7 @@ export default function SignUp() {
 
   return (
     <FormLayout>
-      {<Header children={"Inscription"} />}
+      {<Header title={"Inscription"} />}
       <FormContent>
         <h2
           className={`${classes["sign-up__title"]} ${classes[`sign-up__title--${mode}`]

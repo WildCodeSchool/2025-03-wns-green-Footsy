@@ -9,10 +9,10 @@ import logo from "../../assets/img/logos_icons/logo.png";
 import logoDark from "../../assets/img/logos_icons/logo_dark.png";
 
 interface HeaderProps {
-  children: ReactNode;
+  title: ReactNode;
 }
 
-export default function Header({children}: HeaderProps) {
+export default function Header({title}: HeaderProps) {
   const { mode } = useMode();
   const iconSrc = mode === "dark" ? iconDark : icon;
   const logoSrc = mode === "dark" ? logoDark : logo;
@@ -34,7 +34,7 @@ export default function Header({children}: HeaderProps) {
           classes[`header__title--${mode}`]
         }`}
       >
-        {children}
+        {title}
       </h2>
     </header>
   );

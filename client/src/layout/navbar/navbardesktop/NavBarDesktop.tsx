@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 
-import community from "../../../assets/img/logos_icons/community.png"; 
+import community from "../../../assets/img/logos_icons/community_desktop.png"; 
 import community_dark from "../../../assets/img/logos_icons/community_dark.png";
-import dashboard from "../../../assets/img/logos_icons/dashboard.png";
+import dashboard from "../../../assets/img/logos_icons/dashboard_desktop.png";
 import dashboard_dark from "../../../assets/img/logos_icons/dashboard_dark.png";
 import footprint from "../../../assets/img/logos_icons/footprint.png";
 import footprint_dark from "../../../assets/img/logos_icons/footprint_dark.png";
-import history from "../../../assets/img/logos_icons/history.png";
+import history from "../../../assets/img/logos_icons/history_desktop.png";
 import history_dark from "../../../assets/img/logos_icons/history_dark.png";
-import information from "../../../assets/img/logos_icons/information.png";
+import information from "../../../assets/img/logos_icons/information_desktop.png";
 import information_dark from "../../../assets/img/logos_icons/information_dark.png";
 
 import classes from "./NavBarDesktop.module.scss";

@@ -5,7 +5,7 @@ display: none;
   display: flex;
   flex-direction: row;
   justify-content: right;
-  padding: 0.5rem 3rem 0.5rem 0.5rem;
+  padding: 0.5rem;
   background-color: var(--color-dark);
   position: fixed;
   bottom: 0;  
@@ -15,7 +15,9 @@ display: none;
     display: inline-block;
       text-decoration: none;
       text-align: right;
+      font-weight: bold;
       padding: 0.5rem;
+      margin-right: 3.5rem;
 
     &--light {
       color: var(--color-light);

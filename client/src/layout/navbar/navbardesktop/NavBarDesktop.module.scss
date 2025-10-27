@@ -14,7 +14,11 @@
     background-color: var(--color-dark);;
     border:0.01rem solid var(--sea-green);
     cursor: pointer;
-    padding: 1rem
+    padding: 1rem;
+
+        &:hover {
+            transform: scale(1.05);
+        }
     }
 
     &__img {
@@ -37,6 +41,10 @@
       align-items: center;
       justify-content: center;
       margin: 2rem;
+
+      &:hover {
+            transform: scale(1.15);
+        }
     }
 
     &__footprinticon {
