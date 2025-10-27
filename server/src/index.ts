@@ -12,6 +12,7 @@ import CategoryResolver from "./resolvers/CategoryResolver";
 import AvatarResolver from "./resolvers/AvatarResolver";
 import FriendResolver from "./resolvers/FriendResolver";
 import InteractionResolver from "./resolvers/InteractionResolver";
+import { seedAvatars } from "./seeders/Seeder";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
@@ -26,12 +27,21 @@ async function startServer() {
       process.exit(1);
     });
   const schema = await buildSchema({
-    resolvers: [UserResolver, ActivityResolver, TypeResolver, CategoryResolver, AvatarResolver, FriendResolver, InteractionResolver],
+    resolvers: [
+      UserResolver,
+      ActivityResolver,
+      TypeResolver,
+      CategoryResolver,
+      AvatarResolver,
+      FriendResolver,
+      InteractionResolver,
+    ],
   });
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {
     listen: { port },
   });
   console.info(`Server started on ${url}`);
+  seedAvatars();
 }
 startServer();

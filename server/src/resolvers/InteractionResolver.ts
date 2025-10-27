@@ -1,22 +1,20 @@
 import { Field, InputType, Int, Resolver } from "type-graphql";
 import Interaction from "../entities/Interaction";
-import Activity from "../entities/Activity";
 
 @InputType()
 export class InteractionInput {
-    @Field(() => Int)
-    user_id: number;
+  @Field(() => Int)
+  user_id: number;
 
-    @Field(() => Int)
-    activity_id: number;
+  @Field(() => Int)
+  activity_id: number;
 
-    @Field(() => String)
-    comment: string;
+  @Field(() => String)
+  comment: string;
 
-    @Field(() => Date)
-    comment_date: Date;
+  @Field(() => Date)
+  comment_date: Date;
 }
 
 @Resolver(Interaction)
-export default class InteractionResolver {
-}
+export default class InteractionResolver {}
