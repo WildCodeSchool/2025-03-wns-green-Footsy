@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client/react";
+import { toast } from "react-toastify";
 
 import CarbonCalculator from "../../components/CarbonCalculator/CarbonCalculator";
 import { useMode } from "../../context/modeContext";
@@ -20,14 +21,12 @@ export default function Login() {
   const { mode } = useMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
   
   const [loginMutation, { loading }] = useMutation(LOGIN);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     
     try {
       const result = await loginMutation({
@@ -40,22 +39,22 @@ export default function Login() {
       
       saveToken(token);
       
+      toast.success("Connexion réussie !");
+      
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Login error:", error);
       
       // Extract more specific error message
-      let errorMessage = "Login failed. Please check your credentials and try again.";
+      let errorMessage = "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.";
       
       if (error?.graphQLErrors?.length > 0) {
         errorMessage = error.graphQLErrors[0].message;
       } else if (error?.networkError) {
-        errorMessage = "Network error. Please check your connection.";
-      } else if (error?.message) {
-        errorMessage = error.message;
+        errorMessage = "Erreur réseau. Veuillez vérifier votre connexion.";
       }
       
-      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
   
@@ -74,8 +73,6 @@ export default function Login() {
           </h2>
 
           <form onSubmit={handleSubmit} className={classes["login__form"]}>
-            {error && <div className={`${classes["login__error"]} ${classes[`login__error--${mode}`]}`}>{error}</div>}
-            
             <div className={classes["login__field"]}>
               <label 
                 htmlFor="email"
