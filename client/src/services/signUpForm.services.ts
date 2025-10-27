@@ -1,3 +1,7 @@
+import { toast } from "react-toastify";
+
+import type { Avatar } from "../types/Avatar.types";
+
 export type SignUpFormData = {
   name?: string;
   surname?: string;
@@ -6,6 +10,7 @@ export type SignUpFormData = {
   confirmEmail?: string;
   password?: string;
   confirmPassword?: string;
+  avatar?: Avatar;
 };
 
 export type FormErrors = {
@@ -14,12 +19,6 @@ export type FormErrors = {
 };
 
 export const formFields = [
-  {
-    label: "Nom",
-    type: "text",
-    id: "name",
-    placeholder: "Doe",
-  },
   {
     label: "Prénom",
     type: "text",
@@ -30,7 +29,6 @@ export const formFields = [
     label: "Date de naissance",
     type: "date",
     id: "birthdate",
-    placeholder: "",
   },
   {
     label: "Mail",
@@ -42,7 +40,6 @@ export const formFields = [
     label: "Confirmer le mail",
     type: "email",
     id: "confirmEmail",
-    placeholder: "jane.doe@exemple.com",
   },
   {
     label: "Mot de passe",
@@ -54,7 +51,6 @@ export const formFields = [
     label: "Confirmer le mot de passe",
     type: "password",
     id: "confirmPassword",
-    placeholder: "motDePasse1234",
   },
 ];
 
@@ -92,15 +88,19 @@ export const handleChange = (
   }
 };
 
-export const handleSubmit = (
+export const handleSubmit = async (
   event: React.FormEvent,
   formData: SignUpFormData,
-  errors: FormErrors
+  errors: FormErrors,
+  // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
+  signUpMutation: any
 ) => {
   event.preventDefault();
 
   if (errors.emailMismatch || errors.passwordMismatch) {
-    alert("Veuillez corriger les erreurs avant de soumettre le formulaire.");
+    toast.error(
+      "Veuillez corriger les erreurs avant de soumettre le formulaire."
+    );
     return;
   }
 
@@ -109,15 +109,39 @@ export const handleSubmit = (
     !formData.surname ||
     !formData.birthdate ||
     !formData.email ||
-    !formData.password
+    !formData.password ||
+    !formData.avatar
   ) {
-    alert("Veuillez remplir tous les champs.");
+    toast.error("Veuillez remplir tous les champs et sélectionner un avatar.");
     return;
   }
 
-  // Ajouter la logique pour envoyer les données au serveur
+  try {
+    await signUpMutation({
+      variables: {
+        data: {
+          first_name: formData.surname,
+          last_name: formData.name,
+          email: formData.email,
+          birthdate: new Date(formData.birthdate),
+          password: formData.password,
+          avatar: {
+            id: formData.avatar.id,
+            title: formData.avatar.title,
+            image: formData.avatar.image,
+          },
+        },
+      },
+    });
 
-  console.log("Données du formulaire :", formData);
+    toast.info("Inscription réussie !");
 
-  alert("Formulaire soumis avec succès !");
+    return "success";
+  } catch (error) {
+    if (error instanceof Error && error.message === "Email already in use") {
+      toast.error("Cette adresse e-mail est déjà utilisée.");
+      return;
+    }
+    toast.error("Erreur lors de l'inscription. Veuillez réessayer.");
+  }
 };

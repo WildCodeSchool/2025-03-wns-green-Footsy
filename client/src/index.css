@@ -120,3 +120,17 @@ li {
   font-size: var(--font-size-body);
   font-weight: var(--weight-normal);
 }
+
+.Toastify__toast {
+  background: var(--color-light);
+  color: var(--color-dark);
+}
+
+.Toastify__toast--success {
+  background: var(--color-dark);
+  color: var(--color-light);
+}
+
+.Toastify__progress-bar {
+  background: var(--color-primary);
+}

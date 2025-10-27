@@ -3,7 +3,7 @@ import classes from "./MainButton.module.scss";
 interface MainButtonProps {
   mode: "light" | "dark";
   accent?: boolean;
-  content: string;
+  content: string | React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
