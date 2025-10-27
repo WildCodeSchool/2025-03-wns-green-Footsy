@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import MainButton from "../../components/MainButton/MainButton";
 import classes from "./Home.module.scss";
 
 import logo from "../../assets/img/logos_icons/logo.png";
@@ -27,12 +27,13 @@ export default function Home() {
       <div className={classes["home__content"]}>
         <div className={classes["home__actions"]}>
           <Link to="/signup" className={classes["home__actions__link"]}>
-            <button
+            <MainButton
               type="button"
-              className={`${classes["home__button"]} ${classes["home__button--light"]}`}
-            >
-              Commencer
-            </button>
+              mode="light"
+              content="Commencer"
+              accent={false}
+              className={classes["home__button-custom"]}
+            />
           </Link>
         </div>
       </div>

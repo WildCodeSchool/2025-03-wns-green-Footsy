@@ -12,6 +12,7 @@ import FormContent from "../../layout/form-content/FormContent";
 import FormLayout from "../../layout/form-layout/FormLayout";
 import { saveToken, parseLoginResponse } from "../../services/authService";
 import classes from "./Login.module.scss";
+import MainButton from "../../components/MainButton/MainButton";
 
 type LoginResponse = {
   login: string;
@@ -107,13 +108,12 @@ export default function Login() {
               />
             </div>
             
-            <button 
-              type="submit" 
+            <MainButton
+              type="submit"
+              mode={mode}
+              content={loading ? "Connexion..." : "Connexion"}
               disabled={loading}
-              className={`${classes["login__button"]} ${classes[`login__button--${mode}`]}`}
-            >
-              {loading ? "Connexion..." : "Connexion"}
-            </button>
+            />
           </form>
 
           <Link
