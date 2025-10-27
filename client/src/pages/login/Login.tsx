@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client/react";
-import { LOGIN } from "../../graphql/operations";
-import { saveToken, parseLoginResponse } from "../../services/authService";
 
-import Header from "../../layout/header/Header";
-import { useMode } from "../../context/modeContext";
-import classes from "./Login.module.scss";
-import FormLayout from "../../layout/form-layout/FormLayout";
-import FormContent from "../../layout/form-content/FormContent";
 import CarbonCalculator from "../../components/CarbonCalculator/CarbonCalculator";
+import { useMode } from "../../context/modeContext";
+import { LOGIN } from "../../graphql/operations";
+import Header from "../../layout/header/Header";
 import Footer from "../../layout/footer/Footer";
+import FormContent from "../../layout/form-content/FormContent";
+import FormLayout from "../../layout/form-layout/FormLayout";
+import { saveToken, parseLoginResponse } from "../../services/authService";
+import classes from "./Login.module.scss";
 
 type LoginResponse = {
   login: string;
@@ -35,8 +35,6 @@ export default function Login() {
           data: { email, password }
         }
       });
-      
-      console.log("Login successful:", result.data);
       
       const { token } = parseLoginResponse((result.data as LoginResponse).login);
       
@@ -79,10 +77,14 @@ export default function Login() {
             {error && <div className={`${classes["login__error"]} ${classes[`login__error--${mode}`]}`}>{error}</div>}
             
             <div className={classes["login__field"]}>
-              <label className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}>
+              <label 
+                htmlFor="email"
+                className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}
+              >
                 Email
               </label>
               <input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -92,10 +94,14 @@ export default function Login() {
             </div>
             
             <div className={classes["login__field"]}>
-              <label className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}>
+              <label 
+                htmlFor="password"
+                className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}
+              >
                 Mot de passe
               </label>
               <input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
