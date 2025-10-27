@@ -1,0 +1,84 @@
+services:
+  frontend:
+    image: necnec59/footsy-client
+    command: sh -c "npm run build"
+    ports: # hote:container
+      - 8181:5173
+    volumes:
+      - ../client/src/:/app/src/
+      - ../client/package.json:/app/package.json
+      - ../client/vite.config.ts:/app/vite.config.ts
+      - ../client/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
+      - web-client-build:/app/dist
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Force le polling
+      - WATCHPACK_POLLING=true
+      - NODE_ENV=production
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    image: necnec59/footsy-server
+    command: npm run dev # lance ton script dev (hot reload)
+    ports:
+      - 5151:4000
+    volumes:
+      - ../server/src:/app/src # monte ton code source
+      - /app/node_modules # évite d’écraser node_modules dans le conteneur
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'curl --fail --request POST --header ''Content-Type: application/json'' --url ''http://backend:4000'' --data ''{"query":"query { __typename }"}'' || exit 1',
+        ]
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_HOST: ${DB_HOST}
+    env_file:
+      - .env
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres
+    container_name: postgres_prod
+    ports: # hote:container
+      - 5429:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_HOST: ${DB_HOST}
+    env_file:
+      - .env
+    volumes:
+      - ./database:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:1.21.3
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    ports:
+      - ${GATEWAY_PORT}:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - web-client-build:/web-client-build
+      - ./logs:/var/log/nginx
+volumes:
+  web-client-build:

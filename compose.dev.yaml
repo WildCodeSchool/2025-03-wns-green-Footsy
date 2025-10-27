@@ -2,7 +2,8 @@ services:
   frontend:
     build:
       context: ./client
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+    command: sh -c "npm run build"
     ports: # hote:container
       - 8080:5173
     volumes:
@@ -11,9 +12,11 @@ services:
       - ./client/vite.config.ts:/app/vite.config.ts
       - ./client/tsconfig.json:/app/tsconfig.json
       - /app/node_modules
+      - web-client-build:/app/dist
     environment:
       - CHOKIDAR_USEPOLLING=true # Force le polling
       - WATCHPACK_POLLING=true
+      - NODE_ENV=production
     env_file:
       - .env
     stdin_open: true
@@ -25,13 +28,13 @@ services:
   backend:
     build:
       context: ./server
-      dockerfile: Dockerfile.dev
-    command: npm run dev           # lance ton script dev (hot reload)
+      dockerfile: Dockerfile
+    command: npm run dev # lance ton script dev (hot reload)
     ports:
       - 5050:4000
     volumes:
-      - ./server/src:/app/src      # monte ton code source
-      - /app/node_modules          # évite d’écraser node_modules dans le conteneur
+      - ./server/src:/app/src # monte ton code source
+      - /app/node_modules # évite d’écraser node_modules dans le conteneur
     healthcheck:
       test:
         [
@@ -68,3 +71,18 @@ services:
       - .env
     volumes:
       - ./database:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:1.21.3
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    ports:
+      - ${GATEWAY_PORT:-8002}:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - web-client-build:/web-client-build
+      - ./logs:/var/log/nginx
+volumes:
+  web-client-build:

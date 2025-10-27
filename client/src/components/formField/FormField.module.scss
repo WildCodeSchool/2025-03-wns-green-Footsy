@@ -1,0 +1,38 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  gap: 0.5rem;
+
+  margin-bottom: 1rem;
+
+  font-family: var(--font-family);
+
+  &__label {
+    display: block;
+
+    &--required {
+      color: red;
+    }
+
+    &--light {
+      color: var(--dark-green);
+    }
+  }
+
+  &__input {
+    padding: 0.5rem;
+    border: 1px solid;
+    border-radius: 8px;
+
+    &--light {
+      background-color: var(--white);
+      border-color: var(--beige);
+      color: var(--dark-green);
+
+      &::placeholder {
+        color: var(--beige);
+      }
+    }
+  }
+}
