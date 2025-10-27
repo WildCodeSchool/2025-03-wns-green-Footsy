@@ -80,6 +80,12 @@ export default class ActivityResolver {
   ): Promise<Activity | null> {
     return await Activity.findOne({ where: { id } });
   }
+  @Query(() => [Activity])
+  async getActivitiesByUserId(
+    @Arg("userId", () => Int) userId: number
+  ): Promise<Activity[]> {
+    return await Activity.find({ where: { user: { id: userId } } });
+  }
 
   @Query(() => [Activity])
   async getActivitiesByUserIdAndFilters(
@@ -156,10 +162,7 @@ export default class ActivityResolver {
 
   @Mutation(() => Boolean)
   async deleteActivity(@Arg("id", () => Int) id: number): Promise<boolean> {
-    const activity = await Activity.findOne({ where: { id } });
-    if (!activity) return false;
-
-    await activity.remove();
-    return true;
+    const result = await Activity.delete(id);
+    return result.affected !== 0;
   }
 }
