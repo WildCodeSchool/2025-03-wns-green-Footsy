@@ -74,8 +74,16 @@ export default class ActivityResolver {
     return await Activity.find();
   }
 
+  @Query(() => Activity, { nullable: true })
+  async getActivityById(
+    @Arg("id", () => Int) id: number
+  ): Promise<Activity | null> {
+    return await Activity.findOne({ where: { id } });
+  }
   @Query(() => [Activity])
-  async activitiesByUserId(@Arg("userId", () => Int) userId: number): Promise<Activity[]> {
+  async getActivitiesByUserId(
+    @Arg("userId", () => Int) userId: number
+  ): Promise<Activity[]> {
     return await Activity.find({ where: { user: { id: userId } } });
   }
 
@@ -121,7 +129,7 @@ export default class ActivityResolver {
   async updateActivity(
     @Arg("data", () => UpdateActivityInput) data: UpdateActivityInput
   ): Promise<Activity | null> {
-  const activity = await Activity.findOne({ where: { id: data.id } });
+    const activity = await Activity.findOne({ where: { id: data.id } });
     if (!activity) return null;
 
     if (data.title !== undefined) {
