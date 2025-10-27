@@ -21,6 +21,7 @@ import { HttpLink } from "@apollo/client";
 import { Flip, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 const router = createBrowserRouter([
   {
     element: <App />,

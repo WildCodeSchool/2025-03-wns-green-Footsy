@@ -4,17 +4,15 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
+import Activity from "./Activity";
 import Avatar from "./Avatar";
 import Friend from "./Friend";
 import Interaction from "./Interaction";
-import Activity from "./Activity";
 
 @ObjectType()
 @Entity()
@@ -47,14 +45,14 @@ export default class User extends BaseEntity {
   @JoinColumn({ name: "avatar_id" })
   avatar: Avatar;
 
-  @OneToMany(() => Friend, friend => friend.requester)
+  @OneToMany(() => Friend, (friend) => friend.requester)
   sentFriendRequests: Friend[];
 
-  @OneToMany(() => Friend, friend => friend.requested)
+  @OneToMany(() => Friend, (friend) => friend.requested)
   receivedFriendRequests: Friend[];
 
   @Field(() => Interaction)
-  @OneToMany(() => Interaction, interaction => interaction.users)
+  @OneToMany(() => Interaction, (interaction) => interaction.users)
   interactions: Interaction[];
 
   @Field(() => [Activity])

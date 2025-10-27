@@ -23,7 +23,7 @@
     display: block;
     width: 4.5rem;
     height: 4.5rem;
-    
+
     @media (min-width: 1024px) {
       display: none;
     }
@@ -32,8 +32,8 @@
   &__desktop_logo {
     display: none;
     width: auto;
-    height:8rem;
-    
+    height: 8rem;
+
     @media (min-width: 1024px) {
       display: block;
     }

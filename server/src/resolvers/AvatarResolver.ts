@@ -20,7 +20,7 @@ export default class AvatarResolver {
     return Avatar.find();
   }
   @Query(() => [Avatar])
-  async getAvatar(@Arg("id", () => Int) id: number): Promise<Avatar> {
+  async getAvatarById(@Arg("id", () => Int) id: number): Promise<Avatar> {
     const avatar = await Avatar.findOneByOrFail({ id });
     return avatar;
   }
