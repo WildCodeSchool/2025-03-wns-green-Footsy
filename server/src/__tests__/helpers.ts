@@ -1,7 +1,6 @@
 import Activity from "../entities/Activity";
 import Avatar from "../entities/Avatar";
 import Category from "../entities/Category";
-import type Interaction from "../entities/Interaction";
 import Type from "../entities/Type";
 import User from "../entities/User";
 
