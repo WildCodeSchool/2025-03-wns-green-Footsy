@@ -6,6 +6,16 @@ export const SIGN_UP = gql`
   }
 `;
 
+export const GET_ALL_AVATARS = gql`
+  query GetAllAvatars {
+    getAllAvatars {
+      id
+      title
+      image
+    }
+  }
+`;
+
 export const LOGIN = gql`
   mutation Login($data: UserInput!) {
     login(data: $data)

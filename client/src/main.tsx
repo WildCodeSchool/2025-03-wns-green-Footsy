@@ -18,6 +18,7 @@ import Home from "./pages/home/Home";
 import "./reset.css";
 import "./index.css";
 import { HttpLink } from "@apollo/client";
+import { Flip, ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -88,6 +89,15 @@ createRoot(rootElement).render(
     <ModeProvider>
       <ApolloProvider client={client}>
         <RouterProvider router={router} />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          limit={5}
+          closeOnClick
+          pauseOnHover
+          theme="colored"
+          transition={Flip}
+        />
       </ApolloProvider>
     </ModeProvider>
   </StrictMode>
