@@ -30,4 +30,13 @@
   * {
     position: relative;
   }
+
+  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 400px;
+    gap: 1.5rem;
+    padding: 2rem 5rem;
+  }
 }
