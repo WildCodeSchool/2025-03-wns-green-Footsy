@@ -98,6 +98,12 @@ export class UpdatePersonalInfoInput {
   birthdate: String;
 }
 
+@InputType()
+export class UpdateAvatarInput {
+  @Field(() => Int)
+  avatar_id: number;
+}
+
 @Resolver(User)
 export default class UserResolver {
   private userService: UserServiceInterface;
@@ -173,6 +179,19 @@ export default class UserResolver {
     } catch (error) {
       console.error("Error updating personal info:", error);
       throw new Error("Failed to update personal information");
+    }
+  }
+
+  @Mutation(() => User)
+  async updateAvatar(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("data", () => UpdateAvatarInput) data: UpdateAvatarInput
+  ): Promise<User> {
+    try {
+      return await this.userService.updateAvatar(userId, data.avatar_id);
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      throw new Error("Failed to update avatar");
     }
   }
 }
