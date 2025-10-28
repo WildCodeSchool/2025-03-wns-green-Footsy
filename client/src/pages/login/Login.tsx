@@ -3,14 +3,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import CarbonCalculator from "../../components/CarbonCalculator/CarbonCalculator";
 import MainButton from "../../components/MainButton/MainButton";
 
 import { useMode } from "../../context/modeContext";
 import { LOGIN } from "../../graphql/operations";
 
+import AuthLayout from "../../layout/auth-layout/AuthLayout";
 import Footer from "../../layout/footer/Footer";
-import FormContent from "../../layout/form-content/FormContent";
 import FormLayout from "../../layout/form-layout/FormLayout";
 import Header from "../../layout/header/Header";
 
@@ -69,79 +68,75 @@ export default function Login() {
   return (
     <FormLayout>
       <Header title="Connection" />
-      <div className={classes.login__container}>
-        <CarbonCalculator />
+      <AuthLayout showImageOnMobile={true}>
+        <h2
+          className={`${classes.login__title} ${
+            classes[`login__title--${mode}`]
+          }`}
+        >
+          Connexion
+        </h2>
 
-        <FormContent>
-          <h2
-            className={`${classes.login__title} ${
-              classes[`login__title--${mode}`]
-            }`}
-          >
-            Connexion
-          </h2>
-
-          <form onSubmit={handleSubmit} className={classes.login__form}>
-            <div className={classes.login__field}>
-              <label
-                htmlFor="email"
-                className={`${classes.login__label} ${
-                  classes[`login__label--${mode}`]
-                }`}
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={`${classes.login__input} ${
-                  classes[`login__input--${mode}`]
-                }`}
-                required
-              />
-            </div>
-
-            <div className={classes.login__field}>
-              <label
-                htmlFor="password"
-                className={`${classes.login__label} ${
-                  classes[`login__label--${mode}`]
-                }`}
-              >
-                Mot de passe
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`${classes.login__input} ${
-                  classes[`login__input--${mode}`]
-                }`}
-                required
-              />
-            </div>
-
-            <MainButton
-              type="submit"
-              mode={mode}
-              content={loading ? "Connexion..." : "Connexion"}
-              disabled={loading}
+        <form onSubmit={handleSubmit} className={classes.login__form}>
+          <div className={classes.login__field}>
+            <label
+              htmlFor="email"
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
+              required
             />
-          </form>
+          </div>
 
-          <Link
-            to="/signup"
-            className={`${classes.login__link} ${
-              classes[`login__link--${mode}`]
-            }`}
-          >
-            Vous n'avez pas de compte ? Inscrivez-vous ici !
-          </Link>
-        </FormContent>
-      </div>
+          <div className={classes.login__field}>
+            <label
+              htmlFor="password"
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
+            >
+              Mot de passe
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
+              required
+            />
+          </div>
+
+          <MainButton
+            type="submit"
+            mode={mode}
+            content={loading ? "Connexion..." : "Connexion"}
+            disabled={loading}
+          />
+        </form>
+
+        <Link
+          to="/signup"
+          className={`${classes.login__link} ${
+            classes[`login__link--${mode}`]
+          }`}
+        >
+          Vous n'avez pas de compte ? Inscrivez-vous ici !
+        </Link>
+      </AuthLayout>
 
       <Footer />
     </FormLayout>
