@@ -7,14 +7,14 @@ import logoDark from "../../assets/img/logos_icons/logo_dark.png";
 
 import type { Avatar } from "../../types/Avatar.types";
 
-import classes from "./Header.module.scss";
+import classes from "./FormHeader.module.scss";
 
 interface HeaderProps {
   title: string;
   avatar?: Avatar;
 }
 
-export default function Header({ title, avatar }: HeaderProps) {
+export default function FormHeader({ title, avatar }: HeaderProps) {
   const { mode } = useMode();
   const iconSrc = mode === "dark" ? iconDark : icon;
   const logoSrc = mode === "dark" ? logoDark : logo;

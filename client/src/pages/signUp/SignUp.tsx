@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import Header from "../../layout/header/Header";
+import FormHeader from "../../layout/form-header/FormHeader";
 
 import { useMode } from "../../context/modeContext";
 
@@ -14,12 +14,11 @@ export default function SignUp() {
 
   return (
     <FormLayout>
-      {<Header title="Inscription" />}
+      {<FormHeader title="Inscription" />}
       <FormContent>
         <h2
-          className={`${classes["sign-up__title"]} ${
-            classes[`sign-up__title--${mode}`]
-          }`}
+          className={`${classes["sign-up__title"]} ${classes[`sign-up__title--${mode}`]
+            }`}
         >
           Inscription
         </h2>
@@ -27,9 +26,8 @@ export default function SignUp() {
 
         <Link
           to="/login"
-          className={`${classes["sign-up__link"]} ${
-            classes[`sign-up__link--${mode}`]
-          }`}
+          className={`${classes["sign-up__link"]} ${classes[`sign-up__link--${mode}`]
+            }`}
         >
           Déjà un compte ?
         </Link>
