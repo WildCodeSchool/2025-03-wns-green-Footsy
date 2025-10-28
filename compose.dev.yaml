@@ -4,7 +4,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     command: sh -c "npm run build"
-    ports: # hote:container
+    ports: 
       - 8080:5173
     volumes:
       - ./client/src/:/app/src/
@@ -14,7 +14,7 @@ services:
       - /app/node_modules
       - web-client-build:/app/dist
     environment:
-      - CHOKIDAR_USEPOLLING=true # Force le polling
+      - CHOKIDAR_USEPOLLING=true 
       - WATCHPACK_POLLING=true
       - NODE_ENV=production
     env_file:
@@ -29,12 +29,12 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    command: npm run dev # lance ton script dev (hot reload)
+    command: npm run dev
     ports:
       - 5050:4000
     volumes:
-      - ./server/src:/app/src # monte ton code source
-      - /app/node_modules # évite d’écraser node_modules dans le conteneur
+      - ./server/src:/app/src
+      - /app/node_modules
     healthcheck:
       test:
         [

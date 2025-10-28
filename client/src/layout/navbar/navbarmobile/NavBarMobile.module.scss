@@ -1,0 +1,31 @@
+.navbarmobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 100vw;
+    margin: 0;
+    padding-bottom: 0.5rem;
+    
+
+    &__button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    &__img {
+      width: 3rem;
+      height: 3rem;
+      object-fit: contain;
+    }
+
+    &__footprint {
+      width: 6rem;
+      height: 6rem;
+      object-fit: contain;
+    }
+  }

@@ -1,39 +1,29 @@
-.navbar{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;  
-    align-items: center;
-    
+.navbar {
+    .mobile {
+    display: block;
+    width: 100%;;
+    margin: 0;
+    padding: 0;
+    position: relative;
     background: linear-gradient(
     to bottom,
     var(--transparent),
-    var(--beige),
-    var(--beige)
+    var(--color-light),
+    var(--color-light)
   );
-
-    &__link {
-        text-decoration: none;
-        font-weight: bold;
-        padding: 0.5rem;
-
-        &--light {
-            color: var(--color-dark);
-        }
-
-        &--dark {
-            color: var(--color-dark-mode-light);
-        }
+    @media (min-width: 1024px) {
+      display: none;
     }
+  }
 
-    &__button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        }
-
-    &__img {
-         width: 4rem;
-        height: 4rem; 
-        object-fit: contain; 
+  .desktop {
+    display: none;
+    position: fixed; 
+    right: 0;       
+    top: 0; 
+    background-color: var(--sea-green);
+    @media (min-width: 1024px) {
+      display: block;
     }
+  }
 }
