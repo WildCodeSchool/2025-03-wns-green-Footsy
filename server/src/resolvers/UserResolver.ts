@@ -86,6 +86,18 @@ export class LoginResponse {
   user: User;
 }
 
+@InputType()
+export class UpdatePersonalInfoInput {
+  @Field(() => String)
+  first_name: string;
+
+  @Field(() => String)
+  last_name: string;
+
+  @Field(() => String)
+  birthdate: String;
+}
+
 @Resolver(User)
 export default class UserResolver {
   private userService: UserServiceInterface;
@@ -148,6 +160,19 @@ export default class UserResolver {
     } catch (err) {
       console.error(err);
       throw new Error("Login error");
+    }
+  }
+
+  @Mutation(() => User)
+  async updatePersonalInfo(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("data", () => UpdatePersonalInfoInput) data: UpdatePersonalInfoInput
+  ): Promise<User> {
+    try {
+      return await this.userService.updatePersonalInfo(userId, data);
+    } catch (error) {
+      console.error("Error updating personal info:", error);
+      throw new Error("Failed to update personal information");
     }
   }
 }

@@ -1,13 +1,13 @@
 import * as argon2 from "argon2";
 import User from "../entities/User";
 
-
-import type { NewUserInput } from "../resolvers/UserResolver";
+import type { NewUserInput, UpdatePersonalInfoInput } from "../resolvers/UserResolver";
 
 export interface UserServiceInterface {
   create(data: NewUserInput): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
   authenticateUser(email: string, password: string): Promise<User>;
+  updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User>;
 }
 
 export default class UserService implements UserServiceInterface {
@@ -35,6 +35,16 @@ export default class UserService implements UserServiceInterface {
     }
   
     return user;
+  }
+
+  async updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User> {
+    const user = await User.findOneByOrFail({ id: userId });
+    
+    user.first_name = data.first_name;
+    user.last_name = data.last_name;
+    user.birthdate = new Date(data.birthdate as string);
+    
+    return user.save();
   }
   
 }
