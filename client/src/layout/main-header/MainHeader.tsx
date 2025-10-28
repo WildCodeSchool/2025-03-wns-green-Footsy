@@ -32,9 +32,8 @@ export default function MainHeader({ title, avatar }: HeaderProps) {
         className={classes.header__desktop_logo}
       />
       <h2
-        className={`${classes.header__title} ${
-          classes[`header__title--${mode}`]
-        }`}
+        className={`${classes.header__title} ${classes[`header__title--${mode}`]
+          }`}
       >
         {title}
       </h2>

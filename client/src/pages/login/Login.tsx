@@ -1,19 +1,21 @@
+import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client/react";
 import { toast } from "react-toastify";
 
-import CarbonCalculator from "../../components/CarbonCalculator/CarbonCalculator";
+import MainButton from "../../components/MainButton/MainButton";
+
 import { useMode } from "../../context/modeContext";
 import { LOGIN } from "../../graphql/operations";
-import FormHeader from "../../layout/form-header/FormHeader";
-import Footer from "../../layout/footer/Footer";
-import FormContent from "../../layout/form-content/FormContent";
-import FormLayout from "../../layout/form-layout/FormLayout";
-import { saveToken, parseLoginResponse } from "../../services/authService";
-import classes from "./Login.module.scss";
-import MainButton from "../../components/mainButton/MainButton";
 
+import AuthLayout from "../../layout/auth-layout/AuthLayout";
+import Footer from "../../layout/footer/Footer";
+import FormLayout from "../../layout/form-layout/FormLayout";
+import FormHeader from "../../layout/form-header/FormHeader";
+
+import { parseLoginResponse, saveToken } from "../../services/authService";
+
+import classes from "./Login.module.scss";
 
 type LoginResponse = {
   login: string;
@@ -33,11 +35,13 @@ export default function Login() {
     try {
       const result = await loginMutation({
         variables: {
-          data: { email, password }
-        }
+          data: { email, password },
+        },
       });
 
-      const { token } = parseLoginResponse((result.data as LoginResponse).login);
+      const { token } = parseLoginResponse(
+        (result.data as LoginResponse).login
+      );
 
       saveToken(token);
 
@@ -48,7 +52,8 @@ export default function Login() {
       console.error("Login error:", error);
 
       // Extract more specific error message
-      let errorMessage = "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.";
+      let errorMessage =
+        "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.";
 
       if (error?.graphQLErrors?.length > 0) {
         errorMessage = error.graphQLErrors[0].message;
@@ -60,71 +65,78 @@ export default function Login() {
     }
   };
 
-
   return (
     <FormLayout>
-      {<FormHeader title="Connexion"/>}
-      <div className={classes["login__container"]}>
-        <CarbonCalculator />
+      {<FormHeader title="Connexion" />}
+      <AuthLayout showImageOnMobile={true}>
+        <h2
+          className={`${classes.login__title} ${
+            classes[`login__title--${mode}`]
+          }`}
+        >
+          Connexion
+        </h2>
 
-        <FormContent>
-          <h2
-            className={`${classes["login__title"]} ${classes[`login__title--${mode}`]}`}
-          >
-            Connexion
-          </h2>
-
-          <form onSubmit={handleSubmit} className={classes["login__form"]}>
-            <div className={classes["login__field"]}>
-              <label
-                htmlFor="email"
-                className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
-                required
-              />
-            </div>
-
-            <div className={classes["login__field"]}>
-              <label
-                htmlFor="password"
-                className={`${classes["login__label"]} ${classes[`login__label--${mode}`]}`}
-              >
-                Mot de passe
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`${classes["login__input"]} ${classes[`login__input--${mode}`]}`}
-                required
-              />
-            </div>
-
-            <MainButton
-              type="submit"
-              mode={mode}
-              content={loading ? "Connexion..." : "Connexion"}
-              disabled={loading}
+        <form onSubmit={handleSubmit} className={classes.login__form}>
+          <div className={classes.login__field}>
+            <label
+              htmlFor="email"
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
+              required
             />
-          </form>
+          </div>
 
-          <Link
-            to="/signup"
-            className={`${classes["login__link"]} ${classes[`login__link--${mode}`]}`}
-          >
-            Vous n'avez pas de compte ? Inscrivez-vous ici !
-          </Link>
-        </FormContent>
-      </div>
+          <div className={classes.login__field}>
+            <label
+              htmlFor="password"
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
+            >
+              Mot de passe
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
+              required
+            />
+          </div>
+
+          <MainButton
+            type="submit"
+            mode={mode}
+            content={loading ? "Connexion..." : "Connexion"}
+            disabled={loading}
+          />
+        </form>
+
+        <Link
+          to="/signup"
+          className={`${classes.login__link} ${
+            classes[`login__link--${mode}`]
+          }`}
+        >
+          Vous n'avez pas de compte ? Inscrivez-vous ici !
+        </Link>
+      </AuthLayout>
       <Footer />
     </FormLayout>
   );

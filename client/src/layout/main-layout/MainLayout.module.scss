@@ -13,10 +13,15 @@
       left: 0;
       width: 100%;
       height: 15vh;
-      background-image: url('../../assets/img/illus/main-header-background.png');
+      background-image: url('../../assets/img/illus/Header-background-desktop.png');
       background-size: cover;
       background-position: center;
       z-index: -1;
+
+      @media (max-width: 1023px) {
+      background-image: url('../../assets/img/illus/Header-background-mobile.png');
+    }
+
     }
 
     &::after {
