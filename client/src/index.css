@@ -1,0 +1,136 @@
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-SemiBoldItalic.woff") format("woff");
+  font-weight: 600;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/fonts/Raleway/Raleway-Italic.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+}
+:root {
+  --font-family: "Raleway", sans-serif;
+
+  --font-size-h1: 3rem;
+  --font-size-h2: 2rem;
+  --font-size-h3: 2rem;
+  --font-size-h4: 1.5rem;
+  --font-size-body: 1rem;
+
+  --weight-bold: 700;
+  --weight-semibold: 600;
+  --weight-normal: 400;
+
+  --style-italic: italic;
+
+  --dark-green: #024a1a;
+  --green: #427d42;
+  --sea-green: #9bcba3;
+  --fir-green: #467620;
+  --lawn-green: #81a631;
+  --beige: #d0dcad;
+  --yellow: #ffd600;
+
+  --light-blue: #8cc2ec;
+  --blue: #5b8bb7;
+  --dark-blue: #011624;
+  --sea-blue: #06496f;
+  --white: #ffffff;
+  --black: #000000;
+
+  --color-dark: var(--dark-green);
+  --color-primary: var(--green);
+  --color-light: var(--beige);
+
+  --dark-mode-color-dark: var(--dark-blue);
+  --dark-mode-color-primary: var(--blue);
+  --dark-mode-color-light: var(--light-blue);
+
+  --transparent: rgba(0, 0, 0, 0);
+  --beige-transparent: #d0dcadb3;
+  --dark-blue-transparent: #011624b3;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+a,
+span,
+button,
+li {
+  font-family: var(--font-family);
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--weight-bold);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--weight-bold);
+}
+
+h3 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--weight-semibold);
+  font-style: var(--style-italic);
+}
+
+h4 {
+  font-size: var(--font-size-h4);
+  font-weight: var(--weight-semibold);
+  font-style: var(--style-italic);
+}
+
+p,
+a,
+span,
+button,
+li {
+  font-size: var(--font-size-body);
+  font-weight: var(--weight-normal);
+}
+
+.Toastify__toast {
+  background: var(--color-light);
+  color: var(--color-dark);
+}
+
+.Toastify__toast--success {
+  background: var(--color-dark);
+  color: var(--color-light);
+}
+
+.Toastify__progress-bar {
+  background: var(--color-primary);
+}

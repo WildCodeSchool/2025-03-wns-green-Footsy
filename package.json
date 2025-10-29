@@ -1,0 +1,19 @@
+{
+  "devDependencies": {
+    "@biomejs/biome": "2.1.2",
+    "@types/node": "^24.1.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "argon2": "^0.43.1",
+    "jsonwebtoken": "^9.0.2",
+    "postgres": "^3.4.7",
+    "seed": "^0.4.4"
+  },
+  "scripts": {
+    "install:root": "npm install",
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install",
+    "i": "npm run install:root && npm run install:client && npm run install:server"
+  }
+}

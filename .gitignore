@@ -1,0 +1,8 @@
+**/.env
+**/node_modules/
+database
+
+.env
+
+**/logs/
+logs/
