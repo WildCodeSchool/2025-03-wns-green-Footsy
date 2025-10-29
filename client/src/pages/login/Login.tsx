@@ -11,7 +11,7 @@ import { LOGIN } from "../../graphql/operations";
 import AuthLayout from "../../layout/auth-layout/AuthLayout";
 import Footer from "../../layout/footer/Footer";
 import FormLayout from "../../layout/form-layout/FormLayout";
-import Header from "../../layout/header/Header";
+import FormHeader from "../../layout/form-header/FormHeader";
 
 import { parseLoginResponse, saveToken } from "../../services/authService";
 
@@ -67,7 +67,7 @@ export default function Login() {
 
   return (
     <FormLayout>
-      <Header title="Connection" />
+      {<FormHeader title="Connexion" />}
       <AuthLayout showImageOnMobile={true}>
         <h2
           className={`${classes.login__title} ${
@@ -137,7 +137,6 @@ export default function Login() {
           Vous n'avez pas de compte ? Inscrivez-vous ici !
         </Link>
       </AuthLayout>
-
       <Footer />
     </FormLayout>
   );
