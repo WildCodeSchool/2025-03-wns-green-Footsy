@@ -1,20 +1,25 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react()],
-	server: {
-		host: '0.0.0.0', // Écoute sur toutes les interfaces réseau
-		port: 5173,
-		strictPort: true, // Échoue si le port n'est pas disponible
-		watch: {
-			usePolling: true, // Nécessaire pour Docker - surveille les changements par polling
-			interval: 1000, // Intervalle de polling en ms
-		},
-		hmr: {
-			host: 'localhost', // Host pour le Hot Module Replacement
-			port: 5173,
-		}
-	}
+  plugins: [react()],
+  server: {
+    host: "0.0.0.0", // Écoute sur toutes les interfaces réseau
+    port: 5173,
+    strictPort: true, // Échoue si le port n'est pas disponible
+    watch: {
+      usePolling: true, // Nécessaire pour Docker - surveille les changements par polling
+      interval: 1000, // Intervalle de polling en ms
+    },
+    hmr: {
+      clientPort: 8080, // Port que le client utilise pour se connecter
+    },
+    proxy: {
+      "/graphql": {
+        target: "http://backend:4000",
+        changeOrigin: true,
+      },
+    },
+  },
 });

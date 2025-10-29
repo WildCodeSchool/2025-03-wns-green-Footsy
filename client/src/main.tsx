@@ -1,24 +1,22 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import { StrictMode } from "react";
-
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Flip, ToastContainer } from "react-toastify";
 
 import App from "./App";
 
 import ModeProvider from "./context/modeContext";
 
-import SignUp from "./pages/signUp/SignUp";
-import Login from "./pages/login/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
-import TestCharte from "./pages/testsCharte/TestsCharte";
 import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import SignUp from "./pages/signUp/SignUp";
+import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
-import { HttpLink } from "@apollo/client";
-import { Flip, ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -44,7 +42,7 @@ const router = createBrowserRouter([
         path: "history",
         element: <h1>History Page - To be implemented</h1>,
       },
-    {
+      {
         path: "add-activity",
         element: <h1>Activity Page - To be implemented</h1>,
       },
@@ -77,11 +75,16 @@ if (rootElement == null) {
   throw new Error(`Your HTML Document should contain a <div id="root"></div>`);
 }
 
+const graphqlUri = import.meta.env.VITE_URL_GRAPHQL || "/graphql";
+
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: import.meta.env.VITE_URL_GRAPHQL || "http://localhost:5050/",
+    uri: graphqlUri,
+    fetchOptions: {
+      mode: "cors",
+    },
     headers: {
-      "x-apollo-operation-name": "default",
+      Accept: "application/json",
     },
   }),
   cache: new InMemoryCache(),
