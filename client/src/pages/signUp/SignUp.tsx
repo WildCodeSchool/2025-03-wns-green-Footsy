@@ -1,21 +1,23 @@
 import { Link } from "react-router-dom";
 
-import Header from "../../layout/header/Header";
+import SignUpForm from "../../components/signUpForm/SignUpForm";
 
 import { useMode } from "../../context/modeContext";
 
-import classes from "./SignUp.module.scss";
+import AuthLayout from "../../layout/auth-layout/AuthLayout";
+import Footer from "../../layout/footer/Footer";
 import FormLayout from "../../layout/form-layout/FormLayout";
-import FormContent from "../../layout/form-content/FormContent";
-import SignUpForm from "../../components/signUpForm/SignUpForm";
+import Header from "../../layout/header/Header";
+
+import classes from "./SignUp.module.scss";
 
 export default function SignUp() {
   const { mode } = useMode();
 
   return (
     <FormLayout>
-      {<Header title="Inscription" />}
-      <FormContent>
+      <Header title="Inscription" />
+      <AuthLayout>
         <h2
           className={`${classes["sign-up__title"]} ${
             classes[`sign-up__title--${mode}`]
@@ -33,7 +35,9 @@ export default function SignUp() {
         >
           Déjà un compte ?
         </Link>
-      </FormContent>
+      </AuthLayout>
+
+      <Footer />
     </FormLayout>
   );
 }

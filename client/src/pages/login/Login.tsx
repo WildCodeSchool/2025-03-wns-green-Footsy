@@ -1,122 +1,144 @@
+import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+import { toast } from "react-toastify";
+
+import MainButton from "../../components/MainButton/MainButton";
+
+import { useMode } from "../../context/modeContext";
 import { LOGIN } from "../../graphql/operations";
-import { saveToken, parseLoginResponse } from "../../services/authService";
+
+import AuthLayout from "../../layout/auth-layout/AuthLayout";
+import Footer from "../../layout/footer/Footer";
+import FormLayout from "../../layout/form-layout/FormLayout";
+import Header from "../../layout/header/Header";
+
+import { parseLoginResponse, saveToken } from "../../services/authService";
+
+import classes from "./Login.module.scss";
 
 type LoginResponse = {
   login: string;
 };
 
-// TODO: Implement styles
-
 export default function Login() {
+  const { mode } = useMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
-  const apolloClient = new ApolloClient({
-    link: new HttpLink({
-      uri: import.meta.env.VITE_URL_GRAPHQL || "http://localhost:5050/graphql",
-    }),
-    cache: new InMemoryCache(),
-  });
+
+  const [loginMutation, { loading }] = useMutation(LOGIN);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-    
+
     try {
-      const result = await apolloClient.mutate({
-        mutation: LOGIN,
+      const result = await loginMutation({
         variables: {
-          data: { email, password }
-        }
+          data: { email, password },
+        },
       });
-      
-      console.log("Login successful:", result.data);
-      
-      const { token } = parseLoginResponse((result.data as LoginResponse).login);
-      
+
+      const { token } = parseLoginResponse(
+        (result.data as LoginResponse).login
+      );
+
       saveToken(token);
-      
+
+      toast.success("Connexion réussie !");
+
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Login error:", error);
-      
+
       // Extract more specific error message
-      let errorMessage = "Login failed. Please check your credentials and try again.";
-      
+      let errorMessage =
+        "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.";
+
       if (error?.graphQLErrors?.length > 0) {
         errorMessage = error.graphQLErrors[0].message;
       } else if (error?.networkError) {
-        errorMessage = "Network error. Please check your connection.";
-      } else if (error?.message) {
-        errorMessage = error.message;
+        errorMessage = "Erreur réseau. Veuillez vérifier votre connexion.";
       }
-      
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+
+      toast.error(errorMessage);
     }
   };
-  
 
   return (
-    <section className="">
-      <div
-        className=""
-      >
-        <h1 className="">
-          Bienvenue !
-        </h1>
-
-        <h2 className="">
-          Qu'est-ce que footsy ?
-        </h2>
-        <p className="">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu turpis ut metus luctus fringilla. Integer ac elit ut nisl volutpat tempus pretium ut metus.
-        </p>
-        <h2 className="">
-          Se connecter
+    <FormLayout>
+      <Header title="Connection" />
+      <AuthLayout showImageOnMobile={true}>
+        <h2
+          className={`${classes.login__title} ${
+            classes[`login__title--${mode}`]
+          }`}
+        >
+          Connexion
         </h2>
 
-        <form onSubmit={handleSubmit}>
-          {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
-          
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+        <form onSubmit={handleSubmit} className={classes.login__form}>
+          <div className={classes.login__field}>
+            <label
+              htmlFor="email"
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
+              required
+            />
+          </div>
+
+          <div className={classes.login__field}>
+            <label
+              htmlFor="password"
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
+            >
+              Mot de passe
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
+              required
+            />
+          </div>
+
+          <MainButton
+            type="submit"
+            mode={mode}
+            content={loading ? "Connexion..." : "Connexion"}
+            disabled={loading}
           />
-          
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          
-          <button type="submit" disabled={loading}>
-            {loading ? "Connexion..." : "Connexion"}
-          </button>
         </form>
 
-        <div className="">
-          <Link
-            to="/signup"
-            className=""
-          >
-            Vous n'avez pas de compte ? Inscrivez-vous ici !      
-          </Link>
-        </div>
-      </div>
-    </section>
+        <Link
+          to="/signup"
+          className={`${classes.login__link} ${
+            classes[`login__link--${mode}`]
+          }`}
+        >
+          Vous n'avez pas de compte ? Inscrivez-vous ici !
+        </Link>
+      </AuthLayout>
+
+      <Footer />
+    </FormLayout>
   );
 }

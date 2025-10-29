@@ -13,17 +13,20 @@
 
   transition: all ease-in-out 0.2s;
 
-  text-transform: uppercase;
+  text-transform: capitalize;
   font-weight: bold;
 
   &-light {
     background-color: var(--color-dark);
     border-color: var(--color-dark);
-    color: var(--color-light);
+    color: var(--white);
 
     &:hover {
-      color: var(--color-dark);
+      background-color: var(--color-primary);
+      color: var(--white);
+      border: 2px solid var(--color-primary);
     }
+   
   }
 
   &-dark {
@@ -52,7 +55,4 @@
     }
   }
 
-  &:hover {
-    background-color: var(--transparent);
-  }
 }
