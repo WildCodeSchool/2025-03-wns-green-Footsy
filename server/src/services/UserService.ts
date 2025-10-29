@@ -11,6 +11,7 @@ export interface UserServiceInterface {
   updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User>;
   updateAvatar(userId: number, avatarId: number): Promise<User>;
   changePassword(userId: number, currentPassword: string, newPassword: string): Promise<User>;
+  deleteAccount(userId: number): Promise<boolean>;
 }
 
 export default class UserService implements UserServiceInterface {
@@ -71,6 +72,12 @@ export default class UserService implements UserServiceInterface {
     user.hashed_password = hashedNewPassword;
     
     return user.save();
+  }
+
+  async deleteAccount(userId: number): Promise<boolean> {
+    const user = await User.findOneByOrFail({ id: userId });
+    await User.remove(user);
+    return true;
   }
   
 }

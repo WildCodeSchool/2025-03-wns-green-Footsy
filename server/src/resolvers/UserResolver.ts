@@ -220,4 +220,14 @@ export default class UserResolver {
       throw new Error("Failed to change password");
     }
   }
+
+  @Mutation(() => Boolean)
+  async deleteAccount(@Arg("userId", () => Int) userId: number): Promise<boolean> {
+    try {
+      return await this.userService.deleteAccount(userId);
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      throw new Error("Failed to delete account");
+    }
+  }
 }
