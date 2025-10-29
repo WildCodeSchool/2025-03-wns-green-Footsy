@@ -17,9 +17,8 @@ import AvatarSelector from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
 import { Loader } from "../loader/Loader";
 
-import MainButton from "../MainButton/MainButton";
-import classes from "./SignUpForm.module.scss";
 import MainButton from "../mainButton/MainButton";
+import classes from "./SignUpForm.module.scss";
 
 export default function SignUpForm() {
   const navigate = useNavigate();
