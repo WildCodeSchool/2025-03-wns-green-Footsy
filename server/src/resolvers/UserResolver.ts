@@ -2,6 +2,7 @@ import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import {
   Arg,
+  Ctx,
   Field,
   InputType,
   Int,
@@ -130,6 +131,24 @@ export default class UserResolver {
   async getUserById(@Arg("id", () => Int) id: number) {
     const user = await User.findOneByOrFail({ id });
     return user;
+  }
+
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() context: { token: string | null }): Promise<User | null> {
+    try {
+      if (!context.token || !process.env.JWT_SECRET) {
+        return null;
+      }
+
+      const decoded = jwt.verify(context.token, process.env.JWT_SECRET) as { id: number };
+      
+      return await User.findOne({
+        where: { id: decoded.id },
+        relations: ["avatar"]
+      });
+    } catch (error) {
+      return null;
+    }
   }
 
   @Mutation(() => String)
