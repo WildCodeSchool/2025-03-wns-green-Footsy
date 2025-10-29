@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  padding: 1rem 2rem 3rem 2rem;
+  margin: 0;
+  max-width: 100%;
+
+  @media (min-width: 1024px) {
+    justify-content: flex-start;
+    padding: 0.5rem 2rem 0.5rem 2rem;
+  }
+
+  &__mobile_logo {
+    display: block;
+    width: 4.5rem;
+    height: 4.5rem;
+
+    @media (min-width: 1024px) {
+      display: none;
+    }
+  }
+
+  &__desktop_logo {
+    display: none;
+    width: auto;
+    height: 8rem;
+
+    @media (min-width: 1024px) {
+      display: block;
+    }
+  }
+
+  &__title {
+    width: 100%;
+    text-align: center;
+
+    @media (min-width: 1024px) {
+      display: none;
+    }
+
+    &--light {
+      color: var(--color-dark);
+    }
+
+    &--dark {
+      color: var(--color-dark-mode-light);
+    }
+  }
+}
