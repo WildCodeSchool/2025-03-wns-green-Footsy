@@ -64,6 +64,9 @@ if (rootElement == null) {
 const client = new ApolloClient({
   link: new HttpLink({
     uri: import.meta.env.VITE_URL_GRAPHQL || "http://localhost:5050/",
+    headers: {
+      "x-apollo-operation-name": "default",
+    },
   }),
   cache: new InMemoryCache(),
 });
