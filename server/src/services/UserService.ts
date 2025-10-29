@@ -10,6 +10,7 @@ export interface UserServiceInterface {
   authenticateUser(email: string, password: string): Promise<User>;
   updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User>;
   updateAvatar(userId: number, avatarId: number): Promise<User>;
+  changePassword(userId: number, currentPassword: string, newPassword: string): Promise<User>;
 }
 
 export default class UserService implements UserServiceInterface {
@@ -54,6 +55,21 @@ export default class UserService implements UserServiceInterface {
     const avatar = await Avatar.findOneByOrFail({ id: avatarId });
     
     user.avatar = avatar;
+    return user.save();
+  }
+
+  async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<User> {
+    const user = await User.findOneByOrFail({ id: userId });
+    
+    const isValidCurrentPassword = await argon2.verify(user.hashed_password, currentPassword);
+    if (!isValidCurrentPassword) {
+      throw new Error("Current password is incorrect");
+    }
+    
+    const hashedNewPassword = await argon2.hash(newPassword);
+    
+    user.hashed_password = hashedNewPassword;
+    
     return user.save();
   }
   

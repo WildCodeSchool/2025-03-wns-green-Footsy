@@ -104,6 +104,15 @@ export class UpdateAvatarInput {
   avatar_id: number;
 }
 
+@InputType()
+export class ChangePasswordInput {
+  @Field(() => String)
+  current_password: string;
+
+  @Field(() => String)
+  new_password: string;
+}
+
 @Resolver(User)
 export default class UserResolver {
   private userService: UserServiceInterface;
@@ -192,6 +201,23 @@ export default class UserResolver {
     } catch (error) {
       console.error("Error updating avatar:", error);
       throw new Error("Failed to update avatar");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async changePassword(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("data", () => ChangePasswordInput) data: ChangePasswordInput
+  ): Promise<boolean> {
+    try {
+      await this.userService.changePassword(userId, data.current_password, data.new_password);
+      return true;
+    } catch (error) {
+      console.error("Error changing password:", error);
+      if (error instanceof Error && error.message.includes("Current password is incorrect")) {
+        throw new Error("Current password is incorrect");
+      }
+      throw new Error("Failed to change password");
     }
   }
 }
