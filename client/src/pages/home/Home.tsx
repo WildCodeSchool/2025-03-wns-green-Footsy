@@ -1,22 +1,26 @@
 import { Link } from "react-router-dom";
-import MainButton from "../../components/MainButton/MainButton";
-import classes from "./Home.module.scss";
 
 import logo from "../../assets/img/logos_icons/logo.png";
 
+import MainButton from "../../components/mainButton/MainButton";
+
+import { useMode } from "../../context/modeContext";
+
+import classes from "./Home.module.scss";
+
 export default function Home() {
+  const { mode } = useMode();
+
   return (
-    <section className={`${classes["home"]} ${classes["home--light"]}`}>
+    <section className={`${classes.home} ${classes[`home--${mode}`]}`}>
       {/* Header with Logo */}
-      <header className={classes["home__header"]}>
-        <div className={classes["home__header__content"]}>
-          <img
-            src={logo}
-            alt="Footsy"
-            className={classes["home__header__logo"]}
-          />
+      <header className={classes.home__header}>
+        <div className={classes.home__header__content}>
+          <img src={logo} alt="Footsy" className={classes.home__header__logo} />
           <p
-            className={`${classes["home__header__tagline"]} ${classes["home__header__tagline--light"]}`}
+            className={`${classes.home__header__tagline} ${
+              classes[`home__header__tagline--${mode}`]
+            }`}
           >
             Green It Yourself
           </p>
@@ -24,12 +28,12 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <div className={classes["home__content"]}>
-        <div className={classes["home__actions"]}>
-          <Link to="/signup" className={classes["home__actions__link"]}>
+      <div className={classes.home__content}>
+        <div className={classes.home__actions}>
+          <Link to="/signup" className={classes.home__actions__link}>
             <MainButton
               type="button"
-              mode="light"
+              mode={mode}
               content="Commencer"
               accent={false}
               className={classes["home__button-custom"]}
