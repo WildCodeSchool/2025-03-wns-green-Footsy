@@ -5,13 +5,14 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { buildSchema } from "type-graphql";
 
 import dataSource from "./config/db";
-import UserResolver from "./resolvers/UserResolver";
 import ActivityResolver from "./resolvers/ActivityResolver";
-import TypeResolver from "./resolvers/TypeResolver";
-import CategoryResolver from "./resolvers/CategoryResolver";
 import AvatarResolver from "./resolvers/AvatarResolver";
+import CategoryResolver from "./resolvers/CategoryResolver";
 import FriendResolver from "./resolvers/FriendResolver";
 import InteractionResolver from "./resolvers/InteractionResolver";
+import TypeResolver from "./resolvers/TypeResolver";
+import UserResolver from "./resolvers/UserResolver";
+
 import { seedAvatars } from "./seeders/Seeder";
 
 const port = parseInt(process.env.PORT || "4000", 10);

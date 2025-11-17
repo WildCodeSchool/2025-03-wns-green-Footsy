@@ -66,7 +66,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - ./database:/var/lib/postgresql
 
   nginx:
     image: nginx:1.21.3

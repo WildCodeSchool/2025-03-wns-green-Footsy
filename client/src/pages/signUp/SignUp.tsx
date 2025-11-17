@@ -1,39 +1,39 @@
 import { Link } from "react-router-dom";
 
-import Header from "../../layout/header/Header";
+import FormHeader from "../../layout/form-header/FormHeader";
+import SignUpForm from "../../components/signUpForm/SignUpForm";
 
 import { useMode } from "../../context/modeContext";
 
-import classes from "./SignUp.module.scss";
+import AuthLayout from "../../layout/auth-layout/AuthLayout";
+import Footer from "../../layout/footer/Footer";
 import FormLayout from "../../layout/form-layout/FormLayout";
-import FormContent from "../../layout/form-content/FormContent";
-import SignUpForm from "../../components/signUpForm/SignUpForm";
+
+import classes from "./SignUp.module.scss";
 
 export default function SignUp() {
   const { mode } = useMode();
 
   return (
     <FormLayout>
-      {<Header title="Inscription" />}
-      <FormContent>
-        <h2
-          className={`${classes["sign-up__title"]} ${
-            classes[`sign-up__title--${mode}`]
-          }`}
-        >
-          Inscription
-        </h2>
-        <SignUpForm />
-
-        <Link
-          to="/login"
-          className={`${classes["sign-up__link"]} ${
-            classes[`sign-up__link--${mode}`]
-          }`}
-        >
-          Déjà un compte ?
-        </Link>
-      </FormContent>
+      {<FormHeader title="Inscription" />}
+      <AuthLayout showImageOnMobile={true}>
+        <div className={classes["sign-up__container"]}>
+            <h2
+              className={`${classes["sign-up__title"]} ${classes[`sign-up__title--${mode}`]}`}
+            >
+              Inscription
+            </h2>
+            <SignUpForm />
+            <Link
+              to="/login"
+              className={`${classes["sign-up__link"]} ${classes[`sign-up__link--${mode}`]}`}
+            >
+              Déjà un compte ?
+            </Link>
+        </div>
+      </AuthLayout>
+      <Footer />
     </FormLayout>
   );
 }

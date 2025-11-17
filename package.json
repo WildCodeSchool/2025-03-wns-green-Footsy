@@ -14,6 +14,7 @@
     "install:root": "npm install",
     "install:client": "cd client && npm install",
     "install:server": "cd server && npm install",
-    "i": "npm run install:root && npm run install:client && npm run install:server"
+    "i": "npm run install:root && npm run install:client && npm run install:server",
+    "docker": "docker compose -f compose.dev.yaml up -d"
   }
 }

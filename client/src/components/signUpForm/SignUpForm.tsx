@@ -16,8 +16,8 @@ import type { Avatar } from "../../types/Avatar.types";
 import AvatarSelector from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
 import { Loader } from "../loader/Loader";
-import MainButton from "../mainButton/MainButton";
 
+import MainButton from "../mainButton/MainButton";
 import classes from "./SignUpForm.module.scss";
 
 export default function SignUpForm() {
@@ -124,7 +124,7 @@ export default function SignUpForm() {
       <div className={classes["sign-up-form__submit"]}>
         <MainButton
           type="submit"
-          content={loading ? <Loader /> : "INSCRIS-TOI"}
+          content={loading ? <Loader /> : "Inscris-toi"}
           mode={mode}
         />
       </div>
