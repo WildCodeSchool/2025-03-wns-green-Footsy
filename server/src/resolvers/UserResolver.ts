@@ -2,6 +2,7 @@ import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import {
   Arg,
+  Ctx,
   Field,
   InputType,
   Int,
@@ -86,6 +87,33 @@ export class LoginResponse {
   user: User;
 }
 
+@InputType()
+export class UpdatePersonalInfoInput {
+  @Field(() => String)
+  first_name: string;
+
+  @Field(() => String)
+  last_name: string;
+
+  @Field(() => String)
+  birthdate: String;
+}
+
+@InputType()
+export class UpdateAvatarInput {
+  @Field(() => Int)
+  avatar_id: number;
+}
+
+@InputType()
+export class ChangePasswordInput {
+  @Field(() => String)
+  current_password: string;
+
+  @Field(() => String)
+  new_password: string;
+}
+
 @Resolver(User)
 export default class UserResolver {
   private userService: UserServiceInterface;
@@ -103,6 +131,24 @@ export default class UserResolver {
   async getUserById(@Arg("id", () => Int) id: number) {
     const user = await User.findOneByOrFail({ id });
     return user;
+  }
+
+  @Query(() => User, { nullable: true })
+  async currentUser(@Ctx() context: { token: string | null }): Promise<User | null> {
+    try {
+      if (!context.token || !process.env.JWT_SECRET) {
+        return null;
+      }
+
+      const decoded = jwt.verify(context.token, process.env.JWT_SECRET) as { id: number };
+      
+      return await User.findOne({
+        where: { id: decoded.id },
+        relations: ["avatar"]
+      });
+    } catch {
+      return null;
+    }
   }
 
   @Mutation(() => String)
@@ -148,6 +194,66 @@ export default class UserResolver {
     } catch (err) {
       console.error(err);
       throw new Error("Login error");
+    }
+  }
+
+  @Mutation(() => User)
+  async updatePersonalInfo(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("data", () => UpdatePersonalInfoInput) data: UpdatePersonalInfoInput
+  ): Promise<User> {
+    try {
+      return await this.userService.updatePersonalInfo(userId, data);
+    } catch (error) {
+      console.error("Error updating personal info:", error);
+      throw new Error("Failed to update personal information");
+    }
+  }
+
+
+  @Mutation(() => User)
+  async updateAvatar(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("data", () => UpdateAvatarInput) data: UpdateAvatarInput
+  ): Promise<User> {
+    try {
+      const updatedUser = await this.userService.updateAvatar(userId, data.avatar_id);
+
+      if (!updatedUser) {
+        throw new Error("Failed to update avatar");
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw new Error("Failed to update avatar");
+    }
+  }
+
+
+  @Mutation(() => Boolean)
+  async changePassword(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("data", () => ChangePasswordInput) data: ChangePasswordInput
+  ): Promise<boolean> {
+    try {
+      await this.userService.changePassword(userId, data.current_password, data.new_password);
+      return true;
+    } catch (error) {
+      console.error("Error changing password:", error);
+      if (error instanceof Error && error.message.includes("Current password is incorrect")) {
+        throw new Error("Current password is incorrect");
+      }
+      throw new Error("Failed to change password");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deleteAccount(@Arg("userId", () => Int) userId: number): Promise<boolean> {
+    try {
+      return await this.userService.deleteAccount(userId);
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      throw new Error("Failed to delete account");
     }
   }
 }

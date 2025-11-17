@@ -16,6 +16,7 @@ import FormHeader from "../../layout/form-header/FormHeader";
 import { parseLoginResponse, saveToken } from "../../services/authService";
 
 import classes from "./Login.module.scss";
+import MainButton from "../../components/mainButton/MainButton";
 
 type LoginResponse = {
   login: string;

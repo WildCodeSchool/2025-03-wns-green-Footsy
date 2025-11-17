@@ -7,7 +7,10 @@ import { createMockUser, createMockAvatar } from "../../__tests__/helpers";
 import type User from "../../entities/User";
 import type { UserServiceInterface } from "../../services/UserService";
 
-jest.mock("jsonwebtoken");
+jest.mock("jsonwebtoken", () => ({
+  sign: jest.fn(),
+  verify: jest.fn(),
+}));
 
 jest.mock("argon2", () => ({
   hash: jest.fn(),
@@ -18,6 +21,10 @@ const mockUserService: jest.Mocked<UserServiceInterface> = {
   create: jest.fn(),
   findByEmail: jest.fn(),
   authenticateUser: jest.fn(),
+  updatePersonalInfo: jest.fn(),
+  updateAvatar: jest.fn(),
+  changePassword: jest.fn(),
+  deleteAccount: jest.fn(), 
 };
 
 describe("UserResolver", () => {
@@ -161,7 +168,6 @@ describe("UserResolver", () => {
 
     it("should create a new user and return profile with token", async () => {
       // Arrange
-
       const mockToken = "mock-signup-token";
       const createdUser = createMockUser({
         id: 2,
@@ -319,4 +325,240 @@ describe("UserResolver", () => {
       "Email already in use"
     );
   });
+
+  describe("currentUser", () => {
+    it("should return user information when valid token is provided", async () => {
+      // Arrange
+      const mockToken = "valid-token";
+      const decodedToken = { id: 1 };
+      const context = { token: mockToken };
+      
+      // Mock jwt.verify to return decoded token
+      (jwt.verify as jest.Mock).mockReturnValue(decodedToken);
+      
+      // Mock User.findOne using jest.spyOn
+      const User = await import("../../entities/User");
+      const findOneSpy = jest.spyOn(User.default, "findOne").mockResolvedValue(mockUser);
+      
+      // Act
+      const result = await userResolver.currentUser(context);
+      
+      // Assert
+      expect(jwt.verify).toHaveBeenCalledWith(
+        mockToken,
+        process.env.JWT_SECRET
+      );
+      expect(findOneSpy).toHaveBeenCalledWith({
+        where: { id: decodedToken.id },
+        relations: ["avatar"]
+      });
+      expect(result).toEqual(mockUser);
+      
+      // Cleanup
+      findOneSpy.mockRestore();
+    });
+  
+    it("should return null when no token is provided", async () => {
+      // Arrange
+      const context = { token: null };
+      
+      // Act
+      const result = await userResolver.currentUser(context);
+      
+      // Assert
+      expect(result).toBeNull();
+    });
+  
+    it("should return null when token is invalid", async () => {
+      // Arrange
+      const context = { token: "invalid-token" };
+      (jwt.verify as jest.Mock).mockImplementation(() => {
+        throw new Error("Invalid token");
+      });
+      
+      // Act
+      const result = await userResolver.currentUser(context);
+      
+      // Assert
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("updatePersonalInfo", () => {
+    it("should update user personal information successfully", async () => {
+      // Arrange
+      const userId = 1;
+      const updateData = {
+        first_name: "Updated",
+        last_name: "Name",
+        birthdate: "1995-01-01T00:00:00.000Z"
+      };
+      const updatedUser = createMockUser({
+        id: userId,
+        first_name: updateData.first_name,
+        last_name: updateData.last_name
+      });
+      
+      mockUserService.updatePersonalInfo.mockResolvedValue(updatedUser);
+      
+      // Act
+      const result = await userResolver.updatePersonalInfo(userId, updateData);
+      
+      // Assert
+      expect(mockUserService.updatePersonalInfo).toHaveBeenCalledWith(
+        userId,
+        updateData
+      );
+      expect(result).toEqual(updatedUser);
+    });
+  
+    it("should throw error when update fails", async () => {
+      // Arrange
+      const userId = 1;
+      const updateData = {
+        first_name: "Updated",
+        last_name: "Name",
+        birthdate: "1995-01-01T00:00:00.000Z"
+      };
+      
+      mockUserService.updatePersonalInfo.mockRejectedValue(
+        new Error("User not found")
+      );
+      
+      // Act & Assert
+      await expect(
+        userResolver.updatePersonalInfo(userId, updateData)
+      ).rejects.toThrow("Failed to update personal information");
+    });
+  });
+  
+  describe("updateAvatar", () => {
+    it("should update user avatar successfully", async () => {
+      // Arrange
+      const userId = 1;
+      const avatarData = { avatar_id: 2 };
+      const newAvatar = createMockAvatar({ id: 2, title: "New Avatar" });
+      const updatedUser = createMockUser({ id: userId, avatar: newAvatar });
+      
+      mockUserService.updateAvatar.mockResolvedValue(updatedUser);
+      
+      // Act
+      const result = await userResolver.updateAvatar(userId, avatarData);
+      
+      // Assert
+      expect(mockUserService.updateAvatar).toHaveBeenCalledWith(
+        userId,
+        avatarData.avatar_id
+      );
+      expect(result).toEqual(updatedUser);
+      expect(result.avatar.id).toBe(2);
+    });
+
+    it("should throw error when update fails", async () => {
+      // Arrange
+      const userId = 1;
+      const avatarData = { avatar_id: 999 };
+      
+      mockUserService.updateAvatar.mockRejectedValue(
+        new Error("Avatar not found")
+      );
+      
+      // Act & Assert
+      await expect(
+        userResolver.updateAvatar(userId, avatarData)
+      ).rejects.toThrow("Failed to update avatar");
+    });
+  });
+
+  describe("changePassword", () => {
+    it("should change password successfully with correct current password", async () => {
+      // Arrange
+      const userId = 1;
+      const passwordData = {
+        current_password: "oldPassword123",
+        new_password: "newPassword456"
+      };
+      const updatedUser = createMockUser({ id: userId });
+      
+      mockUserService.changePassword.mockResolvedValue(updatedUser);
+      
+      // Act
+      const result = await userResolver.changePassword(userId, passwordData);
+      
+      // Assert
+      expect(mockUserService.changePassword).toHaveBeenCalledWith(
+        userId,
+        passwordData.current_password,
+        passwordData.new_password
+      );
+      expect(result).toBe(true);
+    });
+
+    it("should throw error when current password is incorrect", async () => {
+      // Arrange
+      const userId = 1;
+      const passwordData = {
+        current_password: "wrongPassword123",
+        new_password: "newPassword456"
+      };
+      
+      mockUserService.changePassword.mockRejectedValue(
+        new Error("Current password is incorrect")
+      );
+      
+      // Act & Assert
+      await expect(
+        userResolver.changePassword(userId, passwordData)
+      ).rejects.toThrow("Current password is incorrect");
+    });
+
+    it("should throw error when password change fails", async () => {
+      // Arrange
+      const userId = 1;
+      const passwordData = {
+        current_password: "oldPassword123",
+        new_password: "newPassword456"
+      };
+      
+      mockUserService.changePassword.mockRejectedValue(
+        new Error("User not found")
+      );
+      
+      // Act & Assert
+      await expect(
+        userResolver.changePassword(userId, passwordData)
+      ).rejects.toThrow("Failed to change password");
+    });
+  });
+
+  describe("deleteAccount", () => {
+    it("should delete user account successfully", async () => {
+      // Arrange
+      const userId = 1;
+      mockUserService.deleteAccount.mockResolvedValue(true);
+      
+      // Act
+      const result = await userResolver.deleteAccount(userId);
+      
+      // Assert
+      expect(mockUserService.deleteAccount).toHaveBeenCalledWith(userId);
+      expect(result).toBe(true);
+    });
+
+    it("should throw error when delete fails", async () => {
+      // Arrange
+      const userId = 1;
+      mockUserService.deleteAccount.mockRejectedValue(
+        new Error("User not found")
+      );
+      
+      // Act & Assert
+      await expect(
+        userResolver.deleteAccount(userId)
+      ).rejects.toThrow("Failed to delete account");
+    });
+  });
+  
 });
+
+
