@@ -210,17 +210,25 @@ export default class UserResolver {
     }
   }
 
+
   @Mutation(() => User)
   async updateAvatar(
     @Arg("userId", () => Int) userId: number,
     @Arg("data", () => UpdateAvatarInput) data: UpdateAvatarInput
   ): Promise<User> {
     try {
-      return await this.userService.updateAvatar(userId, data.avatar_id);
-    } catch {
-      return null
+      const updatedUser = await this.userService.updateAvatar(userId, data.avatar_id);
+
+      if (!updatedUser) {
+        throw new Error("Failed to update avatar");
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw new Error("Failed to update avatar");
     }
   }
+
 
   @Mutation(() => Boolean)
   async changePassword(
