@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import MainButton from "../../components/MainButton/MainButton";
+import MainButton from "../../components/mainButton/MainButton";
 import classes from "./Home.module.scss";
 
 import logo from "../../assets/img/logos_icons/logo.png";

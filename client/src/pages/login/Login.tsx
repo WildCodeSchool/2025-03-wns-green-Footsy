@@ -12,7 +12,7 @@ import FormContent from "../../layout/form-content/FormContent";
 import FormLayout from "../../layout/form-layout/FormLayout";
 import { saveToken, parseLoginResponse } from "../../services/authService";
 import classes from "./Login.module.scss";
-import MainButton from "../../components/MainButton/MainButton";
+import MainButton from "../../components/mainButton/MainButton";
 
 type LoginResponse = {
   login: string;

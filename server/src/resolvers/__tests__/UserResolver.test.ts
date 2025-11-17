@@ -326,7 +326,7 @@ describe("UserResolver", () => {
     );
   });
 
-  describe("me", () => {
+  describe("currentUser", () => {
     it("should return user information when valid token is provided", async () => {
       // Arrange
       const mockToken = "valid-token";
@@ -341,7 +341,7 @@ describe("UserResolver", () => {
       const findOneSpy = jest.spyOn(User.default, "findOne").mockResolvedValue(mockUser);
       
       // Act
-      const result = await userResolver.me(context);
+      const result = await userResolver.currentUser(context);
       
       // Assert
       expect(jwt.verify).toHaveBeenCalledWith(
@@ -363,7 +363,7 @@ describe("UserResolver", () => {
       const context = { token: null };
       
       // Act
-      const result = await userResolver.me(context);
+      const result = await userResolver.currentUser(context);
       
       // Assert
       expect(result).toBeNull();
@@ -377,7 +377,7 @@ describe("UserResolver", () => {
       });
       
       // Act
-      const result = await userResolver.me(context);
+      const result = await userResolver.currentUser(context);
       
       // Assert
       expect(result).toBeNull();

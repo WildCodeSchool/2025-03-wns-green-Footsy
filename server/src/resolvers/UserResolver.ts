@@ -134,7 +134,7 @@ export default class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async me(@Ctx() context: { token: string | null }): Promise<User | null> {
+  async currentUser(@Ctx() context: { token: string | null }): Promise<User | null> {
     try {
       if (!context.token || !process.env.JWT_SECRET) {
         return null;
@@ -146,7 +146,7 @@ export default class UserResolver {
         where: { id: decoded.id },
         relations: ["avatar"]
       });
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -217,9 +217,8 @@ export default class UserResolver {
   ): Promise<User> {
     try {
       return await this.userService.updateAvatar(userId, data.avatar_id);
-    } catch (error) {
-      console.error("Error updating avatar:", error);
-      throw new Error("Failed to update avatar");
+    } catch {
+      return null
     }
   }
 
