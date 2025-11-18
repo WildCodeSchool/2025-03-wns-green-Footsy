@@ -21,3 +21,33 @@ export const LOGIN = gql`
     login(data: $data)
   }
 `;
+
+export const GET_ACTIVITY_TYPES = gql`
+  query GetActivityTypes {
+    getActivityTypes {
+      id
+      name
+    }
+  }
+`;
+
+export const CREATE_ACTIVITY = gql`
+  mutation CreateActivity($data: ActivityInput!) {
+    createActivity(data: $data) {
+      id
+      title
+      date
+      type {
+        id
+        name
+      }
+      quantity
+      co2_equivalent
+      user {
+        id
+        first_name
+        last_name
+      }
+    }
+  }
+`;

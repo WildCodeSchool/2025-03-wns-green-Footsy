@@ -17,6 +17,7 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
+import Activity from "./pages/activity/Activity";
 
 const router = createBrowserRouter([
   {
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
       },
       {
         path: "add-activity",
-        element: <h1>Activity Page - To be implemented</h1>,
+        element: <Activity />, 
       },
       {
         path: "community",

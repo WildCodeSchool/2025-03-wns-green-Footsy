@@ -10,9 +10,10 @@ type FormFieldProps = {
   id: string;
   name: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   placeholder?: string;
   required?: boolean;
+  options?: Array<{ id: number; name: string }>;
 };
 
 export default function FormField({
@@ -24,6 +25,7 @@ export default function FormField({
   onChange,
   placeholder,
   required = true,
+  options,
 }: FormFieldProps) {
   const { mode } = useMode();
 
@@ -31,27 +33,44 @@ export default function FormField({
     <div className={classes["form-field"]}>
       <label
         htmlFor={id}
-        className={`${classes["form-field__label"]} ${
-          classes[`form-field__label--${mode}`]
-        }`}
+        className={`${classes["form-field__label"]} ${classes[`form-field__label--${mode}`]
+          }`}
       >
         {label}
         {required && (
           <span className={classes["form-field__label--required"]}> *</span>
         )}
       </label>
-      <input
-        type={type}
-        id={id}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className={`${classes["form-field__input"]} ${
-          classes[`form-field__input--${mode}`]
-        }`}
-      />
+      {type === 'select' ? (
+        <select
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className={`${classes["form-field__input"]} ${classes[`form-field__input--${mode}`]
+            }`}
+        >
+          <option value="">{placeholder}</option>
+          {options?.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.name}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={required}
+          className={`${classes["form-field__input"]} ${classes[`form-field__input--${mode}`]
+            }`}
+        />
+      )}
     </div>
   );
 }
