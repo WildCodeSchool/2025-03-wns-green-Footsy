@@ -1,13 +1,17 @@
 import * as argon2 from "argon2";
 import User from "../entities/User";
+import Avatar from "../entities/Avatar";
 
-
-import type { NewUserInput } from "../resolvers/UserResolver";
+import type { NewUserInput, UpdatePersonalInfoInput } from "../resolvers/UserResolver";
 
 export interface UserServiceInterface {
   create(data: NewUserInput): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
   authenticateUser(email: string, password: string): Promise<User>;
+  updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User>;
+  updateAvatar(userId: number, avatarId: number): Promise<User>;
+  changePassword(userId: number, currentPassword: string, newPassword: string): Promise<User>;
+  deleteAccount(userId: number): Promise<boolean>;
 }
 
 export default class UserService implements UserServiceInterface {
@@ -35,6 +39,45 @@ export default class UserService implements UserServiceInterface {
     }
   
     return user;
+  }
+
+  async updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User> {
+    const user = await User.findOneByOrFail({ id: userId });
+    
+    user.first_name = data.first_name;
+    user.last_name = data.last_name;
+    user.birthdate = new Date(data.birthdate as string);
+    
+    return user.save();
+  }
+
+  async updateAvatar(userId: number, avatarId: number): Promise<User> {
+    const user = await User.findOneByOrFail({ id: userId });
+    const avatar = await Avatar.findOneByOrFail({ id: avatarId });
+    
+    user.avatar = avatar;
+    return user.save();
+  }
+
+  async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<User> {
+    const user = await User.findOneByOrFail({ id: userId });
+    
+    const isValidCurrentPassword = await argon2.verify(user.hashed_password, currentPassword);
+    if (!isValidCurrentPassword) {
+      throw new Error("Current password is incorrect");
+    }
+    
+    const hashedNewPassword = await argon2.hash(newPassword);
+    
+    user.hashed_password = hashedNewPassword;
+    
+    return user.save();
+  }
+
+  async deleteAccount(userId: number): Promise<boolean> {
+    const user = await User.findOneByOrFail({ id: userId });
+    await User.remove(user);
+    return true;
   }
   
 }

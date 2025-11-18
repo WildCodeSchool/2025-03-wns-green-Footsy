@@ -41,6 +41,10 @@ async function startServer() {
   const apolloServer = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(apolloServer, {
     listen: { port },
+    context: async ({ req }) => {
+      const token = req.headers.authorization?.replace('Bearer ', '') || null;
+      return { token };
+    },
   });
   console.info(`Server started on ${url}`);
   seedAvatars();

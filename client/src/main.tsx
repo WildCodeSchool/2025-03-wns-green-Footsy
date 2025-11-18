@@ -17,12 +17,14 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
+import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 import Activity from "./pages/activity/Activity";
 
 const router = createBrowserRouter([
   {
     element: <App />,
     children: [
+      // Public routes
       {
         path: "/",
         element: <Home />,
@@ -34,22 +36,6 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "history",
-        element: <h1>History Page - To be implemented</h1>,
-      },
-      {
-        path: "add-activity",
-        element: <Activity />, 
-      },
-      {
-        path: "community",
-        element: <h1>Community Page - To be implemented</h1>,
       },
       {
         path: "information",
@@ -66,6 +52,18 @@ const router = createBrowserRouter([
       {
         path: "charte",
         element: <TestCharte />,
+      },
+
+
+      // Protected Routes
+      {
+        element: <ProtectedRoutes />,
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "history", element: <h1>History Page - To be implemented</h1> },
+          { path: "add-activity", element: < Activity /> },
+          { path: "community", element: <h1>Community Page - To be implemented</h1> },
+        ],
       },
     ],
   },
