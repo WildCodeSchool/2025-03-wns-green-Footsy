@@ -23,6 +23,7 @@ const router = createBrowserRouter([
   {
     element: <App />,
     children: [
+      // Public routes
       {
         path: "/",
         element: <Home />,
@@ -34,38 +35,6 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
-      },
-      {
-        path: "dashboard",
-        element: (
-          <ProtectedRoutes>
-            <Dashboard />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "history",
-        element: (
-          <ProtectedRoutes>
-            <h1>History Page - To be implemented</h1>,
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "add-activity",
-        element: (
-          <ProtectedRoutes>
-            <h1>Activity Page - To be implemented</h1>,
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "community",
-        element: (
-          <ProtectedRoutes>
-            element: <h1>Community Page - To be implemented</h1>,
-          </ProtectedRoutes>
-        ),
       },
       {
         path: "information",
@@ -83,6 +52,17 @@ const router = createBrowserRouter([
         path: "charte",
         element: <TestCharte />,
       },
+
+
+      // Protected Routes
+      { element: <ProtectedRoutes />,
+        children: [
+         { path: "dashboard", element: <Dashboard /> },
+          { path: "history", element: <h1>History Page - To be implemented</h1> },
+          { path: "add-activity", element: <h1>Activity Page - To be implemented</h1> },
+          { path: "community", element: <h1>Community Page - To be implemented</h1> },
+        ],
+      },   
     ],
   },
 ]);

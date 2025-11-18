@@ -1,11 +1,7 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { toast } from "react-toastify";
 
-interface ProtectedRoutesProps {
-    children: React.ReactNode;
-}
-
-export default function ProtectedRoutes ({children} : ProtectedRoutesProps) {
+export default function ProtectedRoutes () {
     const token = localStorage.getItem('token');
 
     if(!token) {
@@ -13,5 +9,5 @@ export default function ProtectedRoutes ({children} : ProtectedRoutesProps) {
         return <Navigate to="/login" replace/>
     }
 
-    return <>{children}</>
+    return <Outlet />
 }
