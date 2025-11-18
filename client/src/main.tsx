@@ -17,6 +17,7 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
+import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 
 const router = createBrowserRouter([
   {
@@ -36,19 +37,35 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoutes>
+            <Dashboard />
+          </ProtectedRoutes>
+        ),
       },
       {
         path: "history",
-        element: <h1>History Page - To be implemented</h1>,
+        element: (
+          <ProtectedRoutes>
+            <h1>History Page - To be implemented</h1>,
+          </ProtectedRoutes>
+        ),
       },
       {
         path: "add-activity",
-        element: <h1>Activity Page - To be implemented</h1>,
+        element: (
+          <ProtectedRoutes>
+            <h1>Activity Page - To be implemented</h1>,
+          </ProtectedRoutes>
+        ),
       },
       {
         path: "community",
-        element: <h1>Community Page - To be implemented</h1>,
+        element: (
+          <ProtectedRoutes>
+            element: <h1>Community Page - To be implemented</h1>,
+          </ProtectedRoutes>
+        ),
       },
       {
         path: "information",
