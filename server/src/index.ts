@@ -39,6 +39,8 @@ async function startServer() {
     ],
   });
   const apolloServer = new ApolloServer({ schema });
+  const stamp = new Date().toISOString();
+  console.info(`[dev-watch] Reload backend at ${stamp}`);
   const { url } = await startStandaloneServer(apolloServer, {
     listen: { port },
   });
