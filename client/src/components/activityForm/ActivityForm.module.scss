@@ -21,15 +21,11 @@
     }
   }
 
-  &__error {
-    p {
-    color: red;
-    font-size: 14px;
-    margin: 10px 0;
-    }
-  }
-
   &__submit {
     margin-top: 1rem;
   }
+}
+
+p {
+  color: red;
 }
