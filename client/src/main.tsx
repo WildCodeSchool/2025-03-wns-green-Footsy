@@ -10,6 +10,7 @@ import App from "./App";
 import ModeProvider from "./context/modeContext";
 
 import Dashboard from "./pages/dashboard/Dashboard";
+import History from "./pages/history/History";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import SignUp from "./pages/signUp/SignUp";
@@ -17,6 +18,7 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
+import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 
 const router = createBrowserRouter([
   {
@@ -35,22 +37,6 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "history",
-        element: <h1>History Page - To be implemented</h1>,
-      },
-      {
-        path: "add-activity",
-        element: <h1>Activity Page - To be implemented</h1>,
-      },
-      {
-        path: "community",
-        element: <h1>Community Page - To be implemented</h1>,
-      },
-      {
         path: "information",
         element: <h1>Informations Page - To be implemented</h1>,
       },
@@ -65,6 +51,23 @@ const router = createBrowserRouter([
       {
         path: "charte",
         element: <TestCharte />,
+      },
+
+      // Protected Routes
+      {
+        element: <ProtectedRoutes />,
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "history", element: <History /> },
+          {
+            path: "add-activity",
+            element: <h1>Activity Page - To be implemented</h1>,
+          },
+          {
+            path: "community",
+            element: <h1>Community Page - To be implemented</h1>,
+          },
+        ],
       },
     ],
   },
