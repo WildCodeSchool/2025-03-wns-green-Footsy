@@ -28,7 +28,7 @@ export default class Activity extends BaseEntity {
   @Column("float", { nullable: true })
   quantity: number;
 
-  @Field(() => Date)
+  @Field(() => String)
   @Column("date")
   date: Date;
 
