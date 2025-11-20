@@ -11,6 +11,7 @@ import { Loader } from '../loader/Loader';
 import { CREATE_ACTIVITY, GET_ACTIVITY_TYPES } from '../../graphql/operations';
 import type { GetActivityTypesData } from '../../types/ActivityType';
 import { mockCarbonActivities } from '../../__tests__/mockCarbonActivities';
+import { useCurrentUser } from '../../context/userContext';
 
 
 // Flag pour activer/désactiver le mock
@@ -39,12 +40,13 @@ export default function ActivityForm() {
         date: '',
         type_id: 0,
         quantity: 0,
-        co2_equivalent: 0
+        co2_equivalent: 0,
+        user_id: 0,
     });
 
     const [createActivity, { loading: submitLoading, error }] = useMutation(CREATE_ACTIVITY);
 
-    const user = userCurrentUser();
+    const {user} = useCurrentUser();
 
     return (
         <form

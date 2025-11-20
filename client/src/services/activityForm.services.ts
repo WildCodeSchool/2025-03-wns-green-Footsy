@@ -1,11 +1,12 @@
 import { toast } from "react-toastify";
+import type { User } from "../types/User.types"
 export type ActivityFormData = {
     title: string;
     date: string;
-    type_id: number;  // On utilise l'ID du type au lieu de la chaîne
+    type_id: number;  
     quantity: number;
     co2_equivalent: number;
-    user_id?: number;  // Optionnel pour l'instant, à rendre obligatoire plus tard avec l'auth
+    user_id: number;  
 }
 
 export const activityFormFields = [
@@ -70,13 +71,16 @@ export const handleActivityChange = (
 export const handleActivitySubmit = async (
     event: React.FormEvent<HTMLFormElement>,
     formData: ActivityFormData,
-    user: User,
+    user: User | undefined,
     // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
     createActivity: any
 ) => {
     event.preventDefault();
 
-    console.log('📋 FormData reçu:', formData);
+   if (!user) {
+    toast.error("Vous devez être connecté pour ajouter une activité.");
+    return;
+   }
 
    if (!formData.title || !formData.date || !formData.type_id || formData.type_id === 0) {
     console.log('❌ Champs manquants ou invalides:', {
@@ -98,15 +102,12 @@ export const handleActivitySubmit = async (
         return;
     }
 
-    console.log('✅ Validation OK, envoi de la mutation...');
-    console.log('📤 Variables envoyées:', { data: formData });
-
     try {
         await createActivity({
             variables: {
                 data: {
                     ...formData,
-                    date: new Date(formData.date).toISOString(),
+                    user_id: user.id
                 }
             }
         });

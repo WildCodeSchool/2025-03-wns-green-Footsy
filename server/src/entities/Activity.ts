@@ -30,7 +30,7 @@ export default class Activity extends BaseEntity {
 
   @Field(() => String)
   @Column("date")
-  date: Date;
+  date: string;
 
   @Field(() => Float)
   @Column("float")
