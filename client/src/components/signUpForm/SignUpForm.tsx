@@ -3,7 +3,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useMode } from "../../context/modeContext";
-import { LOGIN, SIGN_UP } from "../../graphql/operations";
+import {
+  LOGIN,
+  type LoginMutationData,
+  SIGN_UP,
+} from "../../graphql/operations";
+import { parseLoginResponse, saveToken } from "../../services/authService";
 import {
   type FormErrors,
   formFields,
@@ -16,8 +21,8 @@ import type { Avatar } from "../../types/Avatar.types";
 import AvatarSelector from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
 import { Loader } from "../loader/Loader";
-
 import MainButton from "../mainButton/MainButton";
+
 import classes from "./SignUpForm.module.scss";
 
 export default function SignUpForm() {
@@ -33,7 +38,7 @@ export default function SignUpForm() {
   });
 
   const [signUpMutation, { loading, error }] = useMutation(SIGN_UP);
-  const [loginMutation] = useMutation(LOGIN);
+  const [loginMutation] = useMutation<LoginMutationData>(LOGIN);
 
   const handleAvatarSelect = (avatar: Avatar) => {
     setFormData((prev) => ({
@@ -42,28 +47,33 @@ export default function SignUpForm() {
     }));
   };
 
-  return (
-    <form
-      onSubmit={async (event) => {
-        event.preventDefault();
-        const result = await handleSubmit(
-          event,
-          formData,
-          errors,
-          signUpMutation
-        );
+  const submitAndLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await handleSubmit(e, formData, errors, signUpMutation);
 
-        if (result === "success") {
-          await loginMutation({
-            variables: {
-              data: { email: formData.email, password: formData.password },
-            },
-          });
+    if (result === "success") {
+      try {
+        const loginResult = await loginMutation({
+          variables: {
+            data: { email: formData.email, password: formData.password },
+          },
+        });
+
+        if (loginResult.data) {
+          const { token } = parseLoginResponse(loginResult.data.login);
+          saveToken(token);
           navigate("/dashboard");
         }
-      }}
-      className={classes["sign-up-form"]}
-    >
+      } catch {
+        console.error(
+          "Erreur lors de la connexion après inscription. Essayez de vous reconnecter"
+        );
+      }
+    }
+  };
+
+  return (
+    <form onSubmit={submitAndLogin} className={classes["sign-up-form"]}>
       <div className={classes["sign-up-form__header"]}>
         <div className={classes["sign-up-form__avatar"]}>
           <AvatarSelector
