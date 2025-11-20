@@ -21,3 +21,20 @@ export const LOGIN = gql`
     login(data: $data)
   }
 `;
+
+export const GET_CURRENT_USER = gql`
+  query GetCurrentUser {
+    currentUser {
+      id
+      first_name
+      last_name
+      email
+      birthdate
+      avatar {
+        id
+        title
+        image
+      }
+    }
+  }
+`;

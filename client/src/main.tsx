@@ -1,4 +1,4 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache, ApolloLink } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -18,6 +18,9 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 import "./reset.css";
 import "./index.css";
 import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
+import { SetContextLink } from "@apollo/client/link/context";
+import { getToken } from "./services/authService";
+import UserProvider from "./context/userContext";
 
 const router = createBrowserRouter([
   {
@@ -55,14 +58,15 @@ const router = createBrowserRouter([
 
 
       // Protected Routes
-      { element: <ProtectedRoutes />,
+      {
+        element: <ProtectedRoutes />,
         children: [
-         { path: "dashboard", element: <Dashboard /> },
+          { path: "dashboard", element: <Dashboard /> },
           { path: "history", element: <h1>History Page - To be implemented</h1> },
           { path: "add-activity", element: <h1>Activity Page - To be implemented</h1> },
           { path: "community", element: <h1>Community Page - To be implemented</h1> },
         ],
-      },   
+      },
     ],
   },
 ]);
@@ -74,16 +78,31 @@ if (rootElement == null) {
 
 const graphqlUri = import.meta.env.VITE_URL_GRAPHQL || "/graphql";
 
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri: graphqlUri,
-    fetchOptions: {
-      mode: "cors",
-    },
+const httpLink = new HttpLink({
+  uri: graphqlUri,
+  fetchOptions: {
+    mode: "cors",
+  },
+  headers: {
+    Accept: "application/json",
+  },
+});
+
+const authLink = new SetContextLink((prevContext) => {
+  const token = getToken();
+  return {
+    ...prevContext,
     headers: {
-      Accept: "application/json",
+      ...prevContext.headers,
+      authorization: token ? `Bearer ${token}` : "",
     },
-  }),
+  };
+});
+
+const link = ApolloLink.from([authLink, httpLink]);
+
+const client = new ApolloClient({
+  link,
   cache: new InMemoryCache(),
 });
 
@@ -91,16 +110,18 @@ createRoot(rootElement).render(
   <StrictMode>
     <ModeProvider>
       <ApolloProvider client={client}>
-        <RouterProvider router={router} />
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          limit={5}
-          closeOnClick
-          pauseOnHover
-          theme="colored"
-          transition={Flip}
-        />
+        <UserProvider>
+          <RouterProvider router={router} />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            limit={5}
+            closeOnClick
+            pauseOnHover
+            theme="colored"
+            transition={Flip}
+          />
+        </UserProvider>
       </ApolloProvider>
     </ModeProvider>
   </StrictMode>

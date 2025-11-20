@@ -33,3 +33,18 @@ export const getToken = () => {
 export const removeToken = () => {
   localStorage.removeItem("token");
 };
+
+export const getUserFromToken = () => {
+  const token = getToken();
+  if (!token) return null;
+
+  try {
+    const payload = token.split(".")[1];
+    const decodedPayload = atob(payload);
+    const user = JSON.parse(decodedPayload);
+    return user;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};
