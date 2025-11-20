@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { HistoryCard } from "../../components/historyCard/HistoryCard";
@@ -8,6 +8,8 @@ import {
   type SortOption,
 } from "../../components/historyFilters/HistoryFilters";
 import { Loader } from "../../components/loader/Loader";
+
+import { useCurrentUser } from "../../context/userContext";
 
 import {
   GET_ACTIVITIES_BY_USER_ID,
@@ -27,23 +29,25 @@ import classes from "./History.module.scss";
 
 export default function History() {
   const navigate = useNavigate();
-  const user = useCurrentUser();
+  const { user } = useCurrentUser();
 
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
     undefined
   );
   const [sortBy, setSortBy] = useState<SortOption>("date-desc");
 
-  if (!user) {
-    navigate("/login");
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   const {
     data: activitiesData,
     loading: activitiesLoading,
     error: activitiesError,
   } = useQuery<GetActivitiesByUserIdData>(GET_ACTIVITIES_BY_USER_ID, {
-    variables: { userId: user?.id },
+    variables: { userId: user?.id ?? 0 },
     skip: !user,
   });
 

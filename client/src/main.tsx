@@ -1,4 +1,10 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
+import { SetContextLink } from "@apollo/client/link/context";
 import { ApolloProvider } from "@apollo/client/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -7,7 +13,10 @@ import { Flip, ToastContainer } from "react-toastify";
 
 import App from "./App";
 
+import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 import ModeProvider from "./context/modeContext";
+import UserProvider from "./context/userContext";
+import { getToken } from "./services/authService";
 
 import Dashboard from "./pages/dashboard/Dashboard";
 import History from "./pages/history/History";
@@ -18,12 +27,12 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
-import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 
 const router = createBrowserRouter([
   {
     element: <App />,
     children: [
+      // Public routes
       {
         path: "/",
         element: <Home />,
@@ -80,16 +89,31 @@ if (rootElement == null) {
 
 const graphqlUri = import.meta.env.VITE_URL_GRAPHQL || "/graphql";
 
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri: graphqlUri,
-    fetchOptions: {
-      mode: "cors",
-    },
+const httpLink = new HttpLink({
+  uri: graphqlUri,
+  fetchOptions: {
+    mode: "cors",
+  },
+  headers: {
+    Accept: "application/json",
+  },
+});
+
+const authLink = new SetContextLink((prevContext) => {
+  const token = getToken();
+  return {
+    ...prevContext,
     headers: {
-      Accept: "application/json",
+      ...prevContext.headers,
+      authorization: token ? `Bearer ${token}` : "",
     },
-  }),
+  };
+});
+
+const link = ApolloLink.from([authLink, httpLink]);
+
+const client = new ApolloClient({
+  link,
   cache: new InMemoryCache(),
 });
 
@@ -97,16 +121,18 @@ createRoot(rootElement).render(
   <StrictMode>
     <ModeProvider>
       <ApolloProvider client={client}>
-        <RouterProvider router={router} />
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          limit={5}
-          closeOnClick
-          pauseOnHover
-          theme="colored"
-          transition={Flip}
-        />
+        <UserProvider>
+          <RouterProvider router={router} />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            limit={5}
+            closeOnClick
+            pauseOnHover
+            theme="colored"
+            transition={Flip}
+          />
+        </UserProvider>
       </ApolloProvider>
     </ModeProvider>
   </StrictMode>

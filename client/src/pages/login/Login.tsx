@@ -1,8 +1,9 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+import MainButton from "../../components/mainButton/MainButton";
 
 import { useMode } from "../../context/modeContext";
 import { LOGIN } from "../../graphql/operations";
@@ -11,7 +12,6 @@ import AuthLayout from "../../layout/auth-layout/AuthLayout";
 import Footer from "../../layout/footer/Footer";
 import FormLayout from "../../layout/form-layout/FormLayout";
 import FormHeader from "../../layout/form-header/FormHeader";
-import MainButton from "../../components/mainButton/MainButton";
 
 import { parseLoginResponse, saveToken } from "../../services/authService";
 

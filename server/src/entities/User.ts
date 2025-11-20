@@ -36,7 +36,7 @@ export default class User extends BaseEntity {
   @Column("varchar", { length: 255 })
   hashed_password: string;
 
-  @Field(() => Date)
+  @Field(() => String)
   @Column("date")
   birthdate: Date;
 
