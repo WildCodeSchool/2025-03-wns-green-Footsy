@@ -11,7 +11,7 @@ import { Loader } from '../loader/Loader';
 import { CREATE_ACTIVITY, GET_ACTIVITY_TYPES } from '../../graphql/operations';
 import type { GetActivityTypesData } from '../../types/ActivityType';
 import { mockCarbonActivities } from '../../__tests__/mockCarbonActivities';
-import { getUserFromToken } from '../../services/authService';
+
 
 // Flag pour activer/désactiver le mock
 const USE_MOCK_DATA = true; // Mettre à false quand l'API sera prête
@@ -44,7 +44,7 @@ export default function ActivityForm() {
 
     const [createActivity, { loading: submitLoading, error }] = useMutation(CREATE_ACTIVITY);
 
-    const user = getUserFromToken();
+    const user = userCurrentUser();
 
     return (
         <form

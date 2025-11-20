@@ -70,6 +70,7 @@ export const handleActivityChange = (
 export const handleActivitySubmit = async (
     event: React.FormEvent<HTMLFormElement>,
     formData: ActivityFormData,
+    user: User,
     // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
     createActivity: any
 ) => {
