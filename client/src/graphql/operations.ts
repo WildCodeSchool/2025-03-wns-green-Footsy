@@ -49,7 +49,7 @@ export const UPDATE_PERSONAL_INFO = gql`
       id
       first_name
       last_name
-      birthdate
+      birthdateString
     }
   }
 `;

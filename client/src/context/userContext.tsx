@@ -5,15 +5,21 @@ import { getUserFromToken } from "../services/authService";
 import { GET_CURRENT_USER } from "../graphql/operations";
 
 type UserContextType = {
-    user?: User
+    user?: User;
+    loading: boolean;
+    error?: any;
+    refetch?: () => void;
 };
 
 const UserContext = createContext<UserContextType>({
     user: undefined,
+    loading: false,
+    error: undefined,
+    refetch: undefined,
 });
 
 export default function UserProvider({ children }: { children: ReactNode }) {
-    const { data, loading, error } = useQuery<User>(
+    const { data, loading, error, refetch } = useQuery<{ currentUser: User }>(
         GET_CURRENT_USER,
         {
             errorPolicy: "all",
@@ -22,10 +28,15 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     );
 
     const user =
-        loading ? getUserFromToken() ?? undefined : error ? undefined : data;
+        loading ? getUserFromToken() ?? undefined : error ? undefined : data?.currentUser;
 
     return (
-        <UserContext.Provider value={{user}}>
+        <UserContext.Provider value={{
+            user,
+            loading,
+            error,
+            refetch
+        }}>
             {children}
         </UserContext.Provider>
     );
