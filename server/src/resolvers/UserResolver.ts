@@ -32,7 +32,7 @@ export class NewUserInput {
   password: string;
 
   @Field(() => String)
-  birthdate: string;
+  birthdate: Date;
 
   @Field(() => AvatarInput)
   avatar: AvatarInput;
