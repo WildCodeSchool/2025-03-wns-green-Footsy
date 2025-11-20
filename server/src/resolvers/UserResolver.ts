@@ -4,11 +4,13 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   InputType,
   Int,
   Mutation,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 
 import type Avatar from "../entities/Avatar";
@@ -120,6 +122,33 @@ export default class UserResolver {
 
   constructor(userService: UserServiceInterface = new UserService()) {
     this.userService = userService;
+  }
+
+  @FieldResolver(() => String)
+  birthdateString(@Root() user: User): string {
+    if (!user.birthdate) return "";
+    
+    // Handle both Date object and string formats
+    let date: Date;
+    if (user.birthdate instanceof Date) {
+      date = user.birthdate;
+    } else if (typeof user.birthdate === "string") {
+      // If it's already a string in YYYY-MM-DD format, return it
+      if (/^\d{4}-\d{2}-\d{2}$/.test(user.birthdate)) {
+        return user.birthdate;
+      }
+      // Otherwise, try to parse it
+      date = new Date(user.birthdate);
+    } else {
+      return "";
+    }
+    
+    // Convert Date to ISO string and extract only the date part (YYYY-MM-DD)
+    // Handle timezone issues by using local date
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   @Query(() => [User])

@@ -12,6 +12,7 @@ import ModeProvider from "./context/modeContext";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
+import Settings from "./pages/settings/Settings";
 import SignUp from "./pages/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
 
@@ -61,7 +62,8 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoutes />,
         children: [
-          { path: "dashboard", element: <Dashboard /> },
+         { path: "dashboard", element: <Dashboard /> },
+         { path: "settings", element: <Settings /> },
           { path: "history", element: <h1>History Page - To be implemented</h1> },
           { path: "add-activity", element: <h1>Activity Page - To be implemented</h1> },
           { path: "community", element: <h1>Community Page - To be implemented</h1> },
