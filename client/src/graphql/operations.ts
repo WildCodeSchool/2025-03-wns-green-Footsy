@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import type { Activity, Category } from "../types/Activity.types";
+import type { User } from "../types/User.types";
 
 export type GetActivitiesByUserIdData = {
   getActivitiesByUserId: Activity[];
@@ -7,6 +8,10 @@ export type GetActivitiesByUserIdData = {
 
 export type GetAllCategoriesData = {
   getAllCategories: Category[];
+};
+
+export type GetCurrentUserData = {
+  currentUser: User;
 };
 
 export type LoginMutationData = {

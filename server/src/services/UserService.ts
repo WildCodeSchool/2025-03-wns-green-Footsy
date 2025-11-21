@@ -1,6 +1,6 @@
 import * as argon2 from "argon2";
-import User from "../entities/User";
 import Avatar from "../entities/Avatar";
+import User from "../entities/User";
 
 import type {
   NewUserInput,
@@ -59,7 +59,10 @@ export default class UserService implements UserServiceInterface {
 
     user.first_name = data.first_name;
     user.last_name = data.last_name;
-    user.birthdate = new Date(data.birthdate as string);
+    user.birthdate =
+      data.birthdate instanceof Date
+        ? data.birthdate
+        : new Date(data.birthdate);
 
     return user.save();
   }

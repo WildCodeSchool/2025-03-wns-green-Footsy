@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
 
 import { HistoryCard } from "../../components/historyCard/HistoryCard";
 import {
@@ -28,7 +27,6 @@ import { processActivities } from "../../services/activity.services";
 import classes from "./History.module.scss";
 
 export default function History() {
-  const navigate = useNavigate();
   const { user } = useCurrentUser();
 
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
@@ -36,26 +34,26 @@ export default function History() {
   );
   const [sortBy, setSortBy] = useState<SortOption>("date-desc");
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
-
   const {
     data: activitiesData,
     loading: activitiesLoading,
     error: activitiesError,
   } = useQuery<GetActivitiesByUserIdData>(GET_ACTIVITIES_BY_USER_ID, {
     variables: { userId: user?.id ?? 0 },
-    skip: !user,
+    skip: !user?.id,
+    fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
   });
 
   const { data: categoriesData, loading: categoriesLoading } =
     useQuery<GetAllCategoriesData>(GET_ALL_CATEGORIES);
 
   const { filteredAndSortedActivities, groupedActivities } = useMemo(() => {
-    const activities = activitiesData?.getActivitiesByUserId || [];
+    const activities =
+      activitiesData?.getActivitiesByUserId.map((activity) => ({
+        ...activity,
+        date: new Date(activity.date).toLocaleDateString(),
+      })) || [];
     const { filtered, grouped } = processActivities(
       activities,
       selectedCategory,

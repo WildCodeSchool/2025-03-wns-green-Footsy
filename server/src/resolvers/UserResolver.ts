@@ -95,8 +95,8 @@ export class UpdatePersonalInfoInput {
   @Field(() => String)
   last_name: string;
 
-  @Field(() => String)
-  birthdate: string;
+  @Field(() => Date)
+  birthdate: Date;
 }
 
 @InputType()
