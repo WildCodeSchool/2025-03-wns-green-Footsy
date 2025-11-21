@@ -86,7 +86,9 @@ p,
 a,
 span,
 button,
-li {
+li,
+label,
+div {
   font-family: var(--font-family);
 }
 

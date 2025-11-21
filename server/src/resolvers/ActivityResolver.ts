@@ -84,7 +84,10 @@ export default class ActivityResolver {
   async getActivitiesByUserId(
     @Arg("userId", () => Int) userId: number
   ): Promise<Activity[]> {
-    return await Activity.find({ where: { user: { id: userId } } });
+    return await Activity.find({
+      where: { user: { id: userId } },
+      relations: ["type", "type.category"],
+    });
   }
 
   @Query(() => [Activity])
@@ -104,7 +107,10 @@ export default class ActivityResolver {
       whereClause.type = { category: { id: category_id } };
     }
 
-    return await Activity.find({ where: whereClause });
+    return await Activity.find({
+      where: whereClause,
+      relations: ["type", "type.category"],
+    });
   }
 
   @Mutation(() => Activity)

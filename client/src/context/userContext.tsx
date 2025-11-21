@@ -30,8 +30,11 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     }
   );
 
-  const user =
-    loading ? getUserFromToken() ?? undefined : error ? undefined : data?.currentUser;
+  const user = loading
+    ? getUserFromToken() ?? undefined
+    : error
+    ? undefined
+    : data?.currentUser;
 
   return (
     <UserContext.Provider value={{
