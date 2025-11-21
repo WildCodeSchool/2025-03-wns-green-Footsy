@@ -128,26 +128,11 @@ export default class UserResolver {
   birthdateString(@Root() user: User): string {
     if (!user.birthdate) return "";
     
-    // Handle both Date object and string formats
-    let date: Date;
-    if (user.birthdate instanceof Date) {
-      date = user.birthdate;
-    } else if (typeof user.birthdate === "string") {
-      // If it's already a string in YYYY-MM-DD format, return it
-      if (/^\d{4}-\d{2}-\d{2}$/.test(user.birthdate)) {
-        return user.birthdate;
-      }
-      // Otherwise, try to parse it
-      date = new Date(user.birthdate);
-    } else {
-      return "";
-    }
-    
-    // Convert Date to ISO string and extract only the date part (YYYY-MM-DD)
-    // Handle timezone issues by using local date
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    // Convert Date to YYYY-MM-DD format using local date methods
+    // to avoid timezone issues
+    const year = user.birthdate.getFullYear();
+    const month = String(user.birthdate.getMonth() + 1).padStart(2, "0");
+    const day = String(user.birthdate.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
 
@@ -236,9 +221,13 @@ export default class UserResolver {
     @Arg("data", () => UpdatePersonalInfoInput) data: UpdatePersonalInfoInput
   ): Promise<User> {
     try {
+      // GraphQL automatically converts ISO string to Date, so we can pass it directly
       return await this.userService.updatePersonalInfo(userId, data);
     } catch (error) {
       console.error("Error updating personal info:", error);
+      if (error instanceof Error) {
+        throw new Error(`Failed to update personal information: ${error.message}`);
+      }
       throw new Error("Failed to update personal information");
     }
   }

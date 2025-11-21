@@ -107,13 +107,22 @@ export default function SettingsForm() {
 		if (!user) return false;
 
 		try {
+			// Convert birthdate string (YYYY-MM-DD) to ISO string for GraphQL
+			// formData.birthdate is already initialized with user.birthdateString in useEffect
+			const birthdateString = overrides?.birthdate ?? formData.birthdate;
+			if (!birthdateString) {
+				toast.error("La date de naissance est requise");
+				return false;
+			}
+			const birthdateISO = new Date(birthdateString).toISOString();
+
 			await updatePersonalInfo({
 				variables: {
 					userId: user.id,
 					data: {
 						first_name: overrides?.firstName ?? formData.firstName,
 						last_name: overrides?.lastName ?? formData.lastName,
-						birthdate: overrides?.birthdate ?? formData.birthdate,
+						birthdate: birthdateISO,
 					},
 				},
 			});
@@ -122,8 +131,11 @@ export default function SettingsForm() {
 			if (refetch) await refetch();
 			return true;
 		} catch (err) {
-			toast.error("Erreur lors de la mise à jour");
-			console.error(err);
+			console.error("Error updating personal info:", err);
+			const errorMessage = err instanceof Error 
+				? err.message 
+				: "Erreur lors de la mise à jour";
+			toast.error(errorMessage);
 			return false;
 		}
 	};

@@ -22,7 +22,7 @@ const UserContext = createContext<UserContextType>({
 });
 
 export default function UserProvider({ children }: { children: ReactNode }) {
-  const { data, loading, error, refetch } = useQuery<{ currentUser: User }>(
+  const { data, loading, error, refetch } = useQuery<GetCurrentUserData>(
     GET_CURRENT_USER,
     {
       errorPolicy: "all",
