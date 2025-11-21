@@ -119,6 +119,7 @@ export default class ActivityResolver {
 
     const activity = Activity.create({
       ...data,
+      date: data.date instanceof Date ? data.date : new Date(data.date),
       user,
       type,
     });
@@ -139,7 +140,8 @@ export default class ActivityResolver {
       activity.quantity = data.quantity;
     }
     if (data.date !== undefined) {
-      activity.date = new Date(data.date);
+      activity.date =
+        data.date instanceof Date ? data.date : new Date(data.date);
     }
     if (data.co2_equivalent !== undefined) {
       activity.co2_equivalent = data.co2_equivalent;
