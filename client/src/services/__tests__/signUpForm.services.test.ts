@@ -308,7 +308,7 @@ describe("signUpForm.services", () => {
             last_name: mockFormData.name,
             email: mockFormData.email,
             birthdate: mockFormData.birthdate
-              ? new Date(mockFormData.birthdate)
+              ? new Date(mockFormData.birthdate).toISOString()
               : undefined,
             password: mockFormData.password,
             avatar: {
@@ -405,7 +405,7 @@ describe("signUpForm.services", () => {
             first_name: "Jane",
             last_name: "Smith",
             email: "jane.smith@example.com",
-            birthdate: new Date("1995-05-15"),
+            birthdate: new Date("1995-05-15").toISOString(),
             password: "securepassword123",
             avatar: {
               id: mockAvatar.id,
