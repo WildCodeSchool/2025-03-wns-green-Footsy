@@ -1,16 +1,26 @@
 import * as argon2 from "argon2";
-import User from "../entities/User";
 import Avatar from "../entities/Avatar";
+import User from "../entities/User";
 
-import type { NewUserInput, UpdatePersonalInfoInput } from "../resolvers/UserResolver";
+import type {
+  NewUserInput,
+  UpdatePersonalInfoInput,
+} from "../resolvers/UserResolver";
 
 export interface UserServiceInterface {
   create(data: NewUserInput): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
   authenticateUser(email: string, password: string): Promise<User>;
-  updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User>;
+  updatePersonalInfo(
+    userId: number,
+    data: UpdatePersonalInfoInput
+  ): Promise<User>;
   updateAvatar(userId: number, avatarId: number): Promise<User>;
-  changePassword(userId: number, currentPassword: string, newPassword: string): Promise<User>;
+  changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<User>;
   deleteAccount(userId: number): Promise<boolean>;
 }
 
@@ -23,7 +33,7 @@ export default class UserService implements UserServiceInterface {
   async findByEmail(email: string): Promise<User | null> {
     return User.findOne({
       where: { email },
-      relations: ["avatar"]
+      relations: ["avatar"],
     });
   }
 
@@ -32,45 +42,58 @@ export default class UserService implements UserServiceInterface {
     if (!user) {
       throw new Error("User not found");
     }
-  
+
     const isValidPassword = await argon2.verify(user.hashed_password, password);
     if (!isValidPassword) {
       throw new Error("Invalid password");
     }
-  
+
     return user;
   }
 
-  async updatePersonalInfo(userId: number, data: UpdatePersonalInfoInput): Promise<User> {
+  async updatePersonalInfo(
+    userId: number,
+    data: UpdatePersonalInfoInput
+  ): Promise<User> {
     const user = await User.findOneByOrFail({ id: userId });
-    
+
     user.first_name = data.first_name;
     user.last_name = data.last_name;
-    user.birthdate = new Date(data.birthdate as string);
-    
+    user.birthdate =
+      data.birthdate instanceof Date
+        ? data.birthdate
+        : new Date(data.birthdate);
+
     return user.save();
   }
 
   async updateAvatar(userId: number, avatarId: number): Promise<User> {
     const user = await User.findOneByOrFail({ id: userId });
     const avatar = await Avatar.findOneByOrFail({ id: avatarId });
-    
+
     user.avatar = avatar;
     return user.save();
   }
 
-  async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<User> {
+  async changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<User> {
     const user = await User.findOneByOrFail({ id: userId });
-    
-    const isValidCurrentPassword = await argon2.verify(user.hashed_password, currentPassword);
+
+    const isValidCurrentPassword = await argon2.verify(
+      user.hashed_password,
+      currentPassword
+    );
     if (!isValidCurrentPassword) {
       throw new Error("Current password is incorrect");
     }
-    
+
     const hashedNewPassword = await argon2.hash(newPassword);
-    
+
     user.hashed_password = hashedNewPassword;
-    
+
     return user.save();
   }
 
@@ -79,5 +102,4 @@ export default class UserService implements UserServiceInterface {
     await User.remove(user);
     return true;
   }
-  
 }
