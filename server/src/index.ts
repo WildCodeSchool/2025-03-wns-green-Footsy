@@ -45,6 +45,7 @@ async function startServer() {
     listen: { port },
     context: async ({ req }) => {
       const token = req.headers.authorization?.replace('Bearer ', '') || null;
+       console.log('🔐 Token reçu côté serveur:', token)
       return { token };
     },
   });

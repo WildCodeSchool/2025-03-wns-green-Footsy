@@ -15,7 +15,7 @@ export type GetAllTypesData = {
 }
 
 export type GetCurrentUserData = {
-  user: User;
+  currentUser: User;
 };
 
 export const SIGN_UP = gql`

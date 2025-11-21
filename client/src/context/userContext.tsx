@@ -28,7 +28,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     ? getUserFromToken() ?? undefined
     : error
     ? undefined
-    : data?.user;
+    : data?.currentUser;
 
   return (
     <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>

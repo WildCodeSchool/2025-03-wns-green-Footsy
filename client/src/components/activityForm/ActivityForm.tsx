@@ -21,6 +21,7 @@ export default function ActivityForm() {
     const [formData, setFormData] = useState<ActivityFormData>({
         title: '',
         date: '',
+        category_id: 0,
         type_id: 0,
         quantity: 0,
         co2_equivalent: 0,

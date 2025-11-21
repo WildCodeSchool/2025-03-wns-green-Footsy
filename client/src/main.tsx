@@ -91,6 +91,7 @@ const httpLink = new HttpLink({
 
 const authLink = new SetContextLink((prevContext) => {
   const token = getToken();
+  console.log('🔑 Token récupéré:', token); 
   return {
     ...prevContext,
     headers: {

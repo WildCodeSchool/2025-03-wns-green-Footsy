@@ -1,12 +1,14 @@
 import { toast } from "react-toastify";
 import type { User } from "../types/User.types"
+
 export type ActivityFormData = {
     title: string;
     date: string;
-    type_id: number;  
+    category_id: number;
+    type_id: number;
     quantity: number;
     co2_equivalent: number;
-    user_id: number;  
+    user_id: number;
 }
 
 export const activityFormFields = [
@@ -16,7 +18,7 @@ export const activityFormFields = [
         id: "date",
         placeholder: "JJ/MM/AAAA",
     },
-      {
+    {
         label: "Titre",
         type: "text",
         id: "title",
@@ -57,14 +59,15 @@ export const handleActivityChange = (
     const { id, value } = event.target;
 
     let processedValue: string | number;
-    
-    if(id === 'type_id' || id === 'quantity' || id === 'co2_equivalent'){
-        if(value === '') {
+
+    if (id === 'type_id' || id === 'quantity' || id === 'co2_equivalent') {
+        if (value === '') {
             processedValue = id === 'type_id' ? '' : 0;
         } else {
             processedValue = Number(value);
         }
-    } else { processedValue = value;
+    } else {
+        processedValue = value;
     }
 
     const newFormData = {
@@ -88,20 +91,15 @@ export const handleActivitySubmit = async (
 ) => {
     event.preventDefault();
 
-   if (!user) {
-    toast.error("Vous devez être connecté pour ajouter une activité.");
-    return;
-   }
+    if (!user) {
+        toast.error("Vous devez être connecté pour ajouter une activité.");
+        return;
+    }
 
-   if (!formData.title || !formData.date || !formData.type_id || formData.type_id === 0) {
-    console.log('❌ Champs manquants ou invalides:', {
-        title: formData.title,
-        date: formData.date,
-        type_id: formData.type_id
-    });
-    toast.error("Veuillez remplir tous les champs.");
-    return;
-}
+    if (!formData.title || !formData.date || !formData.type_id || formData.type_id === 0 || !formData.quantity || !formData.co2_equivalent) {
+        toast.error("Veuillez remplir tous les champs.");
+        return;
+    }
 
     if (formData.quantity <= 0) {
         toast.error("La quantité doit être un nombre positif.");
@@ -117,7 +115,11 @@ export const handleActivitySubmit = async (
         await createActivity({
             variables: {
                 data: {
-                    ...formData,
+                     title: formData.title,
+                    date: formData.date,
+                    type_id: formData.type_id,
+                    quantity: formData.quantity,
+                    co2_equivalent: formData.co2_equivalent,
                     user_id: user.id
                 }
             }
