@@ -15,6 +15,29 @@ export async function seedAvatars() {
   }
 }
 
+export async function seedUsers() {
+  const userRepository = dataSource.getRepository(User);
+  const avatarRepository = dataSource.getRepository(Avatar);
+  
+  // Check if avatars exist
+  const existingAvatars = await avatarRepository.find();
+  if (existingAvatars.length === 0) {
+    console.warn("No avatars found. Please seed avatars first.");
+    return;
+  }
+  
+  // Check if users exist
+  const existingUsers = await userRepository.find();
+  if (existingUsers.length > 0) {
+    console.info("Users already exist, skipping seeding");
+    return;
+  }
+  
+  // Seedear users
+  await userRepository.save(Users);
+  console.info("Users seeded");
+}
+
 async function generateAndSaveFixtures() {
   try {
     await dataSource.initialize();

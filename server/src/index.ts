@@ -13,7 +13,7 @@ import InteractionResolver from "./resolvers/InteractionResolver";
 import TypeResolver from "./resolvers/TypeResolver";
 import UserResolver from "./resolvers/UserResolver";
 
-import { seedAvatars } from "./seeders/Seeder";
+import { seedAvatars, seedUsers } from "./seeders/Seeder";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
@@ -50,5 +50,6 @@ async function startServer() {
   });
   console.info(`Server started on ${url}`);
   seedAvatars();
+  seedUsers();
 }
 startServer();
