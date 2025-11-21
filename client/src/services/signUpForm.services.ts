@@ -123,7 +123,7 @@ export const handleSubmit = async (
           first_name: formData.surname,
           last_name: formData.name,
           email: formData.email,
-          birthdate: new Date(formData.birthdate),
+          birthdate: new Date(formData.birthdate).toISOString(),
           password: formData.password,
           avatar: {
             id: formData.avatar.id,

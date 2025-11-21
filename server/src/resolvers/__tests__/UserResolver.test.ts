@@ -24,7 +24,7 @@ const mockUserService: jest.Mocked<UserServiceInterface> = {
   updatePersonalInfo: jest.fn(),
   updateAvatar: jest.fn(),
   changePassword: jest.fn(),
-  deleteAccount: jest.fn(), 
+  deleteAccount: jest.fn(),
 };
 
 describe("UserResolver", () => {
@@ -332,17 +332,19 @@ describe("UserResolver", () => {
       const mockToken = "valid-token";
       const decodedToken = { id: 1 };
       const context = { token: mockToken };
-      
+
       // Mock jwt.verify to return decoded token
       (jwt.verify as jest.Mock).mockReturnValue(decodedToken);
-      
+
       // Mock User.findOne using jest.spyOn
       const User = await import("../../entities/User");
-      const findOneSpy = jest.spyOn(User.default, "findOne").mockResolvedValue(mockUser);
-      
+      const findOneSpy = jest
+        .spyOn(User.default, "findOne")
+        .mockResolvedValue(mockUser);
+
       // Act
       const result = await userResolver.currentUser(context);
-      
+
       // Assert
       expect(jwt.verify).toHaveBeenCalledWith(
         mockToken,
@@ -350,35 +352,35 @@ describe("UserResolver", () => {
       );
       expect(findOneSpy).toHaveBeenCalledWith({
         where: { id: decodedToken.id },
-        relations: ["avatar"]
+        relations: ["avatar"],
       });
       expect(result).toEqual(mockUser);
-      
+
       // Cleanup
       findOneSpy.mockRestore();
     });
-  
+
     it("should return null when no token is provided", async () => {
       // Arrange
       const context = { token: null };
-      
+
       // Act
       const result = await userResolver.currentUser(context);
-      
+
       // Assert
       expect(result).toBeNull();
     });
-  
+
     it("should return null when token is invalid", async () => {
       // Arrange
       const context = { token: "invalid-token" };
       (jwt.verify as jest.Mock).mockImplementation(() => {
         throw new Error("Invalid token");
       });
-      
+
       // Act
       const result = await userResolver.currentUser(context);
-      
+
       // Assert
       expect(result).toBeNull();
     });
@@ -391,19 +393,19 @@ describe("UserResolver", () => {
       const updateData = {
         first_name: "Updated",
         last_name: "Name",
-        birthdate: "1995-01-01T00:00:00.000Z"
+        birthdate: new Date("1995-01-01T00:00:00.000Z"),
       };
       const updatedUser = createMockUser({
         id: userId,
         first_name: updateData.first_name,
-        last_name: updateData.last_name
+        last_name: updateData.last_name,
       });
-      
+
       mockUserService.updatePersonalInfo.mockResolvedValue(updatedUser);
-      
+
       // Act
       const result = await userResolver.updatePersonalInfo(userId, updateData);
-      
+
       // Assert
       expect(mockUserService.updatePersonalInfo).toHaveBeenCalledWith(
         userId,
@@ -411,27 +413,27 @@ describe("UserResolver", () => {
       );
       expect(result).toEqual(updatedUser);
     });
-  
+
     it("should throw error when update fails", async () => {
       // Arrange
       const userId = 1;
       const updateData = {
         first_name: "Updated",
         last_name: "Name",
-        birthdate: "1995-01-01T00:00:00.000Z"
+        birthdate: new Date("1995-01-01T00:00:00.000Z"),
       };
-      
+
       mockUserService.updatePersonalInfo.mockRejectedValue(
         new Error("User not found")
       );
-      
+
       // Act & Assert
       await expect(
         userResolver.updatePersonalInfo(userId, updateData)
       ).rejects.toThrow("Failed to update personal information");
     });
   });
-  
+
   describe("updateAvatar", () => {
     it("should update user avatar successfully", async () => {
       // Arrange
@@ -439,12 +441,12 @@ describe("UserResolver", () => {
       const avatarData = { avatar_id: 2 };
       const newAvatar = createMockAvatar({ id: 2, title: "New Avatar" });
       const updatedUser = createMockUser({ id: userId, avatar: newAvatar });
-      
+
       mockUserService.updateAvatar.mockResolvedValue(updatedUser);
-      
+
       // Act
       const result = await userResolver.updateAvatar(userId, avatarData);
-      
+
       // Assert
       expect(mockUserService.updateAvatar).toHaveBeenCalledWith(
         userId,
@@ -458,11 +460,11 @@ describe("UserResolver", () => {
       // Arrange
       const userId = 1;
       const avatarData = { avatar_id: 999 };
-      
+
       mockUserService.updateAvatar.mockRejectedValue(
         new Error("Avatar not found")
       );
-      
+
       // Act & Assert
       await expect(
         userResolver.updateAvatar(userId, avatarData)
@@ -476,15 +478,15 @@ describe("UserResolver", () => {
       const userId = 1;
       const passwordData = {
         current_password: "oldPassword123",
-        new_password: "newPassword456"
+        new_password: "newPassword456",
       };
       const updatedUser = createMockUser({ id: userId });
-      
+
       mockUserService.changePassword.mockResolvedValue(updatedUser);
-      
+
       // Act
       const result = await userResolver.changePassword(userId, passwordData);
-      
+
       // Assert
       expect(mockUserService.changePassword).toHaveBeenCalledWith(
         userId,
@@ -499,13 +501,13 @@ describe("UserResolver", () => {
       const userId = 1;
       const passwordData = {
         current_password: "wrongPassword123",
-        new_password: "newPassword456"
+        new_password: "newPassword456",
       };
-      
+
       mockUserService.changePassword.mockRejectedValue(
         new Error("Current password is incorrect")
       );
-      
+
       // Act & Assert
       await expect(
         userResolver.changePassword(userId, passwordData)
@@ -517,13 +519,13 @@ describe("UserResolver", () => {
       const userId = 1;
       const passwordData = {
         current_password: "oldPassword123",
-        new_password: "newPassword456"
+        new_password: "newPassword456",
       };
-      
+
       mockUserService.changePassword.mockRejectedValue(
         new Error("User not found")
       );
-      
+
       // Act & Assert
       await expect(
         userResolver.changePassword(userId, passwordData)
@@ -536,10 +538,10 @@ describe("UserResolver", () => {
       // Arrange
       const userId = 1;
       mockUserService.deleteAccount.mockResolvedValue(true);
-      
+
       // Act
       const result = await userResolver.deleteAccount(userId);
-      
+
       // Assert
       expect(mockUserService.deleteAccount).toHaveBeenCalledWith(userId);
       expect(result).toBe(true);
@@ -551,14 +553,11 @@ describe("UserResolver", () => {
       mockUserService.deleteAccount.mockRejectedValue(
         new Error("User not found")
       );
-      
+
       // Act & Assert
-      await expect(
-        userResolver.deleteAccount(userId)
-      ).rejects.toThrow("Failed to delete account");
+      await expect(userResolver.deleteAccount(userId)).rejects.toThrow(
+        "Failed to delete account"
+      );
     });
   });
-  
 });
-
-

@@ -1,7 +1,12 @@
 import { gql } from "@apollo/client";
+import type { User } from "../types/User.types";
 
 export type LoginMutationData = {
   login: string;
+};
+
+export type GetCurrentUserData = {
+  currentUser: User;
 };
 
 export const SIGN_UP = gql`
