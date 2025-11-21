@@ -31,7 +31,7 @@ export class NewUserInput {
   @Field(() => String)
   password: string;
 
-  @Field(() => Date)
+  @Field(() => String)
   birthdate: Date;
 
   @Field(() => AvatarInput)

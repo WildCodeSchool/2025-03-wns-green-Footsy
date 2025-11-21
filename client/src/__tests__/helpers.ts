@@ -1,6 +1,51 @@
 import { vi } from "vitest";
 import type { SignUpFormData } from "../services/signUpForm.services";
 import type { Avatar } from "../types/Avatar.types";
+import type { Activity, Category, Type } from "../types/Activity.types";
+
+export const createMockCategory = ({
+  id,
+  title,
+}: Partial<Category> = {}): Category => {
+  return {
+    id: id ?? 1,
+    title: title ?? "Transport",
+  };
+};
+
+export const createMockType = ({
+  id,
+  title,
+  quantity_unit,
+  category,
+}: Partial<Type> = {}): Type => {
+  return {
+    id: id ?? 1,
+    title: title ?? "Vol court-courrier",
+    quantity_unit: quantity_unit ?? "vol",
+    category: category ?? createMockCategory(),
+  };
+};
+
+export const createMockActivity = ({
+  id,
+  title,
+  quantity,
+  date,
+  co2_equivalent,
+  userId,
+  type,
+}: Partial<Activity> = {}): Activity => {
+  return {
+    id: id ?? 1,
+    title: title ?? "Activité test",
+    quantity: quantity ?? 1,
+    date: date ?? "2025-03-15",
+    co2_equivalent: co2_equivalent ?? 100,
+    userId: userId ?? 1,
+    type: type ?? createMockType(),
+  };
+};
 
 export const createMockAvatar = ({
   id,
