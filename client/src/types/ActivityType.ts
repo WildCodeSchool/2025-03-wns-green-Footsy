@@ -1,9 +1,21 @@
-export interface ActivityType {
-    id: number;
-    name: string;
-    category?: string;
-}
+export type Activity = {
+  id: number;
+  title: string;
+  quantity?: number;
+  date: string;
+  co2_equivalent: number;
+  userId: number;
+  type: Type;
+};
 
-export interface GetActivityTypesData {
-    getActivityTypes: ActivityType[];
-}
+export type Type = {
+  id: number;
+  title: string;
+  quantity_unit: string;
+  category: Category;
+};
+
+export type Category = {
+  id: number;
+  title: string;
+};

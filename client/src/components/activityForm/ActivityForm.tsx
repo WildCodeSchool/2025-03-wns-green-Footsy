@@ -8,32 +8,15 @@ import classes from './ActivityForm.module.scss';
 import { useMode } from '../../context/modeContext';
 import MainButton from '../mainButton/MainButton';
 import { Loader } from '../loader/Loader';
-import { CREATE_ACTIVITY, GET_ACTIVITY_TYPES } from '../../graphql/operations';
-import type { GetActivityTypesData } from '../../types/ActivityType';
-import { mockCarbonActivities } from '../../__tests__/mockCarbonActivities';
+import { CREATE_ACTIVITY, GET_ALL_CATEGORIES, GET_TYPES_BY_CATEGORY, type GetAllTypesData, type GetAllCategoriesData } from '../../graphql/operations';
 import { useCurrentUser } from '../../context/userContext';
-
-
-// Flag pour activer/désactiver le mock
-const USE_MOCK_DATA = true; // Mettre à false quand l'API sera prête
 
 export default function ActivityForm() {
     const navigate = useNavigate();
     const { mode } = useMode();
+    const { user } = useCurrentUser();
 
-    // Query GraphQL (seulement si on n'utilise pas le mock)
-     const { data: apiTypesData, loading: apiTypesLoading }  = useQuery<GetActivityTypesData>(
-        GET_ACTIVITY_TYPES,
-        { skip : USE_MOCK_DATA} // Skip la query si on utilise le mock
-    );
-
-    // Données à utiliser (mock ou API)
-    const typesData = USE_MOCK_DATA 
-        ? { getActivityTypes: mockCarbonActivities }
-        : apiTypesData;
-    
-    const typesLoading = USE_MOCK_DATA ? false : apiTypesLoading;
-
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
 
     const [formData, setFormData] = useState<ActivityFormData>({
         title: '',
@@ -41,12 +24,28 @@ export default function ActivityForm() {
         type_id: 0,
         quantity: 0,
         co2_equivalent: 0,
-        user_id: 0,
+        user_id: user?.id ?? 0,
     });
+
+    const { data: categoriesData } = useQuery<GetAllCategoriesData>(GET_ALL_CATEGORIES);
+
+    const { data: typesData, loading: typesLoading, error: typesError } = useQuery<GetAllTypesData>(
+        GET_TYPES_BY_CATEGORY,
+        {
+            variables: { categoryId: selectedCategoryId },
+            skip: selectedCategoryId === 0
+        }
+    );
 
     const [createActivity, { loading: submitLoading, error }] = useMutation(CREATE_ACTIVITY);
 
-    const {user} = useCurrentUser();
+    if (typesError) {
+        return (
+            <div className={classes.activity__error}>
+                <p>Impossible de charger les types d'activités. Veuillez rafraîchir la page.</p>
+            </div>
+        );
+    }
 
     return (
         <form
@@ -66,9 +65,15 @@ export default function ActivityForm() {
                         id={field.id}
                         name={field.id}
                         value={String(formData[field.id as keyof ActivityFormData] ?? '')}
-                        onChange={(event) => handleActivityChange(event, formData, setFormData)}
+                        onChange={(event) => handleActivityChange(event, formData, setFormData, field.id === 'category_id' ? setSelectedCategoryId : undefined)}
                         placeholder={field.placeholder}
-                        options={field.type === 'select' ? typesData?.getActivityTypes : undefined}
+                        options={
+                            field.type === 'select' && field.id === 'category_id'
+                                ? categoriesData?.getAllCategories
+                                : field.type === 'select' && field.id === 'type_id'
+                                    ? typesData?.getTypesByCategoryId
+                                    : undefined
+                        }
                     />
                 </div>
             ))}

@@ -1,8 +1,17 @@
 import { gql } from "@apollo/client";
+import type { Category, Type } from "../types/ActivityType";
 
 export type LoginMutationData = {
   login: string;
 };
+
+export type GetAllCategoriesData = {
+  getAllCategories: Category[];
+};
+
+export type GetAllTypesData = {
+  getTypesByCategoryId: Type[];
+}
 
 export const SIGN_UP = gql`
   mutation SignUp($data: NewUserInput!) {
@@ -43,31 +52,38 @@ export const GET_CURRENT_USER = gql`
   }
 `;
 
-export const GET_ACTIVITY_TYPES = gql`
-  query GetActivityTypes {
-    getActivityTypes {
+export const GET_ALL_CATEGORIES = gql`
+  query GetAllCategories {
+    getAllCategories {
       id
-      name
+      title
+    }
+  }
+`;
+
+export const GET_TYPES_BY_CATEGORY = gql`
+  query GetTypesByCategoryId($categoryId: Int!) {
+    getTypesByCategoryId(categoryId: $categoryId) {
+      id
+      title
     }
   }
 `;
 
 export const CREATE_ACTIVITY = gql`
-  mutation CreateActivity($data: ActivityInput!) {
+  mutation CreateActivity($data: CreateActivityInput!) {
     createActivity(data: $data) {
       id
       title
       date
       type {
         id
-        name
+        title
       }
       quantity
       co2_equivalent
       user {
         id
-        first_name
-        last_name
       }
     }
   }

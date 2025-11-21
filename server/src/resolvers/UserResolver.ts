@@ -31,7 +31,7 @@ export class NewUserInput {
   @Field(() => String)
   password: string;
 
-  @Field(() => Date)
+  @Field(() => String)
   birthdate: Date;
 
   @Field(() => AvatarInput)
@@ -96,7 +96,7 @@ export class UpdatePersonalInfoInput {
   last_name: string;
 
   @Field(() => String)
-  birthdate: String;
+  birthdate: string;
 }
 
 @InputType()
@@ -144,7 +144,7 @@ export default class UserResolver {
       
       return await User.findOne({
         where: { id: decoded.id },
-        relations: ["avatar"]
+        relations: ["avatar"],
       });
     } catch {
       return null;
@@ -224,7 +224,7 @@ export default class UserResolver {
       }
 
       return updatedUser;
-    } catch (error) {
+    } catch {
       throw new Error("Failed to update avatar");
     }
   }

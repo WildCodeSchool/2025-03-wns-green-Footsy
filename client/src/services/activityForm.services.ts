@@ -23,6 +23,12 @@ export const activityFormFields = [
         placeholder: "Donnez un titre à votre activité",
     },
     {
+        label: "Catégorie",
+        type: "select",
+        id: "category_id",
+        placeholder: "Choisissez une catégorie",
+    },
+    {
         label: "Type d'activité",
         type: "select",
         id: "type_id",
@@ -46,6 +52,7 @@ export const handleActivityChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     formData: ActivityFormData,
     setFormData: React.Dispatch<React.SetStateAction<ActivityFormData>>,
+    onCategoryChange?: (categoryId: number) => void
 ) => {
     const { id, value } = event.target;
 
@@ -66,6 +73,10 @@ export const handleActivityChange = (
     };
 
     setFormData(newFormData);
+
+    if (id === 'category_id' && onCategoryChange) {
+        onCategoryChange(Number(value));
+    }
 };
 
 export const handleActivitySubmit = async (

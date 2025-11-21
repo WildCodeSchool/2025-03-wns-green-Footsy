@@ -4,6 +4,12 @@ import { useMode } from "../../context/modeContext";
 
 import classes from "./FormField.module.scss";
 
+type SelectOption = {
+  id: number;
+  name?: string;
+  title?: string;
+};
+
 type FormFieldProps = {
   label: string;
   type: string;
@@ -13,7 +19,7 @@ type FormFieldProps = {
   onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   placeholder?: string;
   required?: boolean;
-  options?: Array<{ id: number; name: string }>;
+  options?: SelectOption[];
 };
 
 export default function FormField({
@@ -54,7 +60,7 @@ export default function FormField({
           <option value="">{placeholder}</option>
           {options?.map((option) => (
             <option key={option.id} value={option.id}>
-              {option.name}
+              {option.name || option.title}
             </option>
           ))}
         </select>
