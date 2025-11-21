@@ -36,8 +36,14 @@ export default class User extends BaseEntity {
   @Column("varchar", { length: 255 })
   hashed_password: string;
 
-  @Field(() => String)
-  @Column("date")
+  @Field(() => Date)
+  @Column({
+    type: "date",
+    transformer: {
+      to: (value: Date) => value,
+      from: (value: string) => (value ? new Date(value) : null),
+    },
+  })
   birthdate: Date;
 
   @Field(() => Avatar)

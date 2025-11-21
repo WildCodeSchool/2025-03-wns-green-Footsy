@@ -85,6 +85,19 @@ Base de données : PostgreSQL, TypeORM
 Déploiement : Docker, Docker Compose
 CI/CD : GitHub Actions
 
+## Gestion des dates
+**PostgreSQL** stocke les dates au format `date` (YYYY-MM-DD) sans heure.  
+**GraphQL** utilise le scalar `DateTime` qui nécessite le format ISO 8601 complet (avec heure).
+
+**Côté backend** : Un transformer TypeORM convertit automatiquement les dates PostgreSQL en objets `Date` JavaScript :
+```typescript
+@Column({ type: "date", transformer: { from: (value) => new Date(value) } })
+```
+
+**Côté frontend** :
+- **Envoyer** : Convertir en ISO complet → `new Date(dateString).toISOString()` → `"1999-01-01T00:00:00.000Z"`
+- **Recevoir** : GraphQL retourne automatiquement une string ISO → utiliser telle quelle ou `new Date(isoString)` si besoin
+
 ## Workflow Git
 Branche principale : main (protégée)
 Branche d’intégration : dev

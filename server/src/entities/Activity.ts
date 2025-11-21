@@ -28,8 +28,14 @@ export default class Activity extends BaseEntity {
   @Column("float", { nullable: true })
   quantity: number;
 
-  @Field(() => String)
-  @Column("date")
+  @Field(() => Date)
+  @Column({
+    type: "date",
+    transformer: {
+      to: (value: Date) => value,
+      from: (value: string) => (value ? new Date(value) : null),
+    },
+  })
   date: Date;
 
   @Field(() => Float)

@@ -95,8 +95,8 @@ export class UpdatePersonalInfoInput {
   @Field(() => String)
   last_name: string;
 
-  @Field(() => String)
-  birthdate: string;
+  @Field(() => Date)
+  birthdate: Date;
 }
 
 @InputType()
@@ -134,14 +134,18 @@ export default class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async currentUser(@Ctx() context: { token: string | null }): Promise<User | null> {
+  async currentUser(
+    @Ctx() context: { token: string | null }
+  ): Promise<User | null> {
     try {
       if (!context.token || !process.env.JWT_SECRET) {
         return null;
       }
 
-      const decoded = jwt.verify(context.token, process.env.JWT_SECRET) as { id: number };
-      
+      const decoded = jwt.verify(context.token, process.env.JWT_SECRET) as {
+        id: number;
+      };
+
       return await User.findOne({
         where: { id: decoded.id },
         relations: ["avatar"],
@@ -210,14 +214,16 @@ export default class UserResolver {
     }
   }
 
-
   @Mutation(() => User)
   async updateAvatar(
     @Arg("userId", () => Int) userId: number,
     @Arg("data", () => UpdateAvatarInput) data: UpdateAvatarInput
   ): Promise<User> {
     try {
-      const updatedUser = await this.userService.updateAvatar(userId, data.avatar_id);
+      const updatedUser = await this.userService.updateAvatar(
+        userId,
+        data.avatar_id
+      );
 
       if (!updatedUser) {
         throw new Error("Failed to update avatar");
@@ -229,18 +235,24 @@ export default class UserResolver {
     }
   }
 
-
   @Mutation(() => Boolean)
   async changePassword(
     @Arg("userId", () => Int) userId: number,
     @Arg("data", () => ChangePasswordInput) data: ChangePasswordInput
   ): Promise<boolean> {
     try {
-      await this.userService.changePassword(userId, data.current_password, data.new_password);
+      await this.userService.changePassword(
+        userId,
+        data.current_password,
+        data.new_password
+      );
       return true;
     } catch (error) {
       console.error("Error changing password:", error);
-      if (error instanceof Error && error.message.includes("Current password is incorrect")) {
+      if (
+        error instanceof Error &&
+        error.message.includes("Current password is incorrect")
+      ) {
         throw new Error("Current password is incorrect");
       }
       throw new Error("Failed to change password");
@@ -248,7 +260,9 @@ export default class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteAccount(@Arg("userId", () => Int) userId: number): Promise<boolean> {
+  async deleteAccount(
+    @Arg("userId", () => Int) userId: number
+  ): Promise<boolean> {
     try {
       return await this.userService.deleteAccount(userId);
     } catch (error) {

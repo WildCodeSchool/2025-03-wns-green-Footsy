@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import type { Category, Type } from "../types/ActivityType";
+import type { User } from "../types/User.types";
 
 export type LoginMutationData = {
   login: string;
@@ -12,6 +13,10 @@ export type GetAllCategoriesData = {
 export type GetAllTypesData = {
   getTypesByCategoryId: Type[];
 }
+
+export type GetCurrentUserData = {
+  user: User;
+};
 
 export const SIGN_UP = gql`
   mutation SignUp($data: NewUserInput!) {
