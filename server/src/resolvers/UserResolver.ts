@@ -33,7 +33,7 @@ export class NewUserInput {
   @Field(() => String)
   password: string;
 
-  @Field(() => String)
+  @Field(() => Date)
   birthdate: Date;
 
   @Field(() => AvatarInput)
@@ -221,7 +221,6 @@ export default class UserResolver {
     @Arg("data", () => UpdatePersonalInfoInput) data: UpdatePersonalInfoInput
   ): Promise<User> {
     try {
-      // GraphQL automatically converts ISO string to Date, so we can pass it directly
       return await this.userService.updatePersonalInfo(userId, data);
     } catch (error) {
       console.error("Error updating personal info:", error);
