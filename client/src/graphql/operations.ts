@@ -33,7 +33,7 @@ export const LOGIN = gql`
 
 export const GET_CURRENT_USER = gql`
   query GetCurrentUser {
-    user {
+    currentUser {
       id
       first_name
       last_name
