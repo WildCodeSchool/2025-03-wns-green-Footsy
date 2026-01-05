@@ -1,22 +1,26 @@
 import { gql } from "@apollo/client";
-import type { Category, Type } from "../types/ActivityType";
+import type { Activity, Category, Type } from "../types/Activity.types";
 import type { User } from "../types/User.types";
 
-export type LoginMutationData = {
-  login: string;
+export type GetActivitiesByUserIdData = {
+  getActivitiesByUserId: Activity[];
 };
 
 export type GetAllCategoriesData = {
   getAllCategories: Category[];
 };
 
-export type GetAllTypesData = {
-  getTypesByCategoryId: Type[];
-}
-
 export type GetCurrentUserData = {
   currentUser: User;
 };
+
+export type LoginMutationData = {
+  login: string;
+};
+
+export type GetAllTypesData = {
+  getTypesByCategoryId: Type[];
+}
 
 export const SIGN_UP = gql`
   mutation SignUp($data: NewUserInput!) {
@@ -40,18 +44,22 @@ export const LOGIN = gql`
   }
 `;
 
-export const GET_CURRENT_USER = gql`
-  query GetCurrentUser {
-    currentUser {
+export const GET_ACTIVITIES_BY_USER_ID = gql`
+  query GetActivitiesByUserId($userId: Int!) {
+    getActivitiesByUserId(userId: $userId) {
       id
-      first_name
-      last_name
-      email
-      birthdate
-      avatar {
+      title
+      date
+      quantity
+      co2_equivalent
+      type {
         id
         title
-        image
+        quantity_unit
+        category {
+          id
+          title
+        }
       }
     }
   }
@@ -63,6 +71,58 @@ export const GET_ALL_CATEGORIES = gql`
       id
       title
     }
+  }
+`;
+export const GET_CURRENT_USER = gql`
+  query GetCurrentUser {
+    currentUser {
+      id
+      first_name
+      last_name
+      email
+      birthdateString
+      avatar {
+        id
+        title
+        image
+      }
+    }
+  }
+`;
+
+export const UPDATE_PERSONAL_INFO = gql`
+  mutation UpdatePersonalInfo($userId: Int!, $data: UpdatePersonalInfoInput!) {
+    updatePersonalInfo(userId: $userId, data: $data) {
+      id
+      first_name
+      last_name
+      birthdateString
+    }
+  }
+`;
+
+export const UPDATE_AVATAR = gql`
+  mutation UpdateAvatar($userId: Int!, $data: UpdateAvatarInput!) {
+    updateAvatar(userId: $userId, data: $data) {
+      id
+      avatar {
+        id
+        title
+        image
+      }
+    }
+  }
+`;
+
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword($userId: Int!, $data: ChangePasswordInput!) {
+    changePassword(userId: $userId, data: $data)
+  }
+`;
+
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($userId: Int!) {
+    deleteAccount(userId: $userId)
   }
 `;
 

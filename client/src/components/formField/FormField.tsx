@@ -19,6 +19,8 @@ type FormFieldProps = {
   onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   placeholder?: string;
   required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
   options?: SelectOption[];
 };
 
@@ -31,6 +33,8 @@ export default function FormField({
   onChange,
   placeholder,
   required = true,
+  disabled = false,
+  readOnly = false,
   options,
 }: FormFieldProps) {
   const { mode } = useMode();

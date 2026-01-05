@@ -1,4 +1,10 @@
-import { ApolloClient, HttpLink, InMemoryCache, ApolloLink } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
+import { SetContextLink } from "@apollo/client/link/context";
 import { ApolloProvider } from "@apollo/client/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -7,21 +13,22 @@ import { Flip, ToastContainer } from "react-toastify";
 
 import App from "./App";
 
+import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 import ModeProvider from "./context/modeContext";
+import UserProvider from "./context/userContext";
+import { getToken } from "./services/authService";
 
+import Activity from "./pages/activity/Activity";
 import Dashboard from "./pages/dashboard/Dashboard";
+import History from "./pages/history/History";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
+import Settings from "./pages/settings/Settings";
 import SignUp from "./pages/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
-import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
-import Activity from "./pages/activity/Activity";
-import { SetContextLink } from "@apollo/client/link/context";
-import { getToken } from "./services/authService";
-import UserProvider from "./context/userContext";
 
 const router = createBrowserRouter([
   {
@@ -57,15 +64,21 @@ const router = createBrowserRouter([
         element: <TestCharte />,
       },
 
-
       // Protected Routes
       {
         element: <ProtectedRoutes />,
         children: [
           { path: "dashboard", element: <Dashboard /> },
-          { path: "history", element: <h1>History Page - To be implemented</h1> },
-          { path: "add-activity", element: < Activity /> },
-          { path: "community", element: <h1>Community Page - To be implemented</h1> },
+          { path: "settings", element: <Settings /> },
+          { path: "history", element: <History /> },
+          {
+            path: "add-activity",
+            element: < Activity />,
+          },
+          {
+            path: "community",
+            element: <h1>Community Page - To be implemented</h1>,
+          },
         ],
       },
     ],
