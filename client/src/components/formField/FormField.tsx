@@ -13,6 +13,8 @@ type FormFieldProps = {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
 };
 
 export default function FormField({
@@ -24,6 +26,8 @@ export default function FormField({
   onChange,
   placeholder,
   required = true,
+  disabled = false,
+  readOnly = false,
 }: FormFieldProps) {
   const { mode } = useMode();
 
@@ -48,6 +52,8 @@ export default function FormField({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
+        disabled={disabled}
+        readOnly={readOnly}
         className={`${classes["form-field__input"]} ${
           classes[`form-field__input--${mode}`]
         }`}

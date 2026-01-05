@@ -22,6 +22,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import History from "./pages/history/History";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
+import Settings from "./pages/settings/Settings";
 import SignUp from "./pages/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
 
@@ -67,6 +68,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoutes />,
         children: [
           { path: "dashboard", element: <Dashboard /> },
+          { path: "settings", element: <Settings /> },
           { path: "history", element: <History /> },
           {
             path: "add-activity",

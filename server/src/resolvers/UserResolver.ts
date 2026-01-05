@@ -4,11 +4,13 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   InputType,
   Int,
   Mutation,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 
 import type Avatar from "../entities/Avatar";
@@ -31,7 +33,7 @@ export class NewUserInput {
   @Field(() => String)
   password: string;
 
-  @Field(() => String)
+  @Field(() => Date)
   birthdate: Date;
 
   @Field(() => AvatarInput)
@@ -122,6 +124,18 @@ export default class UserResolver {
     this.userService = userService;
   }
 
+  @FieldResolver(() => String)
+  birthdateString(@Root() user: User): string {
+    if (!user.birthdate) return "";
+    
+    // Convert Date to YYYY-MM-DD format using local date methods
+    // to avoid timezone issues
+    const year = user.birthdate.getFullYear();
+    const month = String(user.birthdate.getMonth() + 1).padStart(2, "0");
+    const day = String(user.birthdate.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
   @Query(() => [User])
   async getAllUsers() {
     return User.find();
@@ -210,6 +224,9 @@ export default class UserResolver {
       return await this.userService.updatePersonalInfo(userId, data);
     } catch (error) {
       console.error("Error updating personal info:", error);
+      if (error instanceof Error) {
+        throw new Error(`Failed to update personal information: ${error.message}`);
+      }
       throw new Error("Failed to update personal information");
     }
   }

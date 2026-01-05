@@ -6,6 +6,8 @@
   position: relative;
 
   &--light {
+    background-color: var(--beige);
+    
     &::before {
       content: "";
       position: absolute;
