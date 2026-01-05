@@ -54,15 +54,14 @@ export const handleActivityChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     formData: ActivityFormData,
     setFormData: React.Dispatch<React.SetStateAction<ActivityFormData>>,
-    onCategoryChange?: (categoryId: number) => void
 ) => {
     const { id, value } = event.target;
 
     let processedValue: string | number;
 
-    if (id === 'type_id' || id === 'quantity' || id === 'co2_equivalent') {
+    if (id === 'type_id' || id === 'quantity' || id === 'co2_equivalent' || id === 'category_id') {
         if (value === '') {
-            processedValue = id === 'type_id' ? '' : 0;
+            processedValue = 0;
         } else {
             processedValue = Number(value);
         }
@@ -76,10 +75,6 @@ export const handleActivityChange = (
     };
 
     setFormData(newFormData);
-
-    if (id === 'category_id' && onCategoryChange) {
-        onCategoryChange(Number(value));
-    }
 };
 
 export const handleActivitySubmit = async (
@@ -115,7 +110,7 @@ export const handleActivitySubmit = async (
         await createActivity({
             variables: {
                 data: {
-                     title: formData.title,
+                    title: formData.title,
                     date: formData.date,
                     type_id: formData.type_id,
                     quantity: formData.quantity,

@@ -5,7 +5,7 @@ import { useMode } from "../../context/modeContext";
 import classes from "./FormField.module.scss";
 
 type SelectOption = {
-  id: string | number;
+  id: number;
   name?: string;
   title?: string;
 };
@@ -19,8 +19,6 @@ type FormFieldProps = {
   onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   placeholder?: string;
   required?: boolean;
-  disabled?: boolean;
-  readOnly?: boolean;
   options?: SelectOption[];
 };
 
@@ -33,8 +31,6 @@ export default function FormField({
   onChange,
   placeholder,
   required = true,
-  disabled = false,
-  readOnly = false,
   options,
 }: FormFieldProps) {
   const { mode } = useMode();

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from "@apollo/client/react";
 import type { ActivityFormData } from '../../services/activityForm.services';
@@ -8,15 +8,14 @@ import classes from './ActivityForm.module.scss';
 import { useMode } from '../../context/modeContext';
 import MainButton from '../mainButton/MainButton';
 import { Loader } from '../loader/Loader';
-import { CREATE_ACTIVITY, GET_ALL_CATEGORIES, GET_TYPES_BY_CATEGORY, type GetAllTypesData, type GetAllCategoriesData } from '../../graphql/operations';
+import { CREATE_ACTIVITY, GET_ALL_CATEGORIES, GET_ALL_TYPES, type GetAllTypes, type GetAllCategoriesData } from '../../graphql/operations';
 import { useCurrentUser } from '../../context/userContext';
+import type { Type } from '../../types/Activity.types';
 
 export default function ActivityForm() {
     const navigate = useNavigate();
     const { mode } = useMode();
     const { user } = useCurrentUser();
-
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
 
     const [formData, setFormData] = useState<ActivityFormData>({
         title: '',
@@ -28,17 +27,24 @@ export default function ActivityForm() {
         user_id: user?.id ?? 0,
     });
 
+    const [typesByCategorySelected, setTypesByCategorySelected] = useState<Array<Type>>([]);
+
     const { data: categoriesData } = useQuery<GetAllCategoriesData>(GET_ALL_CATEGORIES);
 
-    const { data: typesData, loading: typesLoading, error: typesError } = useQuery<GetAllTypesData>(
-        GET_TYPES_BY_CATEGORY,
-        {
-            variables: { categoryId: selectedCategoryId },
-            skip: selectedCategoryId === 0
-        }
+    const { data: typesData, loading: typesLoading, error: typesError } = useQuery<GetAllTypes>(
+        GET_ALL_TYPES,
     );
 
     const [createActivity, { loading: submitLoading, error }] = useMutation(CREATE_ACTIVITY);
+
+    const categories = categoriesData?.getAllCategories;
+
+    const types = typesData?.getAllTypes;
+
+    useEffect(() => {
+        setTypesByCategorySelected(types?.filter((type) => type.category_id === formData.category_id) ?? []); 
+        console.log('coucou')
+    }, [types, formData.category_id])
 
     if (typesError) {
         return (
@@ -47,6 +53,10 @@ export default function ActivityForm() {
             </div>
         );
     }
+
+    console.log({types})
+    console.log(formData.category_id)
+    console.log({typesByCategorySelected})
 
     return (
         <form
@@ -66,16 +76,17 @@ export default function ActivityForm() {
                         id={field.id}
                         name={field.id}
                         value={String(formData[field.id as keyof ActivityFormData] ?? '')}
-                        onChange={(event) => handleActivityChange(event, formData, setFormData, field.id === 'category_id' ? setSelectedCategoryId : undefined)}
+                        onChange={(event) => handleActivityChange(event, formData, setFormData)}
                         placeholder={field.placeholder}
                         options={
                             field.type === 'select' && field.id === 'category_id'
-                                ? categoriesData?.getAllCategories.map((cat) => ({ ...cat, id: String(cat.id) }))
+                                ? categories
                                 : field.type === 'select' && field.id === 'type_id'
-                                    ? typesData?.getTypesByCategoryId.map((t) => ({ ...t, id: String(t.id) }))
+                                    ? typesByCategorySelected
                                     : undefined
                         }
                     />
+                    {/* {field.id === 'quantity' && <p>{formData[fi]}</p>} */}
                 </div>
             ))}
 

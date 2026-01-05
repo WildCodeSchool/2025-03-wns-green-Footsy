@@ -18,8 +18,8 @@ export type LoginMutationData = {
   login: string;
 };
 
-export type GetAllTypesData = {
-  getTypesByCategoryId: Type[];
+export type GetAllTypes = {
+  getAllTypes: Type[];
 }
 
 export const SIGN_UP = gql`
@@ -126,11 +126,13 @@ export const DELETE_ACCOUNT = gql`
   }
 `;
 
-export const GET_TYPES_BY_CATEGORY = gql`
-  query GetTypesByCategoryId($categoryId: Int!) {
-    getTypesByCategoryId(categoryId: $categoryId) {
+export const GET_ALL_TYPES = gql`
+  query GetAllTypes {
+    getAllTypes {
       id
       title
+      quantity_unit
+      category_id
     }
   }
 `;
@@ -143,7 +145,6 @@ export const CREATE_ACTIVITY = gql`
       date
       type {
         id
-        title
       }
       quantity
       co2_equivalent

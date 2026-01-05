@@ -123,14 +123,14 @@ describe("activityForm.services", () => {
             });
         });
 
-        it("should handle empty type_id as empty string", () => {
+        it("should handle empty type_id as 0", () => {
             const event = createMockSelectEventHelper("type_id", "");
 
             handleActivityChange(event, mockFormData, mockSetFormData);
 
             expect(mockSetFormData).toHaveBeenCalledWith({
                 ...mockFormData,
-                type_id: "",
+                type_id: 0,
             });
         });
 
@@ -178,21 +178,19 @@ describe("activityForm.services", () => {
             });
         });
 
-        it("should call onCategoryChange when category_id changes", () => {
+        it("should update category_id as number when category_id changes", () => {
             const event = createMockSelectEventHelper("category_id", "3");
 
             handleActivityChange(
                 event,
                 mockFormData,
                 mockSetFormData,
-                mockOnCategoryChange
             );
 
             expect(mockSetFormData).toHaveBeenCalledWith({
                 ...mockFormData,
-                category_id: "3",
+                category_id: 3,
             });
-            expect(mockOnCategoryChange).toHaveBeenCalledWith(3);
         });
 
         it("should not call onCategoryChange when category_id changes but callback is not provided", () => {
@@ -202,7 +200,7 @@ describe("activityForm.services", () => {
 
             expect(mockSetFormData).toHaveBeenCalledWith({
                 ...mockFormData,
-                category_id: "3",
+                category_id: 3,
             });
             expect(mockOnCategoryChange).not.toHaveBeenCalled();
         });
@@ -214,11 +212,9 @@ describe("activityForm.services", () => {
                 event,
                 mockFormData,
                 mockSetFormData,
-                mockOnCategoryChange
             );
 
             expect(mockSetFormData).toHaveBeenCalled();
-            expect(mockOnCategoryChange).not.toHaveBeenCalled();
         });
     });
 
@@ -485,7 +481,6 @@ describe("activityForm.services", () => {
                 titleChangeEvent,
                 mockFormData,
                 mockSetFormData,
-                mockOnCategoryChange
             );
 
             expect(mockSetFormData).toHaveBeenCalledWith({
@@ -503,10 +498,12 @@ describe("activityForm.services", () => {
                 categoryChangeEvent,
                 mockFormData,
                 mockSetFormData,
-                mockOnCategoryChange
             );
 
-            expect(mockOnCategoryChange).toHaveBeenCalledWith(2);
+            expect(mockSetFormData).toHaveBeenCalledWith({
+                ...mockFormData,
+                category_id: 2,
+            });
 
             // Test successful submission
             const completeFormData: ActivityFormData = {
