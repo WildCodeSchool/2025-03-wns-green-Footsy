@@ -70,9 +70,9 @@ export default function ActivityForm() {
                         placeholder={field.placeholder}
                         options={
                             field.type === 'select' && field.id === 'category_id'
-                                ? categoriesData?.getAllCategories
+                                ? categoriesData?.getAllCategories.map((cat) => ({ ...cat, id: String(cat.id) }))
                                 : field.type === 'select' && field.id === 'type_id'
-                                    ? typesData?.getTypesByCategoryId
+                                    ? typesData?.getTypesByCategoryId.map((t) => ({ ...t, id: String(t.id) }))
                                     : undefined
                         }
                     />

@@ -5,7 +5,7 @@ import { useMode } from "../../context/modeContext";
 import classes from "./FormField.module.scss";
 
 type SelectOption = {
-  id: number;
+  id: string | number;
   name?: string;
   title?: string;
 };
@@ -59,7 +59,7 @@ export default function FormField({
         >
           <option value="">{placeholder}</option>
           {options?.map((option) => (
-            <option key={option.id} value={option.id}>
+            <option key={String(option.id)} value={String(option.id)}>
               {option.name || option.title}
             </option>
           ))}
