@@ -16,6 +16,13 @@ jest.mock("argon2", () => ({
   hash: jest.fn(),
 }));
 
+jest.mock("../../entities/User", () => ({
+  __esModule: true,
+  default: {
+    findOneByOrFail: jest.fn(),
+  },
+}));
+
 // Mock UserService
 const mockUserService: jest.Mocked<UserServiceInterface> = {
   create: jest.fn(),
@@ -25,6 +32,7 @@ const mockUserService: jest.Mocked<UserServiceInterface> = {
   updateAvatar: jest.fn(),
   changePassword: jest.fn(),
   deleteAccount: jest.fn(),
+  promoteToAdmin: jest.fn(),
 };
 
 describe("UserResolver", () => {
@@ -558,6 +566,186 @@ describe("UserResolver", () => {
       await expect(userResolver.deleteAccount(userId)).rejects.toThrow(
         "Failed to delete account"
       );
+    });
+  });
+
+  describe("deleteUserByAdmin", () => {
+    it("should allow admin to delete user account successfully", async () => {
+      // Arrange
+      const userId = 2;
+      const adminUser = createMockUser({ id: 1, isAdmin: true });
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
+
+      // Mock User.findOneByOrFail to return admin user
+      const MockedUser = jest.mocked(require("../../entities/User").default);
+      (
+        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
+      ).mockResolvedValue(adminUser);
+
+      mockUserService.deleteAccount.mockResolvedValue(true);
+
+      // Act
+      const result = await userResolver.deleteUserByAdmin(userId, context);
+
+      // Assert
+      expect(jwt.verify).toHaveBeenCalledWith(
+        mockToken,
+        process.env.JWT_SECRET
+      );
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({
+        id: adminUser.id,
+      });
+      expect(mockUserService.deleteAccount).toHaveBeenCalledWith(userId);
+      expect(result).toBe(true);
+    });
+
+    it("should throw error when user is not authenticated", async () => {
+      // Arrange
+      const userId = 2;
+      const context = { token: null };
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteUserByAdmin(userId, context)
+      ).rejects.toThrow("Failed to delete user");
+    });
+
+    it("should throw error when user is not admin", async () => {
+      // Arrange
+      const userId = 2;
+      const regularUser = createMockUser({ id: 1, isAdmin: false });
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: regularUser.id });
+
+      const MockedUser = jest.mocked(require("../../entities/User").default);
+      (
+        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
+      ).mockResolvedValue(regularUser);
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteUserByAdmin(userId, context)
+      ).rejects.toThrow("Failed to delete user");
+    });
+
+    it("should throw error when JWT_SECRET is missing", async () => {
+      // Arrange
+      const userId = 2;
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+      delete process.env.JWT_SECRET;
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteUserByAdmin(userId, context)
+      ).rejects.toThrow("Failed to delete user");
+    });
+  });
+
+  describe("promoteUserToAdmin", () => {
+    it("should allow admin to promote user successfully", async () => {
+      // Arrange
+      const userId = 2;
+      const adminUser = createMockUser({ id: 1, isAdmin: true });
+      const promotedUser = createMockUser({ id: userId, isAdmin: true });
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
+
+      const MockedUser = jest.mocked(require("../../entities/User").default);
+      (
+        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
+      ).mockResolvedValue(adminUser);
+
+      mockUserService.promoteToAdmin.mockResolvedValue(promotedUser);
+
+      // Act
+      const result = await userResolver.promoteUserToAdmin(userId, context);
+
+      // Assert
+      expect(jwt.verify).toHaveBeenCalledWith(
+        mockToken,
+        process.env.JWT_SECRET
+      );
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({
+        id: adminUser.id,
+      });
+      expect(mockUserService.promoteToAdmin).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(promotedUser);
+    });
+
+    it("should throw error when user is not authenticated", async () => {
+      // Arrange
+      const userId = 2;
+      const context = { token: null };
+
+      // Act & Assert
+      await expect(
+        userResolver.promoteUserToAdmin(userId, context)
+      ).rejects.toThrow("Failed to promote user to admin");
+    });
+
+    it("should throw error when user is not admin", async () => {
+      // Arrange
+      const userId = 2;
+      const regularUser = createMockUser({ id: 1, isAdmin: false });
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: regularUser.id });
+
+      const MockedUser = jest.mocked(require("../../entities/User").default);
+      (
+        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
+      ).mockResolvedValue(regularUser);
+
+      // Act & Assert
+      await expect(
+        userResolver.promoteUserToAdmin(userId, context)
+      ).rejects.toThrow("Failed to promote user to admin");
+    });
+
+    it("should throw error when JWT_SECRET is missing", async () => {
+      // Arrange
+      const userId = 2;
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+      delete process.env.JWT_SECRET;
+
+      // Act & Assert
+      await expect(
+        userResolver.promoteUserToAdmin(userId, context)
+      ).rejects.toThrow("Failed to promote user to admin");
+    });
+
+    it("should throw error when promotion fails", async () => {
+      // Arrange
+      const userId = 2;
+      const adminUser = createMockUser({ id: 1, isAdmin: true });
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
+
+      const MockedUser = jest.mocked(require("../../entities/User").default);
+      (
+        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
+      ).mockResolvedValue(adminUser);
+
+      mockUserService.promoteToAdmin.mockRejectedValue(
+        new Error("User not found")
+      );
+
+      // Act & Assert
+      await expect(
+        userResolver.promoteUserToAdmin(userId, context)
+      ).rejects.toThrow("Failed to promote user to admin");
     });
   });
 });

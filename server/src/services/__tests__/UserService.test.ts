@@ -387,4 +387,90 @@ describe("UserService", () => {
       );
     });
   });
+
+  describe("promoteToAdmin", () => {
+    it("should promote user to admin successfully", async () => {
+      // Arrange
+      const userId = 1;
+      const nonAdminUser = createMockUser({
+        id: userId,
+        email: "user@example.com",
+        isAdmin: false,
+      });
+      const promotedUser = createMockUser({
+        id: userId,
+        email: "user@example.com",
+        isAdmin: true,
+      });
+
+      MockedUser.findOneByOrFail.mockResolvedValue(nonAdminUser);
+      nonAdminUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(promotedUser)
+      );
+
+      // Act
+      const result = await userService.promoteToAdmin(userId);
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(nonAdminUser.isAdmin).toBe(true);
+      expect(nonAdminUser.save).toHaveBeenCalled();
+      expect(result).toEqual(promotedUser);
+    });
+
+    it("should promote already admin user without error", async () => {
+      // Arrange
+      const userId = 1;
+      const adminUser = createMockUser({
+        id: userId,
+        email: "admin@example.com",
+        isAdmin: true,
+      });
+
+      MockedUser.findOneByOrFail.mockResolvedValue(adminUser);
+      adminUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(adminUser)
+      );
+
+      // Act
+      const result = await userService.promoteToAdmin(userId);
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(adminUser.isAdmin).toBe(true);
+      expect(adminUser.save).toHaveBeenCalled();
+      expect(result).toEqual(adminUser);
+    });
+
+    it("should throw error when user does not exist", async () => {
+      // Arrange
+      const userId = 999;
+
+      MockedUser.findOneByOrFail.mockRejectedValue(new Error("User not found"));
+
+      // Act & Assert
+      await expect(userService.promoteToAdmin(userId)).rejects.toThrow(
+        "User not found"
+      );
+    });
+
+    it("should handle database save errors", async () => {
+      // Arrange
+      const userId = 1;
+      const dbError = new Error("Database connection failed");
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.reject(dbError)
+      );
+
+      // Act & Assert
+      await expect(userService.promoteToAdmin(userId)).rejects.toThrow(
+        "Database connection failed"
+      );
+
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(mockUser.save).toHaveBeenCalled();
+    });
+  });
 });
