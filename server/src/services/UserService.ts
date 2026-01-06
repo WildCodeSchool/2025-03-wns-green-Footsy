@@ -1,5 +1,8 @@
 import * as argon2 from "argon2";
+import Activity from "../entities/Activity";
 import Avatar from "../entities/Avatar";
+import Friend from "../entities/Friend";
+import Interaction from "../entities/Interaction";
 import User from "../entities/User";
 
 import type {
@@ -22,6 +25,7 @@ export interface UserServiceInterface {
     newPassword: string
   ): Promise<User>;
   deleteAccount(userId: number): Promise<boolean>;
+  promoteToAdmin(userId: number): Promise<User>;
 }
 
 export default class UserService implements UserServiceInterface {
@@ -99,7 +103,30 @@ export default class UserService implements UserServiceInterface {
 
   async deleteAccount(userId: number): Promise<boolean> {
     const user = await User.findOneByOrFail({ id: userId });
+
+    const activities = await Activity.find({
+      where: { user: { id: userId } },
+      relations: ["interactions"],
+    });
+
+    for (const activity of activities) {
+      if (activity.interactions && activity.interactions.length > 0) {
+        await Interaction.remove(activity.interactions);
+      }
+    }
+
+    await Activity.delete({ user: { id: userId } });
+
+    await Friend.delete({ requester_id: userId });
+    await Friend.delete({ requested_id: userId });
+
     await User.remove(user);
     return true;
+  }
+
+  async promoteToAdmin(userId: number): Promise<User> {
+    const user = await User.findOneByOrFail({ id: userId });
+    user.isAdmin = true;
+    return user.save();
   }
 }

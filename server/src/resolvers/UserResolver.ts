@@ -46,6 +46,7 @@ function getUserPublicProfile(user: User) {
     mail: user.email,
     birthDate: user.birthdate,
     avatar: user.avatar,
+    isAdmin: user.isAdmin,
   };
 }
 
@@ -56,6 +57,7 @@ type UserToken = {
   mail: string;
   birthDate: Date;
   avatar: Avatar;
+  isAdmin: boolean;
 };
 
 function getUserTokenContent(user: User): UserToken {
@@ -66,6 +68,7 @@ function getUserTokenContent(user: User): UserToken {
     mail: user.email,
     birthDate: user.birthdate,
     avatar: user.avatar,
+    isAdmin: user.isAdmin,
   };
 }
 
@@ -124,7 +127,7 @@ export default class UserResolver {
 
   @Query(() => [User])
   async getAllUsers() {
-    return User.find();
+    return User.find({ relations: ["avatar"] });
   }
 
   @Query(() => User)
@@ -268,6 +271,56 @@ export default class UserResolver {
     } catch (error) {
       console.error("Error deleting account:", error);
       throw new Error("Failed to delete account");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deleteUserByAdmin(
+    @Arg("userId", () => Int) userId: number,
+    @Ctx() context: { token: string | null }
+  ): Promise<boolean> {
+    try {
+      if (!context.token || !process.env.JWT_SECRET) {
+        throw new Error("Unauthorized: Authentication required");
+      }
+
+      const decodedJWT = jwt.verify(context.token, process.env.JWT_SECRET) as {
+        id: number;
+      };
+
+      const requestingUser = await User.findOneByOrFail({ id: decodedJWT.id });
+      if (!requestingUser.isAdmin) {
+        throw new Error("Unauthorized: Only admins can delete users");
+      }
+
+      return await this.userService.deleteAccount(userId);
+    } catch {
+      throw new Error("Failed to delete user");
+    }
+  }
+
+  @Mutation(() => User)
+  async promoteUserToAdmin(
+    @Arg("userId", () => Int) userId: number,
+    @Ctx() context: { token: string | null }
+  ): Promise<User> {
+    try {
+      if (!context.token || !process.env.JWT_SECRET) {
+        throw new Error("Unauthorized: Authentication required");
+      }
+
+      const decodedJWT = jwt.verify(context.token, process.env.JWT_SECRET) as {
+        id: number;
+      };
+
+      const requestingUser = await User.findOneByOrFail({ id: decodedJWT.id });
+      if (!requestingUser.isAdmin) {
+        throw new Error("Unauthorized: Only admins can promote users");
+      }
+
+      return await this.userService.promoteToAdmin(userId);
+    } catch {
+      throw new Error("Failed to promote user to admin");
     }
   }
 }

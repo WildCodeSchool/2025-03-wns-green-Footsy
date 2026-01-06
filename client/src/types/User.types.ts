@@ -7,4 +7,5 @@ export type User = {
   email: string;
   birthdate: string; // GraphQL retourne une date au format ISO string
   avatar: Avatar;
+  isAdmin: boolean;
 };

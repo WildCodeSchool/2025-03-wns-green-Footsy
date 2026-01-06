@@ -77,11 +77,48 @@ export const GET_CURRENT_USER = gql`
       last_name
       email
       birthdate
+      isAdmin
       avatar {
         id
         title
         image
       }
+    }
+  }
+`;
+
+export const GET_ALL_USERS = gql`
+  query GetAllUsers {
+    getAllUsers {
+      id
+      first_name
+      last_name
+      email
+      birthdate
+      isAdmin
+      avatar {
+        id
+        title
+        image
+      }
+    }
+  }
+`;
+
+export const DELETE_USER_BY_ADMIN = gql`
+  mutation DeleteUserByAdmin($userId: Int!) {
+    deleteUserByAdmin(userId: $userId)
+  }
+`;
+
+export const PROMOTE_USER_TO_ADMIN = gql`
+  mutation PromoteUserToAdmin($userId: Int!) {
+    promoteUserToAdmin(userId: $userId) {
+      id
+      first_name
+      last_name
+      email
+      isAdmin
     }
   }
 `;
