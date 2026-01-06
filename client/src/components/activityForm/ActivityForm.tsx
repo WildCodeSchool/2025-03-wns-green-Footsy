@@ -41,9 +41,10 @@ export default function ActivityForm() {
 
     const types = typesData?.getAllTypes;
 
+    const selectedType = types?.find((t) => t.id === formData.type_id) ?? typesByCategorySelected.find((t) => t.id === formData.type_id);
+
     useEffect(() => {
-        setTypesByCategorySelected(types?.filter((type) => type.category_id === formData.category_id) ?? []); 
-        console.log('coucou')
+        setTypesByCategorySelected(types?.filter((type) => type.category_id === formData.category_id) ?? []);
     }, [types, formData.category_id])
 
     if (typesError) {
@@ -53,10 +54,6 @@ export default function ActivityForm() {
             </div>
         );
     }
-
-    console.log({types})
-    console.log(formData.category_id)
-    console.log({typesByCategorySelected})
 
     return (
         <form
@@ -86,7 +83,9 @@ export default function ActivityForm() {
                                     : undefined
                         }
                     />
-                    {/* {field.id === 'quantity' && <p>{formData[fi]}</p>} */}
+                    {field.id === 'quantity' && (
+                        <p className={classes.activity__unit}>{selectedType?.quantity_unit ?? ''}</p>
+                    )}
                 </div>
             ))}
 
