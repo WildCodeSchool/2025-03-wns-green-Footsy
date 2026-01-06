@@ -13,11 +13,14 @@ import { Flip, ToastContainer } from "react-toastify";
 
 import App from "./App";
 
+import AdminRoute from "./components/protectedRoutes/AdminRoute";
+import GuestRoute from "./components/protectedRoutes/GuestRoute";
 import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 import ModeProvider from "./context/modeContext";
 import UserProvider from "./context/userContext";
 import { getToken } from "./services/authService";
 
+import Admin from "./pages/admin/Admin";
 import Dashboard from "./pages/dashboard/Dashboard";
 import History from "./pages/history/History";
 import Home from "./pages/home/Home";
@@ -32,19 +35,26 @@ const router = createBrowserRouter([
   {
     element: <App />,
     children: [
-      // Public routes
+      // Public routes (only accessible when NOT logged in)
       {
-        path: "/",
-        element: <Home />,
+        element: <GuestRoute />,
+        children: [
+          {
+            path: "/",
+            element: <Home />,
+          },
+          {
+            path: "signup",
+            element: <SignUp />,
+          },
+          {
+            path: "login",
+            element: <Login />,
+          },
+        ],
       },
-      {
-        path: "signup",
-        element: <SignUp />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
+
+      // Public information routes (accessible to all)
       {
         path: "information",
         element: <h1>Informations Page - To be implemented</h1>,
@@ -62,7 +72,7 @@ const router = createBrowserRouter([
         element: <TestCharte />,
       },
 
-      // Protected Routes
+      // Protected Routes (require authentication)
       {
         element: <ProtectedRoutes />,
         children: [
@@ -77,6 +87,12 @@ const router = createBrowserRouter([
             element: <h1>Community Page - To be implemented</h1>,
           },
         ],
+      },
+
+      // Admin Routes (require admin privileges)
+      {
+        element: <AdminRoute />,
+        children: [{ path: "admin", element: <Admin /> }],
       },
     ],
   },

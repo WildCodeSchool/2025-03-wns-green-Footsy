@@ -1,13 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useCurrentUser } from "../../context/userContext";
 
-export default function ProtectedRoutes () {
-    const token = localStorage.getItem('token');
+export default function ProtectedRoutes() {
+  const { user } = useCurrentUser();
 
-    if(!token) {
-        toast.error("Vous devrez être connecté pour accéder à cette page.");
-        return <Navigate to="/login" replace/>
-    }
+  if (!user) {
+    toast.error("Vous devez être connecté pour accéder à cette page.");
+    return <Navigate to="/" replace />;
+  }
 
-    return <Outlet />
+  return <Outlet />;
 }
