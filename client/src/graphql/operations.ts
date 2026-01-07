@@ -76,7 +76,7 @@ export const GET_CURRENT_USER = gql`
       first_name
       last_name
       email
-      birthdate
+      birthdateString
       isAdmin
       avatar {
         id
@@ -105,6 +105,30 @@ export const GET_ALL_USERS = gql`
   }
 `;
 
+export const UPDATE_PERSONAL_INFO = gql`
+  mutation UpdatePersonalInfo($userId: Int!, $data: UpdatePersonalInfoInput!) {
+    updatePersonalInfo(userId: $userId, data: $data) {
+      id
+      first_name
+      last_name
+      birthdateString
+    }
+  }
+`;
+
+export const UPDATE_AVATAR = gql`
+  mutation UpdateAvatar($userId: Int!, $data: UpdateAvatarInput!) {
+    updateAvatar(userId: $userId, data: $data) {
+      id
+      avatar {
+        id
+        title
+        image
+      }
+    }
+  }
+`;
+
 export const DELETE_USER_BY_ADMIN = gql`
   mutation DeleteUserByAdmin($userId: Int!) {
     deleteUserByAdmin(userId: $userId)
@@ -120,5 +144,17 @@ export const PROMOTE_USER_TO_ADMIN = gql`
       email
       isAdmin
     }
+  }
+`;
+
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword($userId: Int!, $data: ChangePasswordInput!) {
+    changePassword(userId: $userId, data: $data)
+  }
+`;
+
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($userId: Int!) {
+    deleteAccount(userId: $userId)
   }
 `;
