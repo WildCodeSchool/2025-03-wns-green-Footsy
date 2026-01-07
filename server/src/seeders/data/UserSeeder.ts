@@ -13,8 +13,8 @@ const Users = [
   {
     id: 2,
     email: "user@footsy.com",
-    first_name: "test",
-    last_name: "user",
+    first_name: "Test",
+    last_name: "User",
     hashed_password:
       "$argon2id$v=19$m=65536,t=3,p=4$CbnAc/TwBMRl0DBIHs9Hnw$fHI6Kc2T2Bx7XFCs2rKNi0vJKq1gOemhKk2NEpCKN4E",
     birthdate: new Date("1995-08-04"),

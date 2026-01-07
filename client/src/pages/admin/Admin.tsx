@@ -35,8 +35,6 @@ export default function Admin() {
     return null;
   }
 
-  const userName = `${currentUser.first_name} ${currentUser.last_name}`;
-
   return (
     <>
       <MainLayout>
@@ -60,6 +58,7 @@ export default function Admin() {
                   <tbody>
                     {data.getAllUsers.map((user) => {
                       const statusBadge = getUserStatusBadge(user);
+                      const userName = `${user.first_name} ${user.last_name}`;
 
                       return (
                         <tr key={user.id}>

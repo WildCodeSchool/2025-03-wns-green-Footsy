@@ -1,5 +1,3 @@
-@import "../../index.css";
-
 .modal {
   &__overlay {
     position: fixed;
@@ -24,12 +22,6 @@
     text-align: center;
   }
 
-  &__message {
-    margin: 0 0 2rem 0;
-    font-size: 1.1rem;
-    color: #333;
-  }
-
   &__buttons {
     display: flex;
     gap: 1rem;
@@ -44,7 +36,7 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
-    background-color: var(--color-primary);
+    background-color: var(--green);
     color: white;
 
     &:hover {
@@ -52,4 +44,3 @@
     }
   }
 }
-
