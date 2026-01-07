@@ -4,17 +4,22 @@ import { useMode } from "../../context/modeContext";
 
 import classes from "./FormField.module.scss";
 
+type SelectOption = {
+  id: number;
+  name?: string;
+  title?: string;
+};
+
 type FormFieldProps = {
   label: string;
   type: string;
   id: string;
   name: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   placeholder?: string;
   required?: boolean;
-  disabled?: boolean;
-  readOnly?: boolean;
+  options?: SelectOption[];
 };
 
 export default function FormField({
@@ -26,8 +31,7 @@ export default function FormField({
   onChange,
   placeholder,
   required = true,
-  disabled = false,
-  readOnly = false,
+  options,
 }: FormFieldProps) {
   const { mode } = useMode();
 
@@ -35,29 +39,44 @@ export default function FormField({
     <div className={classes["form-field"]}>
       <label
         htmlFor={id}
-        className={`${classes["form-field__label"]} ${
-          classes[`form-field__label--${mode}`]
-        }`}
+        className={`${classes["form-field__label"]} ${classes[`form-field__label--${mode}`]
+          }`}
       >
         {label}
         {required && (
           <span className={classes["form-field__label--required"]}> *</span>
         )}
       </label>
-      <input
-        type={type}
-        id={id}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
-        readOnly={readOnly}
-        className={`${classes["form-field__input"]} ${
-          classes[`form-field__input--${mode}`]
-        }`}
-      />
+      {type === 'select' ? (
+        <select
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className={`${classes["form-field__input"]} ${classes[`form-field__input--${mode}`]
+            }`}
+        >
+          <option value="">{placeholder}</option>
+          {options?.map((option) => (
+            <option key={String(option.id)} value={String(option.id)}>
+              {option.name || option.title}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={required}
+          className={`${classes["form-field__input"]} ${classes[`form-field__input--${mode}`]
+            }`}
+        />
+      )}
     </div>
   );
 }

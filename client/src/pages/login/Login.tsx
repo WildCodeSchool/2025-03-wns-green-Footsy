@@ -70,9 +70,8 @@ export default function Login() {
       {<FormHeader title="Connexion" />}
       <AuthLayout showImageOnMobile={true}>
         <h2
-          className={`${classes.login__title} ${
-            classes[`login__title--${mode}`]
-          }`}
+          className={`${classes.login__title} ${classes[`login__title--${mode}`]
+            }`}
         >
           Connexion
         </h2>
@@ -81,9 +80,8 @@ export default function Login() {
           <div className={classes.login__field}>
             <label
               htmlFor="email"
-              className={`${classes.login__label} ${
-                classes[`login__label--${mode}`]
-              }`}
+              className={`${classes.login__label} ${classes[`login__label--${mode}`]
+                }`}
             >
               Email
             </label>
@@ -92,9 +90,8 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`${classes.login__input} ${
-                classes[`login__input--${mode}`]
-              }`}
+              className={`${classes.login__input} ${classes[`login__input--${mode}`]
+                }`}
               required
             />
           </div>
@@ -102,9 +99,8 @@ export default function Login() {
           <div className={classes.login__field}>
             <label
               htmlFor="password"
-              className={`${classes.login__label} ${
-                classes[`login__label--${mode}`]
-              }`}
+              className={`${classes.login__label} ${classes[`login__label--${mode}`]
+                }`}
             >
               Mot de passe
             </label>
@@ -113,9 +109,8 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`${classes.login__input} ${
-                classes[`login__input--${mode}`]
-              }`}
+              className={`${classes.login__input} ${classes[`login__input--${mode}`]
+                }`}
               required
             />
           </div>
@@ -130,9 +125,8 @@ export default function Login() {
 
         <Link
           to="/signup"
-          className={`${classes.login__link} ${
-            classes[`login__link--${mode}`]
-          }`}
+          className={`${classes.login__link} ${classes[`login__link--${mode}`]
+            }`}
         >
           Vous n'avez pas de compte ? Inscrivez-vous ici !
         </Link>

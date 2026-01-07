@@ -58,7 +58,7 @@ export const formFields = [
 ];
 
 export const handleChange = (
-  event: React.ChangeEvent<HTMLInputElement>,
+  event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   formData: SignUpFormData,
   setFormData: React.Dispatch<React.SetStateAction<SignUpFormData>>,
   setErrors: React.Dispatch<React.SetStateAction<FormErrors>>
