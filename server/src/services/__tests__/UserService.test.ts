@@ -37,6 +37,28 @@ jest.mock("../../entities/Avatar", () => {
   }));
 });
 
+jest.mock("../../entities/Activity", () => ({
+  __esModule: true,
+  default: {
+    find: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
+
+jest.mock("../../entities/Interaction", () => ({
+  __esModule: true,
+  default: {
+    remove: jest.fn(),
+  },
+}));
+
+jest.mock("../../entities/Friend", () => ({
+  __esModule: true,
+  default: {
+    delete: jest.fn(),
+  },
+}));
+
 // Mock des méthodes statiques après la définition des mocks
 const MockedUser = jest.mocked(require("../../entities/User"));
 MockedUser.findOne = jest.fn();
@@ -45,6 +67,12 @@ MockedUser.remove = jest.fn();
 
 const MockedAvatar = jest.mocked(require("../../entities/Avatar"));
 MockedAvatar.findOneByOrFail = jest.fn();
+
+const MockedActivity = jest.mocked(require("../../entities/Activity").default);
+const MockedInteraction = jest.mocked(
+  require("../../entities/Interaction").default
+);
+const MockedFriend = jest.mocked(require("../../entities/Friend").default);
 
 describe("UserService", () => {
   let userService: UserService;
@@ -195,7 +223,9 @@ describe("UserService", () => {
       });
 
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
-      mockUser.save = jest.fn(() => Promise.resolve(updatedUser)) as any;
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(updatedUser)
+      );
 
       // Act
       const result = await userService.updatePersonalInfo(userId, updateData);
@@ -240,7 +270,9 @@ describe("UserService", () => {
 
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
       MockedAvatar.findOneByOrFail.mockResolvedValue(mockAvatar);
-      mockUser.save = jest.fn(() => Promise.resolve(updatedUser)) as any;
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(updatedUser)
+      );
 
       // Act
       const result = await userService.updateAvatar(userId, avatarId);
@@ -297,7 +329,9 @@ describe("UserService", () => {
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
       mockArgon2.verify.mockResolvedValue(true);
       mockArgon2.hash.mockResolvedValue(hashedPassword);
-      mockUser.save = jest.fn(() => Promise.resolve(mockUser)) as any;
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(mockUser)
+      );
 
       // Act
       const result = await userService.changePassword(
@@ -364,14 +398,59 @@ describe("UserService", () => {
       const userId = 1;
 
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
-      MockedUser.remove.mockResolvedValue(undefined);
+      MockedActivity.find.mockResolvedValue([]);
+      MockedActivity.delete.mockResolvedValue({ affected: 0, raw: [] });
+      MockedFriend.delete.mockResolvedValue({ affected: 0, raw: [] });
+      MockedUser.remove.mockResolvedValue(mockUser);
 
       // Act
       const result = await userService.deleteAccount(userId);
 
       // Assert
       expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(MockedActivity.find).toHaveBeenCalledWith({
+        where: { user: { id: userId } },
+        relations: ["interactions"],
+      });
+      expect(MockedActivity.delete).toHaveBeenCalledWith({
+        user: { id: userId },
+      });
+      expect(MockedFriend.delete).toHaveBeenCalledWith({
+        requester_id: userId,
+      });
+      expect(MockedFriend.delete).toHaveBeenCalledWith({
+        requested_id: userId,
+      });
       expect(MockedUser.remove).toHaveBeenCalledWith(mockUser);
+      expect(result).toBe(true);
+    });
+
+    it("should delete user with activities and interactions", async () => {
+      // Arrange
+      const userId = 1;
+      const mockInteractions = [
+        { id: 1, emoji: "👍" },
+        { id: 2, emoji: "❤️" },
+      ];
+      const mockActivity = {
+        id: 1,
+        interactions: mockInteractions,
+      };
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      MockedActivity.find.mockResolvedValue([mockActivity]);
+      MockedInteraction.remove.mockResolvedValue(mockInteractions);
+      MockedActivity.delete.mockResolvedValue({ affected: 1, raw: [] });
+      MockedFriend.delete.mockResolvedValue({ affected: 0, raw: [] });
+      MockedUser.remove.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await userService.deleteAccount(userId);
+
+      // Assert
+      expect(MockedInteraction.remove).toHaveBeenCalledWith(
+        mockActivity.interactions
+      );
       expect(result).toBe(true);
     });
 

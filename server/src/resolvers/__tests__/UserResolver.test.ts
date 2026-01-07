@@ -16,13 +16,6 @@ jest.mock("argon2", () => ({
   hash: jest.fn(),
 }));
 
-jest.mock("../../entities/User", () => ({
-  __esModule: true,
-  default: {
-    findOneByOrFail: jest.fn(),
-  },
-}));
-
 // Mock UserService
 const mockUserService: jest.Mocked<UserServiceInterface> = {
   create: jest.fn(),
@@ -84,6 +77,7 @@ describe("UserResolver", () => {
           mail: mockUser.email,
           birthDate: mockUser.birthdate,
           avatar: mockUser.avatar,
+          isAdmin: mockUser.isAdmin,
         },
         process.env.JWT_SECRET
       );
@@ -212,6 +206,7 @@ describe("UserResolver", () => {
           mail: createdUser.email,
           birthDate: createdUser.birthdate,
           avatar: createdUser.avatar,
+          isAdmin: createdUser.isAdmin,
         },
         process.env.JWT_SECRET
       );
@@ -345,9 +340,9 @@ describe("UserResolver", () => {
       (jwt.verify as jest.Mock).mockReturnValue(decodedToken);
 
       // Mock User.findOne using jest.spyOn
-      const User = await import("../../entities/User");
+      const UserEntity = await import("../../entities/User");
       const findOneSpy = jest
-        .spyOn(User.default, "findOne")
+        .spyOn(UserEntity.default, "findOne")
         .mockResolvedValue(mockUser);
 
       // Act
@@ -580,10 +575,10 @@ describe("UserResolver", () => {
       (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
 
       // Mock User.findOneByOrFail to return admin user
-      const MockedUser = jest.mocked(require("../../entities/User").default);
-      (
-        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
-      ).mockResolvedValue(adminUser);
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(adminUser);
 
       mockUserService.deleteAccount.mockResolvedValue(true);
 
@@ -595,11 +590,14 @@ describe("UserResolver", () => {
         mockToken,
         process.env.JWT_SECRET
       );
-      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({
+      expect(findOneByOrFailSpy).toHaveBeenCalledWith({
         id: adminUser.id,
       });
       expect(mockUserService.deleteAccount).toHaveBeenCalledWith(userId);
       expect(result).toBe(true);
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
     });
 
     it("should throw error when user is not authenticated", async () => {
@@ -622,15 +620,18 @@ describe("UserResolver", () => {
 
       (jwt.verify as jest.Mock).mockReturnValue({ id: regularUser.id });
 
-      const MockedUser = jest.mocked(require("../../entities/User").default);
-      (
-        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
-      ).mockResolvedValue(regularUser);
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(regularUser);
 
       // Act & Assert
       await expect(
         userResolver.deleteUserByAdmin(userId, context)
       ).rejects.toThrow("Failed to delete user");
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
     });
 
     it("should throw error when JWT_SECRET is missing", async () => {
@@ -658,10 +659,10 @@ describe("UserResolver", () => {
 
       (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
 
-      const MockedUser = jest.mocked(require("../../entities/User").default);
-      (
-        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
-      ).mockResolvedValue(adminUser);
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(adminUser);
 
       mockUserService.promoteToAdmin.mockResolvedValue(promotedUser);
 
@@ -673,11 +674,14 @@ describe("UserResolver", () => {
         mockToken,
         process.env.JWT_SECRET
       );
-      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({
+      expect(findOneByOrFailSpy).toHaveBeenCalledWith({
         id: adminUser.id,
       });
       expect(mockUserService.promoteToAdmin).toHaveBeenCalledWith(userId);
       expect(result).toEqual(promotedUser);
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
     });
 
     it("should throw error when user is not authenticated", async () => {
@@ -700,15 +704,18 @@ describe("UserResolver", () => {
 
       (jwt.verify as jest.Mock).mockReturnValue({ id: regularUser.id });
 
-      const MockedUser = jest.mocked(require("../../entities/User").default);
-      (
-        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
-      ).mockResolvedValue(regularUser);
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(regularUser);
 
       // Act & Assert
       await expect(
         userResolver.promoteUserToAdmin(userId, context)
       ).rejects.toThrow("Failed to promote user to admin");
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
     });
 
     it("should throw error when JWT_SECRET is missing", async () => {
@@ -733,10 +740,10 @@ describe("UserResolver", () => {
 
       (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
 
-      const MockedUser = jest.mocked(require("../../entities/User").default);
-      (
-        MockedUser.findOneByOrFail as jest.Mock<() => Promise<User>>
-      ).mockResolvedValue(adminUser);
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(adminUser);
 
       mockUserService.promoteToAdmin.mockRejectedValue(
         new Error("User not found")
@@ -746,6 +753,9 @@ describe("UserResolver", () => {
       await expect(
         userResolver.promoteUserToAdmin(userId, context)
       ).rejects.toThrow("Failed to promote user to admin");
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
     });
   });
 });
