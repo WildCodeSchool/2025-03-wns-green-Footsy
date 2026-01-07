@@ -1,0 +1,350 @@
+.settings-form__profile-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-form__profile-row--inline-mobile {
+  @media (max-width: 1023px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.settings-form__title {
+  width: 100%;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  margin: 0 0 0.5rem;
+  text-align: left;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .settings-form__title {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .settings-form__profile-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+  }
+}
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+  gap: 1.5rem;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    gap: 2rem;
+    padding: 0 2rem 4rem;
+  }
+
+  @media (min-width: 1280px) {
+    max-width: 1040px;
+  }
+}
+
+.settings-form__section {
+  width: 100%;
+  background-color: var(--white);
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 25px 60px rgba(8, 41, 21, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  @media (min-width: 1024px) {
+    padding: 2rem 2.5rem;
+  }
+}
+
+.settings-form__info-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.settings-form__info-item--name {
+  flex: 1 1 auto;
+}
+
+.settings-form__info-content {
+  flex: 1 1 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings-form__info-content--name-display {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.settings-form__info-item--avatar {
+  align-items: flex-start;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: left;
+    text-align: left;
+    gap: 1rem;
+  }
+}
+
+.settings-form__info-content--avatar {
+  flex: 0 0 auto;
+  align-items: flex-start;
+  gap: 1rem;
+
+  @media (max-width: 767px) {
+    align-items: center;
+  }
+}
+
+.settings-form__avatar-selector {
+  flex-shrink: 0;
+  width: fit-content;
+  display: inline-flex;
+}
+
+.settings-form__info-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  margin: 0;
+}
+
+.settings-form__info-description {
+  font-size: 0.9rem;
+  color: var(--dark-green);
+  opacity: 0.7;
+  margin: 0;
+}
+
+.settings-form__avatar-preview {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-form__avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.settings-form__actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 0;
+}
+
+.settings-form__actions--editing {
+  padding-top: calc(1.5rem * 1.5 + 1rem);
+}
+
+.settings-form__actions--placeholder {
+  visibility: hidden;
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .settings-form__actions--name-editing {
+    padding-top: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .settings-form__actions--name-editing {
+    padding-top: 2.2rem;
+  }
+}
+
+.settings-form__action-button {
+  border: 1px solid var(--dark-green);
+  background-color: transparent;
+  color: var(--dark-green);
+  border-radius: 999px;
+  padding: 0.45rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.settings-form__action-button:hover {
+  background-color: var(--dark-green);
+  color: var(--white);
+}
+
+.settings-form__action-button--primary {
+  background-color: var(--dark-green);
+  color: var(--white);
+}
+
+.settings-form__action-button--primary:hover {
+  opacity: 0.9;
+}
+
+.settings-form__action-button--edit::after {
+  content: "";
+  display: none;
+}
+
+@media (max-width: 399px) {
+  .settings-form__action-button--edit {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .settings-form__action-button--edit::after {
+    display: block;
+    width: 18px;
+    height: 18px;
+    background-image: url("../../assets/img/logos_icons/edit.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+}
+
+.settings-form__info-value {
+  font-size: 1rem;
+  color: var(--dark-green);
+  margin: 0;
+}
+
+.settings-form__info-value--name {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.settings-form__name-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 767px) {
+  .settings-form__info-item--name-editing {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .settings-form__info-item--name-editing .settings-form__name-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-form__actions--name-editing {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 0;
+    gap: 0.75rem;
+  }
+
+  .settings-form__info-item--birthdate-editing {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .settings-form__actions--birthdate-editing {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 0;
+    gap: 0.75rem;
+  }
+}
+
+.settings-form__divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(11, 65, 38, 0.12);
+}
+
+.settings-form__inline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.settings-form__form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.settings-form__delete-section {
+  margin-top: 0.5rem;
+  background-color: rgba(11, 65, 38, 0.05);
+  border-radius: 18px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.settings-form__delete-text {
+  font-size: 0.95rem;
+  color: var(--dark-green);
+  margin: 0;
+}
+
+.settings-form__delete-link {
+  background: none;
+  border: none;
+  color: var(--dark-green);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.settings-form__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+  color: var(--dark-green);
+}
+

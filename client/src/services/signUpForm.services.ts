@@ -16,7 +16,10 @@ export type SignUpFormData = {
 export type FormErrors = {
   emailMismatch: boolean;
   passwordMismatch: boolean;
+  passwordInvalid: boolean;
 };
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
 
 export const formFields = [
   {
@@ -55,7 +58,7 @@ export const formFields = [
 ];
 
 export const handleChange = (
-  event: React.ChangeEvent<HTMLInputElement>,
+  event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   formData: SignUpFormData,
   setFormData: React.Dispatch<React.SetStateAction<SignUpFormData>>,
   setErrors: React.Dispatch<React.SetStateAction<FormErrors>>
@@ -78,12 +81,19 @@ export const handleChange = (
   }
 
   if (name === "confirmPassword" || name === "password") {
+    const passwordMismatch =
+      newFormData.password !== "" &&
+      newFormData.confirmPassword !== "" &&
+      newFormData.password !== newFormData.confirmPassword;
+
+    const passwordValue = (newFormData.password as string) ?? "";
+    const passwordInvalid =
+      passwordValue !== "" && !passwordRegex.test(passwordValue);
+
     setErrors((prev) => ({
       ...prev,
-      passwordMismatch:
-        newFormData.password !== "" &&
-        newFormData.confirmPassword !== "" &&
-        newFormData.password !== newFormData.confirmPassword,
+      passwordMismatch,
+      passwordInvalid,
     }));
   }
 };
@@ -100,6 +110,13 @@ export const handleSubmit = async (
   if (errors.emailMismatch || errors.passwordMismatch) {
     toast.error(
       "Veuillez corriger les erreurs avant de soumettre le formulaire."
+    );
+    return;
+  }
+
+  if (errors.passwordInvalid) {
+    toast.error(
+      "Le mot de passe doit faire au moins 8 caractères et contenir une majuscule, une minuscule, un chiffre et un caractère spécial."
     );
     return;
   }

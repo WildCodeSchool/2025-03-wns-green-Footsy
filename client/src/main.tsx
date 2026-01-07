@@ -18,10 +18,12 @@ import ModeProvider from "./context/modeContext";
 import UserProvider from "./context/userContext";
 import { getToken } from "./services/authService";
 
+import Activity from "./pages/activity/Activity";
 import Dashboard from "./pages/dashboard/Dashboard";
 import History from "./pages/history/History";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
+import Settings from "./pages/settings/Settings";
 import SignUp from "./pages/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
 
@@ -68,9 +70,11 @@ const router = createBrowserRouter([
         children: [
           { path: "dashboard", element: <Dashboard /> },
           { path: "history", element: <History /> },
+          { path: "settings", element: <Settings /> },
+          { path: "history", element: <History /> },
           {
             path: "add-activity",
-            element: <h1>Activity Page - To be implemented</h1>,
+            element: <Activity />,
           },
           {
             path: "community",

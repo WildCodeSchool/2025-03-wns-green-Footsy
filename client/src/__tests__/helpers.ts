@@ -87,12 +87,15 @@ export const createMockUserFormData = ({
 
 export const createMockInputEvent = (name: string, value: string) => {
   return {
-    target: { name, value },
-  } as React.ChangeEvent<HTMLInputElement>;
+    target: { id: name, name, value },
+    currentTarget: { id: name, name, value },
+    preventDefault: vi.fn(),
+    stopPropagation: vi.fn(),
+  } as unknown as React.ChangeEvent<HTMLInputElement>;
 };
 
-export const createMockFormEvent = () => {
+export const createMockFormEvent = (): React.FormEvent<HTMLFormElement> => {
   return {
     preventDefault: vi.fn(),
-  } as unknown as React.FormEvent;
+  } as unknown as React.FormEvent<HTMLFormElement>;
 };

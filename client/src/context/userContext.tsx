@@ -9,14 +9,20 @@ import type { User } from "../types/User.types";
 
 type UserContextType = {
   user?: User;
+  loading: boolean;
+  error?: any;
+  refetch?: () => void;
 };
 
 const UserContext = createContext<UserContextType>({
   user: undefined,
+  loading: false,
+  error: undefined,
+  refetch: undefined,
 });
 
 export default function UserProvider({ children }: { children: ReactNode }) {
-  const { data, loading, error } = useQuery<GetCurrentUserData>(
+  const { data, loading, error, refetch } = useQuery<GetCurrentUserData>(
     GET_CURRENT_USER,
     {
       errorPolicy: "all",
@@ -31,7 +37,14 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     : data?.currentUser;
 
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{
+      user,
+      loading,
+      error,
+      refetch
+    }}>
+      {children}
+    </UserContext.Provider>
   );
 }
 

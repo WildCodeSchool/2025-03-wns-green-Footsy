@@ -35,6 +35,7 @@ export default function SignUpForm() {
   const [errors, setErrors] = useState<FormErrors>({
     emailMismatch: false,
     passwordMismatch: false,
+    passwordInvalid: false,
   });
 
   const [signUpMutation, { loading, error }] = useMutation(SIGN_UP);
@@ -120,6 +121,12 @@ export default function SignUpForm() {
           {field.id === "confirmPassword" && errors.passwordMismatch && (
             <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
               Les mots de passe ne sont pas identiques
+            </p>
+          )}
+          {field.id === "password" && errors.passwordInvalid && (
+            <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
+              Le mot de passe doit contenir au moins 8 caractères, une majuscule, une
+              minuscule, un chiffre et un caractère spécial.
             </p>
           )}
         </div>

@@ -13,6 +13,7 @@ export type Type = {
   title: string;
   quantity_unit: string;
   category: Category;
+  category_id?: number;
 };
 
 export type Category = {

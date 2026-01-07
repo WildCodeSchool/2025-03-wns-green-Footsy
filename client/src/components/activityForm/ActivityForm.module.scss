@@ -1,0 +1,31 @@
+.activity__form {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &__title {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--dark-green);
+    }
+  }
+
+  &__submit {
+    margin-top: 1rem;
+  }
+}
+
+.activity__error {
+  color: red;
+}

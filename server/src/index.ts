@@ -13,7 +13,7 @@ import InteractionResolver from "./resolvers/InteractionResolver";
 import TypeResolver from "./resolvers/TypeResolver";
 import UserResolver from "./resolvers/UserResolver";
 
-import { seedAvatars } from "./seeders/Seeder";
+import { seedAvatars, seedUsers, seedCategories, seedTypes, seedActivities } from "./seeders/Seeder";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
@@ -45,10 +45,15 @@ async function startServer() {
     listen: { port },
     context: async ({ req }) => {
       const token = req.headers.authorization?.replace('Bearer ', '') || null;
+       console.log('🔐 Token reçu côté serveur:', token)
       return { token };
     },
   });
   console.info(`Server started on ${url}`);
-  seedAvatars();
+  await seedAvatars();
+  await seedUsers();
+  await seedCategories();
+  await seedTypes();
+  await seedActivities();
 }
 startServer();

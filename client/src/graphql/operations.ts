@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import type { Activity, Category } from "../types/Activity.types";
+import type { Activity, Category, Type } from "../types/Activity.types";
 import type { User } from "../types/User.types";
 
 export type GetActivitiesByUserIdData = {
@@ -16,6 +16,10 @@ export type GetCurrentUserData = {
 
 export type LoginMutationData = {
   login: string;
+};
+
+export type GetAllTypes = {
+  getAllTypes: Type[];
 };
 
 export const SIGN_UP = gql`
@@ -76,11 +80,76 @@ export const GET_CURRENT_USER = gql`
       first_name
       last_name
       email
-      birthdate
+      birthdateString
       avatar {
         id
         title
         image
+      }
+    }
+  }
+`;
+
+export const UPDATE_PERSONAL_INFO = gql`
+  mutation UpdatePersonalInfo($userId: Int!, $data: UpdatePersonalInfoInput!) {
+    updatePersonalInfo(userId: $userId, data: $data) {
+      id
+      first_name
+      last_name
+      birthdateString
+    }
+  }
+`;
+
+export const UPDATE_AVATAR = gql`
+  mutation UpdateAvatar($userId: Int!, $data: UpdateAvatarInput!) {
+    updateAvatar(userId: $userId, data: $data) {
+      id
+      avatar {
+        id
+        title
+        image
+      }
+    }
+  }
+`;
+
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword($userId: Int!, $data: ChangePasswordInput!) {
+    changePassword(userId: $userId, data: $data)
+  }
+`;
+
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($userId: Int!) {
+    deleteAccount(userId: $userId)
+  }
+`;
+
+export const GET_ALL_TYPES = gql`
+  query GetAllTypes {
+    getAllTypes {
+      id
+      title
+      quantity_unit
+      category_id
+    }
+  }
+`;
+
+export const CREATE_ACTIVITY = gql`
+  mutation CreateActivity($data: CreateActivityInput!) {
+    createActivity(data: $data) {
+      id
+      title
+      date
+      type {
+        id
+      }
+      quantity
+      co2_equivalent
+      user {
+        id
       }
     }
   }
