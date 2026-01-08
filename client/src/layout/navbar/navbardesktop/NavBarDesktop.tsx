@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import community from "../../../assets/img/logos_icons/community_desktop.png"; 
+import community from "../../../assets/img/logos_icons/community_desktop.png";
 import community_dark from "../../../assets/img/logos_icons/community_dark.png";
 import dashboard from "../../../assets/img/logos_icons/dashboard_desktop.png";
 import dashboard_dark from "../../../assets/img/logos_icons/dashboard_dark.png";
@@ -11,6 +11,8 @@ import history_dark from "../../../assets/img/logos_icons/history_dark.png";
 import information from "../../../assets/img/logos_icons/information_desktop.png";
 import information_dark from "../../../assets/img/logos_icons/information_dark.png";
 
+import { useCurrentUser } from "../../../context/userContext";
+
 import classes from "./NavBarDesktop.module.scss";
 
 interface NavBarDesktopProps {
@@ -20,6 +22,8 @@ interface NavBarDesktopProps {
 export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
   const navigate = useNavigate();
 
+  const { user } = useCurrentUser();
+
   const footprintIcon = mode === "dark" ? footprint_dark : footprint;
   const dashboardIcon = mode === "dark" ? dashboard_dark : dashboard;
   const historyIcon = mode === "dark" ? history_dark : history;
@@ -28,7 +32,7 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
 
   return (
     <section className={classes.navbardesktop}>
-       <button
+      <button
         type="button"
         onClick={() => navigate("/add-activity")}
         className={classes.navbardesktop__footprintbutton}
@@ -40,55 +44,66 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
         />
       </button>
       <div>
-      <button
-        type="button"
-        onClick={() => navigate("/dashboard")}
-        className={classes.navbardesktop__button}
-      >
-        <img
-          src={dashboardIcon}
-          alt="dashboard-icon"
-          className={classes.navbardesktop__img}
-        />
-        <h5>Tableau de bord</h5>
-      </button>
-      <button
-        type="button"
-        onClick={() => navigate("/history")}
-        className={classes.navbardesktop__button}
-      >
-        <img
-          src={historyIcon}
-          alt="history-icon"
-          className={classes.navbardesktop__img}
-        />
-        <h5>Mon historique</h5>
-      </button>
-      <button
-        type="button"
-        onClick={() => navigate("/community")}
-        className={classes.navbardesktop__button}
-      >
-        <img
-          src={communityIcon}
-          alt="community-icon"
-          className={classes.navbardesktop__img}
-        />
-        <h5>Communauté carbone</h5>
-      </button>
-      <button
-        type="button"
-        onClick={() => navigate("/information")}
-        className={classes.navbardesktop__button}
-      >
-        <img
-          src={infoIcon}
-          alt="information-icon"
-          className={classes.navbardesktop__img}
-        />
-        <h5>En savoir plus</h5>
-      </button>
+        <button
+          type="button"
+          onClick={() => navigate("/dashboard")}
+          className={classes.navbardesktop__button}
+        >
+          <img
+            src={dashboardIcon}
+            alt="dashboard-icon"
+            className={classes.navbardesktop__img}
+          />
+          <h5>Tableau de bord</h5>
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/history")}
+          className={classes.navbardesktop__button}
+        >
+          <img
+            src={historyIcon}
+            alt="history-icon"
+            className={classes.navbardesktop__img}
+          />
+          <h5>Mon historique</h5>
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/community")}
+          className={classes.navbardesktop__button}
+        >
+          <img
+            src={communityIcon}
+            alt="community-icon"
+            className={classes.navbardesktop__img}
+          />
+          <h5>Communauté carbone</h5>
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/information")}
+          className={classes.navbardesktop__button}
+        >
+          <img
+            src={infoIcon}
+            alt="information-icon"
+            className={classes.navbardesktop__img}
+          />
+          <h5>En savoir plus</h5>
+        </button>
       </div>
+      {user?.isAdmin && (
+        <div>
+          <button
+            type="button"
+            onClick={() => navigate("/admin")}
+            className={classes.navbardesktop__button}
+          >
+            <h5>Page admin</h5>
+          </button>
+        </div>
+      )}
     </section>
   );
 }

@@ -1,23 +1,28 @@
 .tag {
   display: inline-flex;
-  width: fit-content;
   align-items: center;
-  padding: 0.375rem 0.875rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 1.25rem;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  transition: all 0.2s ease;
 }
 
-.tag--primary {
-  background: #427d42;
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(66, 125, 66, 0.2);
+.tag--light {
+  background: var(--sea-green);
+  color: var(--dark-green);
 }
 
-.tag--secondary {
-  background: #81a631;
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(129, 166, 49, 0.2);
+.tag--dark {
+  background: var(--dark-green);
+  color: var(--white);
+}
+
+.tag--warning {
+  background: var(--yellow);
+  color: var(--dark-green);
+}
+
+.tag--info {
+  background: var(--lawn-green);
+  color: var(--white);
 }

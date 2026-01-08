@@ -8,4 +8,5 @@ export type User = {
   birthdate?: string | null;
   birthdateString?: string | null;
   avatar: Avatar;
+  isAdmin: boolean;
 };
