@@ -1,8 +1,9 @@
 import { useQuery } from "@apollo/client/react";
 
+import { AdminSwitch } from "../../components/adminSwitch/AdminSwitch";
+import { DeleteUserButton } from "../../components/deleteUserButton/DeleteUserButton";
 import { Loader } from "../../components/loader/Loader";
 import { Tag } from "../../components/tag/Tag";
-import { UserActions } from "../../components/userActions/UserActions";
 
 import { useCurrentUser } from "../../context/userContext";
 
@@ -35,6 +36,10 @@ export default function Admin() {
     return null;
   }
 
+  const allUsers = [...(data?.getAllUsers ?? [])].sort((a, b) =>
+    a.last_name.toLowerCase().localeCompare(b.last_name.toLowerCase())
+  );
+
   return (
     <>
       <MainLayout>
@@ -56,7 +61,7 @@ export default function Admin() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.getAllUsers.map((user) => {
+                    {allUsers.map((user) => {
                       const statusBadge = getUserStatusBadge(user);
                       const userName = `${user.first_name} ${user.last_name}`;
 
@@ -69,21 +74,30 @@ export default function Admin() {
                             {userName}
                           </td>
                           <td data-label="Email">{user.email}</td>
-                          <td data-label="Statut">
-                            <Tag
-                              text={statusBadge.label}
-                              variant={statusBadge.variant}
-                            />
+                          <td
+                            data-label="Statut"
+                            className={classes["users-table__status"]}
+                          >
+                            <div>
+                              <AdminSwitch
+                                user={user}
+                                currentUserId={currentUser.id}
+                                onToggleSuccess={refetch}
+                              />
+                              <Tag
+                                text={statusBadge.label}
+                                variant={statusBadge.variant}
+                              />
+                            </div>
                           </td>
                           <td
-                            data-label="Actions"
-                            className={classes["users-table__actions"]}
+                            data-label="Delete"
+                            className={classes["users-table__delete"]}
                           >
-                            <UserActions
+                            <DeleteUserButton
                               user={user}
                               currentUserId={currentUser.id}
-                              onActionComplete={refetch}
-                              userName={userName}
+                              onDeleteSuccess={refetch}
                             />
                           </td>
                         </tr>

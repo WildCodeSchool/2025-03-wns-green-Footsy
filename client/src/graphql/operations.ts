@@ -135,9 +135,9 @@ export const DELETE_USER_BY_ADMIN = gql`
   }
 `;
 
-export const PROMOTE_USER_TO_ADMIN = gql`
-  mutation PromoteUserToAdmin($userId: Int!) {
-    promoteUserToAdmin(userId: $userId) {
+export const TOGGLE_USER_ADMIN_STATUS = gql`
+  mutation ToggleUserAdminStatus($userId: Int!) {
+    toggleUserAdminStatus(userId: $userId) {
       id
       first_name
       last_name

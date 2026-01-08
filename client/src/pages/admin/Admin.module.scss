@@ -36,10 +36,14 @@
     }
 
     th {
-      padding: 1rem 4rem;
+      padding: 1rem;
       text-align: left;
       font-weight: 600;
       color: var(--dark-green);
+
+      &:first-child {
+        padding-left: 4rem;
+      }
     }
   }
 
@@ -55,8 +59,16 @@
     }
 
     td {
-      padding: 1rem 4rem;
+      padding: 1rem;
       vertical-align: middle;
+
+      &:first-child {
+        padding-left: 4rem;
+      }
+
+      &:last-child {
+        padding-right: 4rem;
+      }
     }
   }
 
@@ -64,9 +76,20 @@
     font-weight: 600;
   }
 
-  &__actions {
+  &__status {
+    div {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 0.5rem;
+      width: 310px;
+    }
+  }
+
+  &__delete {
     display: flex;
     justify-content: flex-end;
+    vertical-align: middle;
     gap: 0.5rem;
   }
 }
