@@ -81,6 +81,25 @@ export const GET_CURRENT_USER = gql`
       last_name
       email
       birthdateString
+      isAdmin
+      avatar {
+        id
+        title
+        image
+      }
+    }
+  }
+`;
+
+export const GET_ALL_USERS = gql`
+  query GetAllUsers {
+    getAllUsers {
+      id
+      first_name
+      last_name
+      email
+      birthdate
+      isAdmin
       avatar {
         id
         title
@@ -110,6 +129,24 @@ export const UPDATE_AVATAR = gql`
         title
         image
       }
+    }
+  }
+`;
+
+export const DELETE_USER_BY_ADMIN = gql`
+  mutation DeleteUserByAdmin($userId: Int!) {
+    deleteUserByAdmin(userId: $userId)
+  }
+`;
+
+export const TOGGLE_USER_ADMIN_STATUS = gql`
+  mutation ToggleUserAdminStatus($userId: Int!) {
+    toggleUserAdminStatus(userId: $userId) {
+      id
+      first_name
+      last_name
+      email
+      isAdmin
     }
   }
 `;
