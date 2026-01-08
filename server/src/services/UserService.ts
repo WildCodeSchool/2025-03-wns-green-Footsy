@@ -25,7 +25,7 @@ export interface UserServiceInterface {
     newPassword: string
   ): Promise<User>;
   deleteAccount(userId: number): Promise<boolean>;
-  promoteToAdmin(userId: number): Promise<User>;
+  toggleAdminStatus(userId: number): Promise<User>;
 }
 
 export default class UserService implements UserServiceInterface {
@@ -124,9 +124,9 @@ export default class UserService implements UserServiceInterface {
     return true;
   }
 
-  async promoteToAdmin(userId: number): Promise<User> {
+  async toggleAdminStatus(userId: number): Promise<User> {
     const user = await User.findOneByOrFail({ id: userId });
-    user.isAdmin = true;
+    user.isAdmin = !user.isAdmin;
     return user.save();
   }
 }

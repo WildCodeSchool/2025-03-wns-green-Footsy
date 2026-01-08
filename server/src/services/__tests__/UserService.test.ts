@@ -467,8 +467,8 @@ describe("UserService", () => {
     });
   });
 
-  describe("promoteToAdmin", () => {
-    it("should promote user to admin successfully", async () => {
+  describe("toggleAdminStatus", () => {
+    it("should promote non-admin user to admin successfully", async () => {
       // Arrange
       const userId = 1;
       const nonAdminUser = createMockUser({
@@ -488,7 +488,7 @@ describe("UserService", () => {
       );
 
       // Act
-      const result = await userService.promoteToAdmin(userId);
+      const result = await userService.toggleAdminStatus(userId);
 
       // Assert
       expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
@@ -497,7 +497,7 @@ describe("UserService", () => {
       expect(result).toEqual(promotedUser);
     });
 
-    it("should promote already admin user without error", async () => {
+    it("should demote admin user to non-admin successfully", async () => {
       // Arrange
       const userId = 1;
       const adminUser = createMockUser({
@@ -505,20 +505,25 @@ describe("UserService", () => {
         email: "admin@example.com",
         isAdmin: true,
       });
+      const demotedUser = createMockUser({
+        id: userId,
+        email: "admin@example.com",
+        isAdmin: false,
+      });
 
       MockedUser.findOneByOrFail.mockResolvedValue(adminUser);
       adminUser.save = jest.fn<() => Promise<User>>(() =>
-        Promise.resolve(adminUser)
+        Promise.resolve(demotedUser)
       );
 
       // Act
-      const result = await userService.promoteToAdmin(userId);
+      const result = await userService.toggleAdminStatus(userId);
 
       // Assert
       expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
-      expect(adminUser.isAdmin).toBe(true);
+      expect(adminUser.isAdmin).toBe(false);
       expect(adminUser.save).toHaveBeenCalled();
-      expect(result).toEqual(adminUser);
+      expect(result).toEqual(demotedUser);
     });
 
     it("should throw error when user does not exist", async () => {
@@ -528,7 +533,7 @@ describe("UserService", () => {
       MockedUser.findOneByOrFail.mockRejectedValue(new Error("User not found"));
 
       // Act & Assert
-      await expect(userService.promoteToAdmin(userId)).rejects.toThrow(
+      await expect(userService.toggleAdminStatus(userId)).rejects.toThrow(
         "User not found"
       );
     });
@@ -544,7 +549,7 @@ describe("UserService", () => {
       );
 
       // Act & Assert
-      await expect(userService.promoteToAdmin(userId)).rejects.toThrow(
+      await expect(userService.toggleAdminStatus(userId)).rejects.toThrow(
         "Database connection failed"
       );
 

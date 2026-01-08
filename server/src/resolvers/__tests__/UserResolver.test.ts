@@ -25,7 +25,7 @@ const mockUserService: jest.Mocked<UserServiceInterface> = {
   updateAvatar: jest.fn(),
   changePassword: jest.fn(),
   deleteAccount: jest.fn(),
-  promoteToAdmin: jest.fn(),
+  toggleAdminStatus: jest.fn(),
 };
 
 describe("UserResolver", () => {
@@ -648,12 +648,12 @@ describe("UserResolver", () => {
     });
   });
 
-  describe("promoteUserToAdmin", () => {
-    it("should allow admin to promote user successfully", async () => {
+  describe("toggleUserAdminStatus", () => {
+    it("should allow admin to toggle user admin status successfully", async () => {
       // Arrange
       const userId = 2;
       const adminUser = createMockUser({ id: 1, isAdmin: true });
-      const promotedUser = createMockUser({ id: userId, isAdmin: true });
+      const toggledUser = createMockUser({ id: userId, isAdmin: true });
       const mockToken = "valid-admin-token";
       const context = { token: mockToken };
 
@@ -664,10 +664,10 @@ describe("UserResolver", () => {
         .spyOn(UserEntity.default, "findOneByOrFail")
         .mockResolvedValue(adminUser);
 
-      mockUserService.promoteToAdmin.mockResolvedValue(promotedUser);
+      mockUserService.toggleAdminStatus.mockResolvedValue(toggledUser);
 
       // Act
-      const result = await userResolver.promoteUserToAdmin(userId, context);
+      const result = await userResolver.toggleUserAdminStatus(userId, context);
 
       // Assert
       expect(jwt.verify).toHaveBeenCalledWith(
@@ -677,8 +677,8 @@ describe("UserResolver", () => {
       expect(findOneByOrFailSpy).toHaveBeenCalledWith({
         id: adminUser.id,
       });
-      expect(mockUserService.promoteToAdmin).toHaveBeenCalledWith(userId);
-      expect(result).toEqual(promotedUser);
+      expect(mockUserService.toggleAdminStatus).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(toggledUser);
 
       // Cleanup
       findOneByOrFailSpy.mockRestore();
@@ -691,8 +691,8 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.promoteUserToAdmin(userId, context)
-      ).rejects.toThrow("Failed to promote user to admin");
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
     });
 
     it("should throw error when user is not admin", async () => {
@@ -711,8 +711,8 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.promoteUserToAdmin(userId, context)
-      ).rejects.toThrow("Failed to promote user to admin");
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
 
       // Cleanup
       findOneByOrFailSpy.mockRestore();
@@ -727,11 +727,11 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.promoteUserToAdmin(userId, context)
-      ).rejects.toThrow("Failed to promote user to admin");
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
     });
 
-    it("should throw error when promotion fails", async () => {
+    it("should throw error when toggle fails", async () => {
       // Arrange
       const userId = 2;
       const adminUser = createMockUser({ id: 1, isAdmin: true });
@@ -745,14 +745,14 @@ describe("UserResolver", () => {
         .spyOn(UserEntity.default, "findOneByOrFail")
         .mockResolvedValue(adminUser);
 
-      mockUserService.promoteToAdmin.mockRejectedValue(
+      mockUserService.toggleAdminStatus.mockRejectedValue(
         new Error("User not found")
       );
 
       // Act & Assert
       await expect(
-        userResolver.promoteUserToAdmin(userId, context)
-      ).rejects.toThrow("Failed to promote user to admin");
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
 
       // Cleanup
       findOneByOrFailSpy.mockRestore();

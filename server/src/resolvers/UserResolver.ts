@@ -317,7 +317,7 @@ export default class UserResolver {
   }
 
   @Mutation(() => User)
-  async promoteUserToAdmin(
+  async toggleUserAdminStatus(
     @Arg("userId", () => Int) userId: number,
     @Ctx() context: { token: string | null }
   ): Promise<User> {
@@ -332,12 +332,12 @@ export default class UserResolver {
 
       const requestingUser = await User.findOneByOrFail({ id: decodedJWT.id });
       if (!requestingUser.isAdmin) {
-        throw new Error("Unauthorized: Only admins can promote users");
+        throw new Error("Unauthorized: Only admins can modify user admin status");
       }
 
-      return await this.userService.promoteToAdmin(userId);
+      return await this.userService.toggleAdminStatus(userId);
     } catch {
-      throw new Error("Failed to promote user to admin");
+      throw new Error("Failed to toggle user admin status");
     }
   }
 }
