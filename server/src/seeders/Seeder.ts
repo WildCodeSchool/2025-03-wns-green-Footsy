@@ -5,7 +5,7 @@ import Avatar from "../entities/Avatar";
 import User from "../entities/User";
 import Category from "../entities/Category";
 import Type from "../entities/Type";
-import { Categories } from "./data/CategorySeeder";
+import { TestCategories } from "./data/CategorySeeder";
 import { Types } from "./data/TypeSeeder";
 import Activity from "../entities/Activity";
 import { Activities } from "./data/ActivitySeeder";
@@ -50,7 +50,7 @@ export async function seedCategories() {
     console.info("Categories already exist, skipping");
     return;
   }
-  await categoryRepo.save(Categories);
+  await categoryRepo.save(TestCategories);
   console.info("Categories seeded");
 }
 
@@ -111,19 +111,3 @@ export async function seedActivities() {
   await activityRepo.save(activities);
   console.info("Activities seeded");
 }
-
-async function generateAndSaveFixtures() {
-  try {
-    await dataSource.initialize();
-    await dataSource.synchronize(true);
-
-    await dataSource.getRepository(Avatar).save(Avatars);
-
-    const savedUsers = await dataSource.getRepository(User).save(Users);
-
-    console.info("Seeded users:", savedUsers);
-  } catch (error) {
-    console.error("Error during seeding:", error);
-  }
-}
-// generateAndSaveFixtures();
