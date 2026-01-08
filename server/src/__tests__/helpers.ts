@@ -31,6 +31,7 @@ export const createMockUser = ({
   birthdate,
   hashed_password,
   avatar,
+  isAdmin,
 }: {
   id?: number;
   email?: string;
@@ -39,6 +40,7 @@ export const createMockUser = ({
   birthdate?: Date;
   hashed_password?: string;
   avatar?: Avatar;
+  isAdmin?: boolean;
 } = {}): User => {
   const user = new User();
   user.id = id ?? 1;
@@ -48,6 +50,7 @@ export const createMockUser = ({
   user.birthdate = birthdate ?? new Date("1990-08-04");
   user.hashed_password = hashed_password ?? "hashedPassword123";
   user.avatar = avatar ?? createMockAvatar();
+  user.isAdmin = isAdmin ?? false;
   return user;
 };
 

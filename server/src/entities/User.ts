@@ -46,6 +46,10 @@ export default class User extends BaseEntity {
   })
   birthdate: Date;
 
+  @Field(() => Boolean)
+  @Column({ type: "boolean", default: false })
+  isAdmin: boolean;
+
   @Field(() => Avatar)
   @ManyToOne(() => Avatar, (avatar) => avatar.users, { nullable: false })
   @JoinColumn({ name: "avatar_id" })

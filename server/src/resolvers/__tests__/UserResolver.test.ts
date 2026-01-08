@@ -25,6 +25,7 @@ const mockUserService: jest.Mocked<UserServiceInterface> = {
   updateAvatar: jest.fn(),
   changePassword: jest.fn(),
   deleteAccount: jest.fn(),
+  toggleAdminStatus: jest.fn(),
 };
 
 describe("UserResolver", () => {
@@ -76,6 +77,7 @@ describe("UserResolver", () => {
           mail: mockUser.email,
           birthDate: mockUser.birthdate,
           avatar: mockUser.avatar,
+          isAdmin: mockUser.isAdmin,
         },
         process.env.JWT_SECRET
       );
@@ -204,6 +206,7 @@ describe("UserResolver", () => {
           mail: createdUser.email,
           birthDate: createdUser.birthdate,
           avatar: createdUser.avatar,
+          isAdmin: createdUser.isAdmin,
         },
         process.env.JWT_SECRET
       );
@@ -337,9 +340,9 @@ describe("UserResolver", () => {
       (jwt.verify as jest.Mock).mockReturnValue(decodedToken);
 
       // Mock User.findOne using jest.spyOn
-      const User = await import("../../entities/User");
+      const UserEntity = await import("../../entities/User");
       const findOneSpy = jest
-        .spyOn(User.default, "findOne")
+        .spyOn(UserEntity.default, "findOne")
         .mockResolvedValue(mockUser);
 
       // Act
@@ -558,6 +561,201 @@ describe("UserResolver", () => {
       await expect(userResolver.deleteAccount(userId)).rejects.toThrow(
         "Failed to delete account"
       );
+    });
+  });
+
+  describe("deleteUserByAdmin", () => {
+    it("should allow admin to delete user account successfully", async () => {
+      // Arrange
+      const userId = 2;
+      const adminUser = createMockUser({ id: 1, isAdmin: true });
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
+
+      // Mock User.findOneByOrFail to return admin user
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(adminUser);
+
+      mockUserService.deleteAccount.mockResolvedValue(true);
+
+      // Act
+      const result = await userResolver.deleteUserByAdmin(userId, context);
+
+      // Assert
+      expect(jwt.verify).toHaveBeenCalledWith(
+        mockToken,
+        process.env.JWT_SECRET
+      );
+      expect(findOneByOrFailSpy).toHaveBeenCalledWith({
+        id: adminUser.id,
+      });
+      expect(mockUserService.deleteAccount).toHaveBeenCalledWith(userId);
+      expect(result).toBe(true);
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
+    });
+
+    it("should throw error when user is not authenticated", async () => {
+      // Arrange
+      const userId = 2;
+      const context = { token: null };
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteUserByAdmin(userId, context)
+      ).rejects.toThrow("Failed to delete user");
+    });
+
+    it("should throw error when user is not admin", async () => {
+      // Arrange
+      const userId = 2;
+      const regularUser = createMockUser({ id: 1, isAdmin: false });
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: regularUser.id });
+
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(regularUser);
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteUserByAdmin(userId, context)
+      ).rejects.toThrow("Failed to delete user");
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
+    });
+
+    it("should throw error when JWT_SECRET is missing", async () => {
+      // Arrange
+      const userId = 2;
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+      delete process.env.JWT_SECRET;
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteUserByAdmin(userId, context)
+      ).rejects.toThrow("Failed to delete user");
+    });
+  });
+
+  describe("toggleUserAdminStatus", () => {
+    it("should allow admin to toggle user admin status successfully", async () => {
+      // Arrange
+      const userId = 2;
+      const adminUser = createMockUser({ id: 1, isAdmin: true });
+      const toggledUser = createMockUser({ id: userId, isAdmin: true });
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
+
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(adminUser);
+
+      mockUserService.toggleAdminStatus.mockResolvedValue(toggledUser);
+
+      // Act
+      const result = await userResolver.toggleUserAdminStatus(userId, context);
+
+      // Assert
+      expect(jwt.verify).toHaveBeenCalledWith(
+        mockToken,
+        process.env.JWT_SECRET
+      );
+      expect(findOneByOrFailSpy).toHaveBeenCalledWith({
+        id: adminUser.id,
+      });
+      expect(mockUserService.toggleAdminStatus).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(toggledUser);
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
+    });
+
+    it("should throw error when user is not authenticated", async () => {
+      // Arrange
+      const userId = 2;
+      const context = { token: null };
+
+      // Act & Assert
+      await expect(
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
+    });
+
+    it("should throw error when user is not admin", async () => {
+      // Arrange
+      const userId = 2;
+      const regularUser = createMockUser({ id: 1, isAdmin: false });
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: regularUser.id });
+
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(regularUser);
+
+      // Act & Assert
+      await expect(
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
+    });
+
+    it("should throw error when JWT_SECRET is missing", async () => {
+      // Arrange
+      const userId = 2;
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+      delete process.env.JWT_SECRET;
+
+      // Act & Assert
+      await expect(
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
+    });
+
+    it("should throw error when toggle fails", async () => {
+      // Arrange
+      const userId = 2;
+      const adminUser = createMockUser({ id: 1, isAdmin: true });
+      const mockToken = "valid-admin-token";
+      const context = { token: mockToken };
+
+      (jwt.verify as jest.Mock).mockReturnValue({ id: adminUser.id });
+
+      const UserEntity = await import("../../entities/User");
+      const findOneByOrFailSpy = jest
+        .spyOn(UserEntity.default, "findOneByOrFail")
+        .mockResolvedValue(adminUser);
+
+      mockUserService.toggleAdminStatus.mockRejectedValue(
+        new Error("User not found")
+      );
+
+      // Act & Assert
+      await expect(
+        userResolver.toggleUserAdminStatus(userId, context)
+      ).rejects.toThrow("Failed to toggle user admin status");
+
+      // Cleanup
+      findOneByOrFailSpy.mockRestore();
     });
   });
 });

@@ -24,21 +24,21 @@ export async function seedAvatars() {
 export async function seedUsers() {
   const userRepository = dataSource.getRepository(User);
   const avatarRepository = dataSource.getRepository(Avatar);
-  
+
   // Check if avatars exist
   const existingAvatars = await avatarRepository.find();
   if (existingAvatars.length === 0) {
     console.warn("No avatars found. Please seed avatars first.");
     return;
   }
-  
+
   // Check if users exist
   const existingUsers = await userRepository.find();
   if (existingUsers.length > 0) {
     console.info("Users already exist, skipping seeding");
     return;
   }
-  
+
   // Seedear users
   await userRepository.save(Users);
   console.info("Users seeded");
@@ -66,10 +66,10 @@ export async function seedTypes() {
     console.warn("No categories found, seed categories first");
     return;
   }
-  
+
   // Map Types with category relation
-  const typesToSave = Types.map(typeData => {
-    const category = categories.find(cat => cat.id === typeData.category_id);
+  const typesToSave = Types.map((typeData) => {
+    const category = categories.find((cat) => cat.id === typeData.category_id);
     if (!category) {
       throw new Error(`Category with id ${typeData.category_id} not found`);
     }
@@ -78,7 +78,7 @@ export async function seedTypes() {
       category: category,
     };
   });
-  
+
   await typeRepo.save(typesToSave);
   console.info("Types seeded");
 }
