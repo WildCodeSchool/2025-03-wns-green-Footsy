@@ -21,6 +21,7 @@ import UserProvider from "./context/userContext";
 import { getToken } from "./services/authService";
 
 import Admin from "./pages/admin/Admin";
+import Activity from "./pages/activity/Activity";
 import Dashboard from "./pages/dashboard/Dashboard";
 import History from "./pages/history/History";
 import Home from "./pages/home/Home";
@@ -82,7 +83,7 @@ const router = createBrowserRouter([
           { path: "history", element: <History /> },
           {
             path: "add-activity",
-            element: <h1>Activity Page - To be implemented</h1>,
+            element: <Activity />,
           },
           {
             path: "community",
