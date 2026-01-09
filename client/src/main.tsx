@@ -79,6 +79,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoutes />,
         children: [
           { path: "dashboard", element: <Dashboard /> },
+          { path: "history", element: <History /> },
           { path: "settings", element: <Settings /> },
           { path: "history", element: <History /> },
           {
