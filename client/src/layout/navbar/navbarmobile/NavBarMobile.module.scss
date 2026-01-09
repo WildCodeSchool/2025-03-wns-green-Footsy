@@ -1,11 +1,17 @@
+:global(:root) {
+  --app-mobile-nav-height: 4.25rem;
+}
+
 .navbarmobile {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    max-width: 100vw;
-    margin: 0;
-    padding-bottom: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0.35rem 0.5rem calc(0.45rem + env(safe-area-inset-bottom));
+  height: calc(var(--app-mobile-nav-height) + env(safe-area-inset-bottom));
+  pointer-events: auto;
     
 
     &__button {
@@ -15,6 +21,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0.35rem;
+    border-radius: 999px;
+
+    &:active {
+      transform: scale(0.98);
+    }
     }
 
     &__img {
@@ -24,8 +36,9 @@
     }
 
     &__footprint {
-      width: 6rem;
-      height: 6rem;
+      width: 4.15rem;
+      height: 4.15rem;
       object-fit: contain;
+      transform: translateY(-0.55rem);
     }
   }

@@ -1,23 +1,34 @@
-.footer {
-display: none;
+:global(:root) {
+  --app-footer-height: 2.75rem;
+}
 
-@media (min-width: 1024px) {
+.footer {
   display: flex;
   flex-direction: row;
-  justify-content: right;
-  padding: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  box-sizing: border-box;
+  height: 2.75rem;
+  padding: 0.25rem 1rem;
   background-color: var(--color-dark);
   position: fixed;
-  bottom: 0;  
+  bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
+  z-index: 1200;
+
+  // Le MainLayout applique un margin-right aux enfants en desktop;
+  // sur un élément fixed ça peut créer un overflow.
+  margin-right: 0 !important;
 
   &__link {
     display: inline-block;
-      text-decoration: none;
-      text-align: right;
-      font-weight: bold;
-      padding: 0.5rem;
-      margin-right: 3.5rem;
+    text-decoration: none;
+    text-align: right;
+    font-weight: 800;
+    padding: 0.25rem 0.5rem;
 
     &--light {
       color: var(--color-light);
@@ -28,4 +39,9 @@ display: none;
     }
   }
 }
+
+@media (max-width: 1023px) {
+  .footer {
+    display: none;
+  }
 }
