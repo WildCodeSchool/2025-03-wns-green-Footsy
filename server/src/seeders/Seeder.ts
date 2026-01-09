@@ -1,3 +1,6 @@
+import "dotenv/config";
+import "reflect-metadata";
+
 import dataSource from "../config/db";
 import { Users } from "./data/UserSeeder";
 import { Avatars } from "./data/AvatarSeeder";
@@ -8,6 +11,7 @@ import Type from "../entities/Type";
 import Activity from "../entities/Activity";
 import { Activities } from "./data/ActivitySeeder";
 import ApiAdemeService from "../services/apiAdeme/ApiAdeme.service";
+
 
 export async function seedAvatars() {
   const avatarRepository = dataSource.getRepository(Avatar);
@@ -153,3 +157,26 @@ export async function seedActivities() {
   await activityRepo.save(activities);
   console.info("Activities seeded");
 }
+
+async function runSeeders() {
+  try {
+    await dataSource.initialize();
+    console.info("Database connected");
+
+    await seedAvatars();
+    await seedUsers();
+    await seedCategories();
+    await seedTypes();
+    await seedActivities();
+
+    console.info("All seeders completed successfully")
+  } catch (error) {
+    console.error("Seeding failed:", error);
+    process.exit(1);
+  } finally {
+    await dataSource.destroy();
+    process.exit(0);
+  }
+}
+
+runSeeders();
