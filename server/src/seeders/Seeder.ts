@@ -5,10 +5,9 @@ import Avatar from "../entities/Avatar";
 import User from "../entities/User";
 import Category from "../entities/Category";
 import Type from "../entities/Type";
-import { TestCategories } from "./data/CategorySeeder";
-import { Types } from "./data/TypeSeeder";
 import Activity from "../entities/Activity";
 import { Activities } from "./data/ActivitySeeder";
+import ApiAdemeService from "../services/apiAdeme/ApiAdeme.service";
 
 export async function seedAvatars() {
   const avatarRepository = dataSource.getRepository(Avatar);
@@ -50,8 +49,35 @@ export async function seedCategories() {
     console.info("Categories already exist, skipping");
     return;
   }
-  await categoryRepo.save(TestCategories);
-  console.info("Categories seeded");
+
+  console.info("Fetching categories from ADEME API...");
+
+  try {
+    const categoriesFromApi = await ApiAdemeService.getCategories()
+
+    console.info(`✓ ${categoriesFromApi.length} categories retrieved`);
+
+    const categoriesToSave = categoriesFromApi.map((cat) => {
+      const quantityUnit = ApiAdemeService.getQuantityUnit(cat.id);
+      if (!quantityUnit) {
+        console.warn(`Category "${cat.name}" (id: ${cat.id}) has no quantity_unit, skipping`);
+        return null;
+      }
+      return {
+        title: cat.name,
+        quantity_unit: quantityUnit
+      };
+    });
+
+    console.info(`✓ ${categoriesToSave.length} categories prepared for saving`);
+
+    await categoryRepo.save(categoriesToSave);
+    console.info("Categories seeded");
+
+  } catch (error) {
+    console.error("Erreur lors du seed des categories:", error);
+    throw error;
+  }
 }
 
 export async function seedTypes() {
@@ -60,6 +86,7 @@ export async function seedTypes() {
     console.info("Types already exist, skipping");
     return;
   }
+
   const categoryRepo = dataSource.getRepository(Category);
   const categories = await categoryRepo.find();
   if (categories.length === 0) {
@@ -67,20 +94,35 @@ export async function seedTypes() {
     return;
   }
 
-  // Map Types with category relation
-  const typesToSave = Types.map((typeData) => {
-    const category = categories.find((cat) => cat.id === typeData.category_id);
-    if (!category) {
-      throw new Error(`Category with id ${typeData.category_id} not found`);
-    }
-    return {
-      ...typeData,
-      category: category,
-    };
-  });
+  console.info("Fetching types from ADEME API...");
 
-  await typeRepo.save(typesToSave);
-  console.info("Types seeded");
+  try {
+    const allTypesToSave = [];
+
+    for (const category of categories) {
+      console.info(`Fetching types for category: ${category.title}...`);
+
+      const typesFromApi = await ApiAdemeService.getTypes(category.id);
+
+      const typesForCategory = typesFromApi.map((type) => ({
+        title: type.name,
+        ecv: type.ecv,
+        category: category
+      }));
+
+      allTypesToSave.push(...typesForCategory);
+    }
+
+    console.info(`✓ ${allTypesToSave.length} types prepared for saving`);
+
+    await typeRepo.save(allTypesToSave);
+    console.info("Types seeded");
+
+  } catch (error) {
+    console.error("Erreur lors du seed des types:", error);
+    throw error;
+  }
+
 }
 
 export async function seedActivities() {

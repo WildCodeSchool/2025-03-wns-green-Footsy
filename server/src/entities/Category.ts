@@ -3,7 +3,7 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -20,7 +20,11 @@ export default class Category extends BaseEntity {
   @Column("varchar", { length: 50 })
   title: string;
 
-  @Field(() => Type)
-  @ManyToOne(() => Type, (type) => type.category, { nullable: true })
+  @Field(() => String)
+  @Column("varchar", { length: 10 })
+  quantity_unit: string;
+
+  @Field(() => [Type])
+  @OneToMany(() => Type, (type) => type.category)
   types: Type[];
 }
