@@ -12,6 +12,7 @@ import information from "../../../assets/img/logos_icons/information.png";
 import information_dark from "../../../assets/img/logos_icons/information_dark.png";
 
 import classes from "./NavBarMobile.module.scss";
+import { removeToken } from "../../../services/authService";
 
 interface NavBarMobileProps {
   mode: string;
@@ -26,8 +27,16 @@ export default function NavBarMobile({ mode }: NavBarMobileProps) {
   const communityIcon = mode === "dark" ? community_dark : community;
   const infoIcon = mode === "dark" ? information_dark : information;
 
+ const handleLogout = () => {
+    removeToken();
+    window.location.href = "/login";
+  };
+
   return (
     <section className={classes.navbarmobile}>
+      <button type="button" onClick={handleLogout}>
+        Logout
+      </button>
       <button
         type="button"
         onClick={() => navigate("/dashboard")}
