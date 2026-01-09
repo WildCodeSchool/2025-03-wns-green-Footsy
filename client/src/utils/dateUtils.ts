@@ -26,7 +26,7 @@ export function toISODateString(
 
 export function formatDateForDisplay(
   date: Date | string | null | undefined,
-  locale: string = navigator.language,
+  locale?: string,
   options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "2-digit",
@@ -45,7 +45,11 @@ export function formatDateForDisplay(
       return "";
     }
 
-    return new Intl.DateTimeFormat(locale, options).format(dateObj);
+    const effectiveLocale =
+      locale ||
+      (typeof navigator !== "undefined" ? navigator.language : "fr-FR");
+
+    return new Intl.DateTimeFormat(effectiveLocale, options).format(dateObj);
   } catch (error) {
     console.error("Error formatting date:", error, date);
     return "";
