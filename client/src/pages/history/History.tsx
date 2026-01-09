@@ -49,11 +49,7 @@ export default function History() {
     useQuery<GetAllCategoriesData>(GET_ALL_CATEGORIES);
 
   const { filteredAndSortedActivities, groupedActivities } = useMemo(() => {
-    const activities =
-      activitiesData?.getActivitiesByUserId.map((activity) => ({
-        ...activity,
-        date: new Date(activity.date).toLocaleDateString(),
-      })) || [];
+    const activities = activitiesData?.getActivitiesByUserId || [];
     const { filtered, grouped } = processActivities(
       activities,
       selectedCategory,

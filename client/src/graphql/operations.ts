@@ -80,7 +80,7 @@ export const GET_CURRENT_USER = gql`
       first_name
       last_name
       email
-      birthdateString
+      birthdate
       isAdmin
       avatar {
         id
@@ -115,7 +115,7 @@ export const UPDATE_PERSONAL_INFO = gql`
       id
       first_name
       last_name
-      birthdateString
+      birthdate
     }
   }
 `;
@@ -189,5 +189,29 @@ export const CREATE_ACTIVITY = gql`
         id
       }
     }
+  }
+`;
+
+export const UPDATE_ACTIVITY = gql`
+  mutation UpdateActivity($data: UpdateActivityInput!) {
+    updateActivity(data: $data) {
+      id
+      title
+      date
+      type {
+        id
+      }
+      quantity
+      co2_equivalent
+      user {
+        id
+      }
+    }
+  }
+`;
+
+export const DELETE_ACTIVITY = gql`
+  mutation DeleteActivity($id: Int!) {
+    deleteActivity(id: $id)
   }
 `;
