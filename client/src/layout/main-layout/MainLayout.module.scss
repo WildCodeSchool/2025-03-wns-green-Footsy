@@ -5,6 +5,12 @@
   overflow-x: hidden;
   position: relative;
 
+  @media (max-width: 1023px) {
+    padding-bottom: calc(
+      var(--app-mobile-nav-height, 4.25rem) + env(safe-area-inset-bottom)
+    );
+  }
+
   &--light {
     background-color: var(--beige);
     
@@ -36,7 +42,7 @@
       z-index: -2;
 
       @media (min-width: 1024px) {
-        padding-bottom: 60px;
+        padding-bottom: 0px;
       }
     }
   }

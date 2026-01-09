@@ -6,6 +6,14 @@ export type GetActivitiesByUserIdData = {
   getActivitiesByUserId: Activity[];
 };
 
+export type GetActivitiesByUserIdAndYearData = {
+  getActivitiesByUserIdAndYear: Activity[];
+};
+
+export type GetActivitiesByUserIdAndCategoryData = {
+  getActivitiesByUserIdAndCategory: Activity[];
+};
+
 export type GetAllCategoriesData = {
   getAllCategories: Category[];
 };
@@ -20,6 +28,21 @@ export type LoginMutationData = {
 
 export type GetAllTypes = {
   getAllTypes: Type[];
+};
+
+export type FriendsCo2RankingEntry = {
+  user: User;
+  averageCo2Kg: number | null;
+  activitiesCount: number;
+  rank: number;
+};
+
+export type GetFriendsCo2RankingData = {
+  getFriendsCo2Ranking: {
+    top3: FriendsCo2RankingEntry[];
+    me: FriendsCo2RankingEntry | null;
+    total: number;
+  };
 };
 
 export const SIGN_UP = gql`
@@ -60,6 +83,48 @@ export const GET_ACTIVITIES_BY_USER_ID = gql`
           id
           title
           quantity_unit
+        }
+      }
+    }
+  }
+`;
+
+export const GET_ACTIVITIES_BY_USER_ID_AND_YEAR = gql`
+  query GetActivitiesByUserIdAndYear($userId: Int!, $year: Int!) {
+    getActivitiesByUserIdAndYear(userId: $userId, year: $year) {
+      id
+      title
+      date
+      quantity
+      co2_equivalent
+      type {
+        id
+        title
+        quantity_unit
+        category {
+          id
+          title
+        }
+      }
+    }
+  }
+`;
+
+export const GET_ACTIVITIES_BY_USER_ID_AND_CATEGORY = gql`
+  query GetActivitiesByUserIdAndCategory($userId: Int!, $categoryId: Int!) {
+    getActivitiesByUserIdAndCategory(userId: $userId, categoryId: $categoryId) {
+      id
+      title
+      date  
+      quantity
+      co2_equivalent
+      type {
+        id
+        title
+        quantity_unit
+        category {
+          id
+          title
         }
       }
     }
@@ -180,6 +245,44 @@ export const GET_ALL_TYPES = gql`
         id
         title
         quantity_unit
+      }
+    }
+  }
+`;
+
+export const GET_FRIENDS_CO2_RANKING = gql`
+  query GetFriendsCo2Ranking($userId: Int!) {
+    getFriendsCo2Ranking(userId: $userId) {
+      total
+      top3 {
+        rank
+        averageCo2Kg
+        activitiesCount
+        user {
+          id
+          first_name
+          last_name
+          avatar {
+            id
+            title
+            image
+          }
+        }
+      }
+      me {
+        rank
+        averageCo2Kg
+        activitiesCount
+        user {
+          id
+          first_name
+          last_name
+          avatar {
+            id
+            title
+            image
+          }
+        }
       }
     }
   }

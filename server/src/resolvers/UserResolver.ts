@@ -175,7 +175,6 @@ export default class UserResolver {
         password: hashedPassword,
       });
       const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
-
       // This is to avoid a security issue in development mode when using localhost. In production, the Secure flag will be set.
       const isProduction = process.env.IS_PRODUCTION === "true";
       res.setHeader(
