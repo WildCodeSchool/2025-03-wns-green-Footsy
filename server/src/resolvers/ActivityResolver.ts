@@ -21,7 +21,7 @@ export class CreateActivityInput {
   @Field(() => Float, { nullable: true })
   quantity: number;
 
-  @Field(() => String)
+  @Field(() => Date)
   date: Date;
 
   @Field(() => Float)
@@ -45,7 +45,7 @@ export class UpdateActivityInput {
   @Field(() => Float, { nullable: true })
   quantity?: number;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   date?: Date;
 
   @Field(() => Float, { nullable: true })

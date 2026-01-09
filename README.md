@@ -87,16 +87,26 @@ CI/CD : GitHub Actions
 
 ## Gestion des dates
 **PostgreSQL** stocke les dates au format `date` (YYYY-MM-DD) sans heure.  
-**GraphQL** utilise le scalar `DateTime` qui nécessite le format ISO 8601 complet (avec heure).
+**GraphQL** utilise le scalar `Date` natif qui gère automatiquement la sérialisation en ISO 8601.
 
 **Côté backend** : Un transformer TypeORM convertit automatiquement les dates PostgreSQL en objets `Date` JavaScript :
 ```typescript
-@Column({ type: "date", transformer: { from: (value) => new Date(value) } })
+@Column({ 
+  type: "date", 
+  transformer: { 
+    to: (value: Date) => value,
+    from: (value: string) => new Date(value) 
+  } 
+})
+date: Date;
 ```
+GraphQL sérialise ensuite automatiquement les `Date` en strings ISO (`"2026-01-12T00:00:00.000Z"`).
 
 **Côté frontend** :
-- **Envoyer** : Convertir en ISO complet → `new Date(dateString).toISOString()` → `"1999-01-01T00:00:00.000Z"`
-- **Recevoir** : GraphQL retourne automatiquement une string ISO → utiliser telle quelle ou `new Date(isoString)` si besoin
+- **Envoyer** : Convertir en ISO complet → `new Date(dateString).toISOString()` → `"2026-01-12T00:00:00.000Z"`
+- **Recevoir** : GraphQL retourne une string ISO (`"2026-01-12T00:00:00.000Z"`)
+  - Pour les inputs HTML : utiliser `toISODateString()` → `"2026-01-12"`
+  - Pour l'affichage : utiliser `formatDateForDisplay()` → adapté au locale (ex: `"12/01/2026"` en français)
 
 ## Workflow Git
 Branche principale : main (protégée)
@@ -114,4 +124,3 @@ Après validation et tests passés, merger dans dev ou main.
 ## Licence
 Ce projet est distribué sous licence MIT.
 Bon coding et réduisons ensemble notre empreinte carbone !
-

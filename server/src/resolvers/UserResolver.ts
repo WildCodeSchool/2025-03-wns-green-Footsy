@@ -4,13 +4,11 @@ import {
   Arg,
   Ctx,
   Field,
-  FieldResolver,
   InputType,
   Int,
   Mutation,
   Query,
   Resolver,
-  Root,
 } from "type-graphql";
 
 import type Avatar from "../entities/Avatar";
@@ -127,18 +125,6 @@ export default class UserResolver {
     this.userService = userService;
   }
 
-  @FieldResolver(() => String)
-  birthdateString(@Root() user: User): string {
-    if (!user.birthdate) return "";
-    
-    // Convert Date to YYYY-MM-DD format using local date methods
-    // to avoid timezone issues
-    const year = user.birthdate.getFullYear();
-    const month = String(user.birthdate.getMonth() + 1).padStart(2, "0");
-    const day = String(user.birthdate.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  }
-
   @Query(() => [User])
   async getAllUsers() {
     return User.find({ relations: ["avatar"] });
@@ -228,7 +214,9 @@ export default class UserResolver {
     } catch (error) {
       console.error("Error updating personal info:", error);
       if (error instanceof Error) {
-        throw new Error(`Failed to update personal information: ${error.message}`);
+        throw new Error(
+          `Failed to update personal information: ${error.message}`
+        );
       }
       throw new Error("Failed to update personal information");
     }
@@ -332,7 +320,9 @@ export default class UserResolver {
 
       const requestingUser = await User.findOneByOrFail({ id: decodedJWT.id });
       if (!requestingUser.isAdmin) {
-        throw new Error("Unauthorized: Only admins can modify user admin status");
+        throw new Error(
+          "Unauthorized: Only admins can modify user admin status"
+        );
       }
 
       return await this.userService.toggleAdminStatus(userId);
