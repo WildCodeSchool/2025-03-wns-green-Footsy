@@ -61,17 +61,14 @@ export async function seedCategories() {
 
     console.info(`✓ ${categoriesFromApi.length} categories retrieved`);
 
-    const categoriesToSave = categoriesFromApi.map((cat) => {
-      const quantityUnit = ApiAdemeService.getQuantityUnit(cat.id);
-      if (!quantityUnit) {
-        console.warn(`Category "${cat.name}" (id: ${cat.id}) has no quantity_unit, skipping`);
-        return null;
-      }
-      return {
-        title: cat.name,
-        quantity_unit: quantityUnit
-      };
-    });
+    const filteredCategories = categoriesFromApi.filter((cat) => cat.id >= 1 && cat.id <= 10);
+    console.info(`✓ ${filteredCategories.length} categories kept (ID 1-10)`);
+
+    const categoriesToSave = filteredCategories.map((cat) => ({
+      title: cat.name,
+      quantity_unit: ApiAdemeService.getQuantityUnit(cat.id),
+      ademe_id: cat.id
+    }));
 
     console.info(`✓ ${categoriesToSave.length} categories prepared for saving`);
 
@@ -104,9 +101,14 @@ export async function seedTypes() {
     const allTypesToSave = [];
 
     for (const category of categories) {
+      if (!category.ademe_id) {
+        console.warn(`⚠ Category "${category.title}" has no ademe_id, skipping`);
+        continue;
+      }
+
       console.info(`Fetching types for category: ${category.title}...`);
 
-      const typesFromApi = await ApiAdemeService.getTypes(category.id);
+      const typesFromApi = await ApiAdemeService.getTypes(category.ademe_id);
 
       const typesForCategory = typesFromApi.map((type) => ({
         title: type.name,
@@ -167,7 +169,7 @@ async function runSeeders() {
     await seedUsers();
     await seedCategories();
     await seedTypes();
-    await seedActivities();
+    //await seedActivities();
 
     console.info("All seeders completed successfully")
   } catch (error) {

@@ -24,6 +24,10 @@ export default class Category extends BaseEntity {
   @Column("varchar", { length: 10 })
   quantity_unit: string;
 
+  @Field(() => Int, { nullable: true })
+  @Column("int", { nullable: true, unique: true })
+  ademe_id?: number;
+
   @Field(() => [Type])
   @OneToMany(() => Type, (type) => type.category)
   types: Type[];
