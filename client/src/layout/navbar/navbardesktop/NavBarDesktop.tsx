@@ -14,6 +14,7 @@ import information_dark from "../../../assets/img/logos_icons/information_dark.p
 import { useCurrentUser } from "../../../context/userContext";
 
 import classes from "./NavBarDesktop.module.scss";
+import { removeToken } from "../../../services/authService";
 
 interface NavBarDesktopProps {
   mode: string;
@@ -30,8 +31,16 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
   const communityIcon = mode === "dark" ? community_dark : community;
   const infoIcon = mode === "dark" ? information_dark : information;
 
+   const handleLogout = () => {
+    removeToken();
+    window.location.href = "/login";
+  };
+
   return (
     <section className={classes.navbardesktop}>
+      <button type="button" onClick={handleLogout}>
+        Logout
+      </button>
       <button
         type="button"
         onClick={() => navigate("/add-activity")}
