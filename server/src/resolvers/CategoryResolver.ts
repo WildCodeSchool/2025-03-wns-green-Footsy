@@ -5,13 +5,18 @@ import Category from "../entities/Category";
 export default class CategoryResolver {
   @Query(() => [Category])
   async getAllCategories(): Promise<Category[]> {
-    return await Category.find();
+    return await Category.find({
+      relations: ['types']
+    });
   }
 
   @Query(() => Category, { nullable: true })
   async getCategoryById(
     @Arg("id", () => Int) id: number
   ): Promise<Category | null> {
-    return await Category.findOne({ where: { id } });
+    return await Category.findOne({ 
+      where: { id },
+      relations: ['types']
+    });
   }
 }

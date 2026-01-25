@@ -5,8 +5,10 @@ import Type from "../entities/Type";
 export default class TypeResolver {
   @Query(() => [Type])
   async getAllTypes(): Promise<Type[]> {
-    return await Type.find();
-  }
+    return await Type.find({
+    relations: ['category']
+  });
+}
 
   @Query(() => [Type])
   async getTypesByCategoryId(

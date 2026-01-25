@@ -43,12 +43,6 @@ export const activityFormFields = [
     id: "quantity",
     placeholder: "Exemple: 30 (minutes), 10 (km)...",
   },
-  {
-    label: "Équivalent CO2 (en kg)",
-    type: "number",
-    id: "co2_equivalent",
-    placeholder: "Exemple: 2.5",
-  },
 ];
 
 export const handleActivityChange = (
@@ -103,8 +97,7 @@ export const handleActivitySubmit = async (
     !formData.date ||
     !formData.type_id ||
     formData.type_id === 0 ||
-    !formData.quantity ||
-    !formData.co2_equivalent
+    !formData.quantity
   ) {
     toast.error("Veuillez remplir tous les champs.");
     return;
@@ -112,11 +105,6 @@ export const handleActivitySubmit = async (
 
   if (formData.quantity <= 0) {
     toast.error("La quantité doit être un nombre positif.");
-    return;
-  }
-
-  if (formData.co2_equivalent < 0) {
-    toast.error("L'équivalent CO2 doit être un nombre positif ou nul.");
     return;
   }
 
