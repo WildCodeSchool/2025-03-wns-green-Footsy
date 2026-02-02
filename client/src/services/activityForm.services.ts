@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { getUserFromToken } from "./authService";
 import type { User } from "../types/User.types";
 
 export type ActivityFormData = {
@@ -87,7 +88,9 @@ export const handleActivitySubmit = async (
 ) => {
   event.preventDefault();
 
-  if (!user) {
+  const connectedUser = user ?? getUserFromToken();
+
+  if (!connectedUser) {
     toast.error("Vous devez être connecté pour ajouter une activité.");
     return;
   }
@@ -122,7 +125,7 @@ export const handleActivitySubmit = async (
               type_id: formData.type_id,
               quantity: formData.quantity,
               co2_equivalent: formData.co2_equivalent,
-              user_id: user.id,
+              user_id: connectedUser.id,
             },
           }
         : {
@@ -132,7 +135,7 @@ export const handleActivitySubmit = async (
               type_id: formData.type_id,
               quantity: formData.quantity,
               co2_equivalent: formData.co2_equivalent,
-              user_id: user.id,
+              user_id: connectedUser.id,
             },
           };
 
