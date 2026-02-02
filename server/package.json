@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"test": "jest",
+		"test:integration": "node --env-file=.env.test ./node_modules/.bin/jest --config=jest.integration.config.js --runInBand",
 		"test:watch": "jest --watch",
 		"compile": "tsc",
 		"start": "npm run compile && node ./dist/index.js",

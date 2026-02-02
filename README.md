@@ -62,6 +62,26 @@ Initialiser la base de données
 docker-compose up -d db
 npm run migrate:up
 
+## Tests
+
+### Tests unitaires (backend)
+Depuis `server/` : `npm test`. Aucune base de données requise.
+
+### Tests d’intégration (backend)
+Les tests d’intégration utilisent une base PostgreSQL dédiée (`db_footsy_test`) pour ne pas toucher à la base de dev. **Aucune installation locale de Postgres n’est nécessaire** : on utilise la même image Docker que pour le développement (`compose.dev.yaml`, service `database`).
+
+1. **Démarrer Postgres avec Docker** (à la racine du repo, même conteneur que en dev) :
+   ```bash
+   docker compose -f compose.dev.yaml up -d database
+   ```
+2. **Créer la base de test** (une fois par machine, dans ce conteneur) :
+   `docker compose -f compose.dev.yaml exec database psql -U postgres -d postgres -c "CREATE DATABASE db_footsy_test;"`
+3. **Configurer l’environnement de test** : copier `server/.env.test.example` vers `server/.env.test` et ajuster si besoin (même utilisateur/mot de passe que Postgres Docker).
+4. **Lancer les tests d’intégration** :
+   ```bash
+   cd server && npm run test:integration
+   ```
+
 ## Commandes utiles
 ### Frontend
 npm --workspace=apps/frontend run dev       # mode dev
