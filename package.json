@@ -18,6 +18,7 @@
     "docker": "docker compose -f compose.dev.yaml up -d",
     "test": "cd server && npm test && cd ../client && npm test",
     "db:create-migration": "cd server && npx typeorm migration:create -n",
-    "db:migrate": "cd server && npx typeorm migration:run"
+    "db:migrate": "cd server && npx typeorm migration:run",
+    "docker:seeder": "docker compose -f compose.dev.yaml exec backend npm run seed"
   }
 }
