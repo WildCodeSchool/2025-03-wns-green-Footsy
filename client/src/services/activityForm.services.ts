@@ -111,6 +111,16 @@ export const handleActivitySubmit = async (
     return;
   }
 
+  if (formData.co2_equivalent < 0) {
+    toast.error("L'équivalent CO2 doit être un nombre positif ou nul.");
+    return;
+  }
+
+  if (formData.co2_equivalent === 0) {
+    toast.error("Veuillez remplir tous les champs.");
+    return;
+  }
+
   try {
     // Convert date string (YYYY-MM-DD) to ISO format for GraphQL Date scalar
     const dateISO = new Date(formData.date).toISOString();
@@ -118,26 +128,26 @@ export const handleActivitySubmit = async (
     const variables =
       isEditMode && formData.id
         ? {
-            data: {
-              id: formData.id,
-              title: formData.title,
-              date: dateISO,
-              type_id: formData.type_id,
-              quantity: formData.quantity,
-              co2_equivalent: formData.co2_equivalent,
-              user_id: connectedUser.id,
-            },
-          }
+          data: {
+            id: formData.id,
+            title: formData.title,
+            date: dateISO,
+            type_id: formData.type_id,
+            quantity: formData.quantity,
+            co2_equivalent: formData.co2_equivalent,
+            user_id: connectedUser.id,
+          },
+        }
         : {
-            data: {
-              title: formData.title,
-              date: dateISO,
-              type_id: formData.type_id,
-              quantity: formData.quantity,
-              co2_equivalent: formData.co2_equivalent,
-              user_id: connectedUser.id,
-            },
-          };
+          data: {
+            title: formData.title,
+            date: dateISO,
+            type_id: formData.type_id,
+            quantity: formData.quantity,
+            co2_equivalent: formData.co2_equivalent,
+            user_id: connectedUser.id,
+          },
+        };
 
     await createOrUpdateActivity({ variables });
 
@@ -149,14 +159,12 @@ export const handleActivitySubmit = async (
     return "success";
   } catch (error) {
     console.error(
-      `Erreur lors de ${
-        isEditMode ? "la modification" : "l'ajout"
+      `Erreur lors de ${isEditMode ? "la modification" : "l'ajout"
       } de l'activité:`,
       error
     );
     toast.error(
-      `Une erreur est survenue lors de ${
-        isEditMode ? "la modification" : "l'ajout"
+      `Une erreur est survenue lors de ${isEditMode ? "la modification" : "l'ajout"
       } de l'activité. Veuillez réessayer.`
     );
   }
