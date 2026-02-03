@@ -28,14 +28,21 @@ const mockUserService: jest.Mocked<UserServiceInterface> = {
   toggleAdminStatus: jest.fn(),
 };
 
+// Create a mock ServerResponse
+const createMockRes = () => ({
+  setHeader: jest.fn(),
+});
+
 describe("UserResolver", () => {
   let userResolver: UserResolver;
   let mockUser: User;
+  let mockRes: any;
 
   beforeEach(() => {
     // Reset environment
     jest.clearAllMocks();
     process.env.JWT_SECRET = "test-secret-key";
+    mockRes = createMockRes();
 
     // Mock data and functions
     userResolver = new UserResolver(mockUserService);
@@ -45,7 +52,7 @@ describe("UserResolver", () => {
 
     const mockArgon2 = jest.mocked(require("argon2"));
     mockArgon2.hash.mockResolvedValue(
-      "$argon2id$v=19$m=65536,t=3,p=4$hashedPassword"
+      "$argon2id$v=19$m=65536,t=3,p=4$hashedPassword",
     );
   });
 
@@ -62,12 +69,12 @@ describe("UserResolver", () => {
       (jwt.sign as jest.Mock).mockReturnValue(mockToken);
 
       // Act
-      const result = await userResolver.login(userData);
+      const result = await userResolver.login(userData, { res: mockRes });
 
       // Assert
       expect(mockUserService.authenticateUser).toHaveBeenCalledWith(
         userData.email,
-        userData.password
+        userData.password,
       );
       expect(jwt.sign).toHaveBeenCalledWith(
         {
@@ -79,9 +86,12 @@ describe("UserResolver", () => {
           avatar: mockUser.avatar,
           isAdmin: mockUser.isAdmin,
         },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
       );
-      expect(result).toContain("token=mock-jwt-token");
+      expect(mockRes.setHeader).toHaveBeenCalledWith(
+        "Set-Cookie",
+        expect.stringContaining("jwt=mock-jwt-token"),
+      );
       expect(result).toContain('"id":1');
       expect(result).toContain('"firstName":"Jane"');
     });
@@ -95,7 +105,9 @@ describe("UserResolver", () => {
       };
 
       // Act & Assert
-      await expect(userResolver.login(userData)).rejects.toThrow("Login error");
+      await expect(
+        userResolver.login(userData, { res: mockRes }),
+      ).rejects.toThrow("Login error");
     });
 
     it('should throw "Login error" when user is not found', async () => {
@@ -106,11 +118,13 @@ describe("UserResolver", () => {
       };
 
       mockUserService.authenticateUser.mockRejectedValue(
-        new Error("User not found")
+        new Error("User not found"),
       );
 
       // Act & Assert
-      await expect(userResolver.login(userData)).rejects.toThrow("Login error");
+      await expect(
+        userResolver.login(userData, { res: mockRes }),
+      ).rejects.toThrow("Login error");
     });
 
     it('should throw "Login error" when password is invalid', async () => {
@@ -121,11 +135,13 @@ describe("UserResolver", () => {
       };
 
       mockUserService.authenticateUser.mockRejectedValue(
-        new Error("Invalid password")
+        new Error("Invalid password"),
       );
 
       // Act & Assert
-      await expect(userResolver.login(userData)).rejects.toThrow("Login error");
+      await expect(
+        userResolver.login(userData, { res: mockRes }),
+      ).rejects.toThrow("Login error");
     });
 
     it('should throw "Login error" when JWT signing fails', async () => {
@@ -141,7 +157,9 @@ describe("UserResolver", () => {
       });
 
       // Act & Assert
-      await expect(userResolver.login(userData)).rejects.toThrow("Login error");
+      await expect(
+        userResolver.login(userData, { res: mockRes }),
+      ).rejects.toThrow("Login error");
     });
 
     it('should throw "Login error" when user is null', async () => {
@@ -154,7 +172,9 @@ describe("UserResolver", () => {
       mockUserService.authenticateUser.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(userResolver.login(userData)).rejects.toThrow("Login error");
+      await expect(
+        userResolver.login(userData, { res: mockRes }),
+      ).rejects.toThrow("Login error");
     });
   });
 
@@ -188,10 +208,16 @@ describe("UserResolver", () => {
       (jwt.sign as jest.Mock).mockReturnValue(mockToken);
 
       // Act
-      const result = await userResolver.signup(newUserData);
+      const result = await userResolver.signup(newUserData, { res: mockRes });
 
       // Assert
-      expect(result).toContain("token=mock-signup-token");
+      expect(mockRes.setHeader).toHaveBeenCalledWith(
+        "Set-Cookie",
+        expect.stringContaining("jwt=mock-signup-token"),
+      );
+      expect(result).toContain('"id":2');
+      expect(result).toContain('"firstName":"John"');
+      expect(result).toContain('"lastName":"Smith"');
 
       // Assert service call
       expect(mockUserService.create).toHaveBeenCalledWith({
@@ -208,7 +234,7 @@ describe("UserResolver", () => {
           avatar: createdUser.avatar,
           isAdmin: createdUser.isAdmin,
         },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
       );
     });
 
@@ -217,21 +243,21 @@ describe("UserResolver", () => {
       delete process.env.JWT_SECRET;
 
       // Act & Assert
-      await expect(userResolver.signup(newUserData)).rejects.toThrow(
-        "Signup error"
-      );
+      await expect(
+        userResolver.signup(newUserData, { res: mockRes }),
+      ).rejects.toThrow("Signup error");
     });
 
     it("should handle user creation errors", async () => {
       // Arrange
       mockUserService.create.mockRejectedValue(
-        new Error("Email already exists")
+        new Error("Email already exists"),
       );
 
       // Act & Assert
-      await expect(userResolver.signup(newUserData)).rejects.toThrow(
-        "Signup error"
-      );
+      await expect(
+        userResolver.signup(newUserData, { res: mockRes }),
+      ).rejects.toThrow("Signup error");
     });
 
     it("should hash the password before creating user", async () => {
@@ -243,7 +269,7 @@ describe("UserResolver", () => {
       mockUserService.create.mockResolvedValue(createdUser);
 
       // Act
-      await userResolver.signup(newUserData);
+      await userResolver.signup(newUserData, { res: mockRes });
 
       // Assert
       const createCall = mockUserService.create.mock.calls[0][0];
@@ -274,7 +300,7 @@ describe("UserResolver", () => {
       mockUserService.create.mockResolvedValue(createdUser);
 
       // Act
-      await userResolver.signup(newUserData);
+      await userResolver.signup(newUserData, { res: mockRes });
 
       // Assert
       const createCall = mockUserService.create.mock.calls[0][0];
@@ -303,9 +329,9 @@ describe("UserResolver", () => {
     mockUserService.create.mockRejectedValue(new Error("Invalid email format"));
 
     // Act & Assert
-    await expect(userResolver.signup(newUserDataFail)).rejects.toThrow(
-      "Signup error"
-    );
+    await expect(
+      userResolver.signup(newUserDataFail, { res: mockRes }),
+    ).rejects.toThrow("Signup error");
   });
 
   it("should handle user with existing email in signup", async () => {
@@ -320,13 +346,13 @@ describe("UserResolver", () => {
     };
 
     mockUserService.create.mockRejectedValue(
-      new Error("duplicate key value violates unique constraint")
+      new Error("duplicate key value violates unique constraint"),
     );
 
     // Act & Assert
-    await expect(userResolver.signup(newUserDataFail)).rejects.toThrow(
-      "Email already in use"
-    );
+    await expect(
+      userResolver.signup(newUserDataFail, { res: mockRes }),
+    ).rejects.toThrow("Email already in use");
   });
 
   describe("currentUser", () => {
@@ -351,7 +377,7 @@ describe("UserResolver", () => {
       // Assert
       expect(jwt.verify).toHaveBeenCalledWith(
         mockToken,
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
       );
       expect(findOneSpy).toHaveBeenCalledWith({
         where: { id: decodedToken.id },
@@ -412,7 +438,7 @@ describe("UserResolver", () => {
       // Assert
       expect(mockUserService.updatePersonalInfo).toHaveBeenCalledWith(
         userId,
-        updateData
+        updateData,
       );
       expect(result).toEqual(updatedUser);
     });
@@ -427,12 +453,12 @@ describe("UserResolver", () => {
       };
 
       mockUserService.updatePersonalInfo.mockRejectedValue(
-        new Error("User not found")
+        new Error("User not found"),
       );
 
       // Act & Assert
       await expect(
-        userResolver.updatePersonalInfo(userId, updateData)
+        userResolver.updatePersonalInfo(userId, updateData),
       ).rejects.toThrow("Failed to update personal information");
     });
   });
@@ -453,7 +479,7 @@ describe("UserResolver", () => {
       // Assert
       expect(mockUserService.updateAvatar).toHaveBeenCalledWith(
         userId,
-        avatarData.avatar_id
+        avatarData.avatar_id,
       );
       expect(result).toEqual(updatedUser);
       expect(result.avatar.id).toBe(2);
@@ -465,12 +491,12 @@ describe("UserResolver", () => {
       const avatarData = { avatar_id: 999 };
 
       mockUserService.updateAvatar.mockRejectedValue(
-        new Error("Avatar not found")
+        new Error("Avatar not found"),
       );
 
       // Act & Assert
       await expect(
-        userResolver.updateAvatar(userId, avatarData)
+        userResolver.updateAvatar(userId, avatarData),
       ).rejects.toThrow("Failed to update avatar");
     });
   });
@@ -494,7 +520,7 @@ describe("UserResolver", () => {
       expect(mockUserService.changePassword).toHaveBeenCalledWith(
         userId,
         passwordData.current_password,
-        passwordData.new_password
+        passwordData.new_password,
       );
       expect(result).toBe(true);
     });
@@ -508,12 +534,12 @@ describe("UserResolver", () => {
       };
 
       mockUserService.changePassword.mockRejectedValue(
-        new Error("Current password is incorrect")
+        new Error("Current password is incorrect"),
       );
 
       // Act & Assert
       await expect(
-        userResolver.changePassword(userId, passwordData)
+        userResolver.changePassword(userId, passwordData),
       ).rejects.toThrow("Current password is incorrect");
     });
 
@@ -526,12 +552,12 @@ describe("UserResolver", () => {
       };
 
       mockUserService.changePassword.mockRejectedValue(
-        new Error("User not found")
+        new Error("User not found"),
       );
 
       // Act & Assert
       await expect(
-        userResolver.changePassword(userId, passwordData)
+        userResolver.changePassword(userId, passwordData),
       ).rejects.toThrow("Failed to change password");
     });
   });
@@ -554,12 +580,12 @@ describe("UserResolver", () => {
       // Arrange
       const userId = 1;
       mockUserService.deleteAccount.mockRejectedValue(
-        new Error("User not found")
+        new Error("User not found"),
       );
 
       // Act & Assert
       await expect(userResolver.deleteAccount(userId)).rejects.toThrow(
-        "Failed to delete account"
+        "Failed to delete account",
       );
     });
   });
@@ -588,7 +614,7 @@ describe("UserResolver", () => {
       // Assert
       expect(jwt.verify).toHaveBeenCalledWith(
         mockToken,
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
       );
       expect(findOneByOrFailSpy).toHaveBeenCalledWith({
         id: adminUser.id,
@@ -607,7 +633,7 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.deleteUserByAdmin(userId, context)
+        userResolver.deleteUserByAdmin(userId, context),
       ).rejects.toThrow("Failed to delete user");
     });
 
@@ -627,7 +653,7 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.deleteUserByAdmin(userId, context)
+        userResolver.deleteUserByAdmin(userId, context),
       ).rejects.toThrow("Failed to delete user");
 
       // Cleanup
@@ -643,7 +669,7 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.deleteUserByAdmin(userId, context)
+        userResolver.deleteUserByAdmin(userId, context),
       ).rejects.toThrow("Failed to delete user");
     });
   });
@@ -672,7 +698,7 @@ describe("UserResolver", () => {
       // Assert
       expect(jwt.verify).toHaveBeenCalledWith(
         mockToken,
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
       );
       expect(findOneByOrFailSpy).toHaveBeenCalledWith({
         id: adminUser.id,
@@ -691,7 +717,7 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.toggleUserAdminStatus(userId, context)
+        userResolver.toggleUserAdminStatus(userId, context),
       ).rejects.toThrow("Failed to toggle user admin status");
     });
 
@@ -711,7 +737,7 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.toggleUserAdminStatus(userId, context)
+        userResolver.toggleUserAdminStatus(userId, context),
       ).rejects.toThrow("Failed to toggle user admin status");
 
       // Cleanup
@@ -727,7 +753,7 @@ describe("UserResolver", () => {
 
       // Act & Assert
       await expect(
-        userResolver.toggleUserAdminStatus(userId, context)
+        userResolver.toggleUserAdminStatus(userId, context),
       ).rejects.toThrow("Failed to toggle user admin status");
     });
 
@@ -746,12 +772,12 @@ describe("UserResolver", () => {
         .mockResolvedValue(adminUser);
 
       mockUserService.toggleAdminStatus.mockRejectedValue(
-        new Error("User not found")
+        new Error("User not found"),
       );
 
       // Act & Assert
       await expect(
-        userResolver.toggleUserAdminStatus(userId, context)
+        userResolver.toggleUserAdminStatus(userId, context),
       ).rejects.toThrow("Failed to toggle user admin status");
 
       // Cleanup
