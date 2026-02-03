@@ -18,7 +18,6 @@ import GuestRoute from "./components/protectedRoutes/GuestRoute";
 import ProtectedRoutes from "./components/protectedRoutes/ProtectedRoutes";
 import ModeProvider from "./context/modeContext";
 import UserProvider from "./context/userContext";
-import { getToken } from "./services/authService";
 
 import Admin from "./pages/admin/Admin";
 import Activity from "./pages/activity/Activity";
@@ -120,12 +119,10 @@ const httpLink = new HttpLink({
 });
 
 const authLink = new SetContextLink((prevContext) => {
-  const token = getToken();
   return {
     ...prevContext,
     headers: {
       ...prevContext.headers,
-      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });
@@ -155,5 +152,5 @@ createRoot(rootElement).render(
         </UserProvider>
       </ApolloProvider>
     </ModeProvider>
-  </StrictMode>
+  </StrictMode>,
 );

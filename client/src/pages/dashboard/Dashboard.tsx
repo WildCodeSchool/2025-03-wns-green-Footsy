@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { getToken } from "../../services/authService";
 import MainHeader from "../../layout/main-header/MainHeader";
 import MainLayout from "../../layout/main-layout/MainLayout";
 import NavBar from "../../layout/navbar/NavBar";
@@ -8,10 +6,6 @@ import Footer from "../../layout/footer/Footer";
 import styles from "./Dashboard.module.scss";
 
 export default function Dashboard() {
-  useEffect(() => {
-    const token = getToken();
-    if (!token) window.location.href = "/login";
-  }, []);
 
   return (
     <MainLayout>
@@ -27,17 +21,29 @@ export default function Dashboard() {
 
           <div className={styles.dbControls}>
             <div className={styles.dbControlsButtons}>
-            <button className={styles.dbArrowPrevious} type="button" aria-label="Mois précédent">
-              ‹
-            </button>
+              <button
+                className={styles.dbArrowPrevious}
+                type="button"
+                aria-label="Mois précédent"
+              >
+                ‹
+              </button>
 
-            <div className={styles.dbMonth}>Juin 2025</div>
+              <div className={styles.dbMonth}>Juin 2025</div>
 
-            <button className={styles.dbArrowNext} type="button" aria-label="Mois suivant">
-              ›
-            </button>
-</div>
-            <div className={styles.dbSegmented} role="tablist" aria-label="Période">
+              <button
+                className={styles.dbArrowNext}
+                type="button"
+                aria-label="Mois suivant"
+              >
+                ›
+              </button>
+            </div>
+            <div
+              className={styles.dbSegmented}
+              role="tablist"
+              aria-label="Période"
+            >
               <button className={styles.dbSegmentedBtnWeek} type="button">
                 Semaine
               </button>

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client/react";
 
 import community from "../../../assets/img/logos_icons/community_desktop.png";
 import community_dark from "../../../assets/img/logos_icons/community_dark.png";
@@ -12,9 +13,9 @@ import information from "../../../assets/img/logos_icons/information_desktop.png
 import information_dark from "../../../assets/img/logos_icons/information_dark.png";
 
 import { useCurrentUser } from "../../../context/userContext";
+import { LOGOUT } from "../../../graphql/operations";
 
 import classes from "./NavBarDesktop.module.scss";
-import { removeToken } from "../../../services/authService";
 
 interface NavBarDesktopProps {
   mode: string;
@@ -22,8 +23,8 @@ interface NavBarDesktopProps {
 
 export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
   const navigate = useNavigate();
-
   const { user } = useCurrentUser();
+  const [logoutMutation] = useMutation(LOGOUT);
 
   const footprintIcon = mode === "dark" ? footprint_dark : footprint;
   const dashboardIcon = mode === "dark" ? dashboard_dark : dashboard;
@@ -31,9 +32,13 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
   const communityIcon = mode === "dark" ? community_dark : community;
   const infoIcon = mode === "dark" ? information_dark : information;
 
-   const handleLogout = () => {
-    removeToken();
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    try {
+      await logoutMutation();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

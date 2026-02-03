@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client/react";
 
-import community from "../../../assets/img/logos_icons/community.png"; 
+import community from "../../../assets/img/logos_icons/community.png";
 import community_dark from "../../../assets/img/logos_icons/community_dark.png";
 import dashboard from "../../../assets/img/logos_icons/dashboard.png";
 import dashboard_dark from "../../../assets/img/logos_icons/dashboard_dark.png";
@@ -11,8 +12,8 @@ import history_dark from "../../../assets/img/logos_icons/history_dark.png";
 import information from "../../../assets/img/logos_icons/information.png";
 import information_dark from "../../../assets/img/logos_icons/information_dark.png";
 
+import { LOGOUT } from "../../../graphql/operations";
 import classes from "./NavBarMobile.module.scss";
-import { removeToken } from "../../../services/authService";
 
 interface NavBarMobileProps {
   mode: string;
@@ -20,6 +21,7 @@ interface NavBarMobileProps {
 
 export default function NavBarMobile({ mode }: NavBarMobileProps) {
   const navigate = useNavigate();
+  const [logoutMutation] = useMutation(LOGOUT);
 
   const footprintIcon = mode === "dark" ? footprint_dark : footprint;
   const dashboardIcon = mode === "dark" ? dashboard_dark : dashboard;
@@ -27,9 +29,13 @@ export default function NavBarMobile({ mode }: NavBarMobileProps) {
   const communityIcon = mode === "dark" ? community_dark : community;
   const infoIcon = mode === "dark" ? information_dark : information;
 
- const handleLogout = () => {
-    removeToken();
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    try {
+      await logoutMutation();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

@@ -4,13 +4,12 @@ import {
   GET_CURRENT_USER,
   type GetCurrentUserData,
 } from "../graphql/operations";
-import { getUserFromToken } from "../services/authService";
 import type { User } from "../types/User.types";
 
 type UserContextType = {
   user?: User;
   loading: boolean;
-  error?: any;
+  error?: Error | undefined;
   refetch?: () => void;
 };
 
@@ -27,22 +26,20 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     {
       errorPolicy: "all",
       fetchPolicy: "network-only",
-    }
+    },
   );
 
-  const user = loading
-    ? getUserFromToken() ?? undefined
-    : error
-    ? undefined
-    : data?.currentUser;
+  const user = loading ? undefined : error ? undefined : data?.currentUser;
 
   return (
-    <UserContext.Provider value={{
-      user,
-      loading,
-      error,
-      refetch
-    }}>
+    <UserContext.Provider
+      value={{
+        user,
+        loading,
+        error,
+        refetch,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

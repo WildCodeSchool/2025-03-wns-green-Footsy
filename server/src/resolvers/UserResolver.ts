@@ -10,6 +10,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
+import type { ServerResponse } from "http";
 
 import type Avatar from "../entities/Avatar";
 import User from "../entities/User";
@@ -138,7 +139,7 @@ export default class UserResolver {
 
   @Query(() => User, { nullable: true })
   async currentUser(
-    @Ctx() context: { token: string | null }
+    @Ctx() context: { token: string | null },
   ): Promise<User | null> {
     try {
       if (!context.token || !process.env.JWT_SECRET) {
@@ -159,7 +160,10 @@ export default class UserResolver {
   }
 
   @Mutation(() => String)
-  async signup(@Arg("data", () => NewUserInput) userData: NewUserInput) {
+  async signup(
+    @Arg("data", () => NewUserInput) userData: NewUserInput,
+    @Ctx() { res }: { res: ServerResponse },
+  ) {
     try {
       if (!process.env.JWT_SECRET)
         throw new Error("Missing env variable: JWT_SECRET");
@@ -171,7 +175,15 @@ export default class UserResolver {
         password: hashedPassword,
       });
       const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
-      return `${getUserPublicProfile(user)}; token=${token}`;
+
+      // This is to avoid a security issue in development mode when using localhost. In production, the Secure flag will be set.
+      const isProduction = process.env.IS_PRODUCTION === "true";
+      res.setHeader(
+        "Set-Cookie",
+        `jwt=${token}; HttpOnly; ${isProduction ? "Secure;" : ""} SameSite=Strict; Path=/`,
+      );
+
+      return JSON.stringify(getUserPublicProfile(user));
     } catch (err) {
       console.error(err);
       if (err instanceof Error && err.message.includes("duplicate key"))
@@ -181,25 +193,44 @@ export default class UserResolver {
   }
 
   @Mutation(() => String)
-  async login(@Arg("data", () => UserInput) userData: UserInput) {
+  async login(
+    @Arg("data", () => UserInput) userData: UserInput,
+    @Ctx() { res }: { res: ServerResponse },
+  ) {
     try {
-      if (!process.env.JWT_SECRET)
+      if (!process.env.JWT_SECRET) {
+        console.error("JWT_SECRET is not set in the environment variables.");
         throw new Error("Missing env variable: JWT_SECRET");
+      }
 
       const user = await this.userService.authenticateUser(
         userData.email,
-        userData.password
+        userData.password,
       );
 
       if (!user) {
+        console.error(
+          "Authentication failed: User not found or invalid credentials.",
+        );
         throw new Error("Incorrect email or password");
       }
 
       const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
 
-      return `${JSON.stringify(getUserPublicProfile(user))}; token=${token}`;
+      try {
+        const isProduction = process.env.IS_PRODUCTION === "true";
+        res.setHeader(
+          "Set-Cookie",
+          `jwt=${token}; HttpOnly; ${isProduction ? "Secure;" : ""} SameSite=Strict; Path=/`,
+        );
+      } catch (cookieError) {
+        console.error("Error setting cookie:", cookieError);
+        throw new Error("Failed to set authentication cookie.");
+      }
+
+      return JSON.stringify(getUserPublicProfile(user));
     } catch (err) {
-      console.error(err);
+      console.error("Error in login method:", err);
       throw new Error("Login error");
     }
   }
@@ -207,7 +238,7 @@ export default class UserResolver {
   @Mutation(() => User)
   async updatePersonalInfo(
     @Arg("userId", () => Int) userId: number,
-    @Arg("data", () => UpdatePersonalInfoInput) data: UpdatePersonalInfoInput
+    @Arg("data", () => UpdatePersonalInfoInput) data: UpdatePersonalInfoInput,
   ): Promise<User> {
     try {
       return await this.userService.updatePersonalInfo(userId, data);
@@ -215,7 +246,7 @@ export default class UserResolver {
       console.error("Error updating personal info:", error);
       if (error instanceof Error) {
         throw new Error(
-          `Failed to update personal information: ${error.message}`
+          `Failed to update personal information: ${error.message}`,
         );
       }
       throw new Error("Failed to update personal information");
@@ -225,12 +256,12 @@ export default class UserResolver {
   @Mutation(() => User)
   async updateAvatar(
     @Arg("userId", () => Int) userId: number,
-    @Arg("data", () => UpdateAvatarInput) data: UpdateAvatarInput
+    @Arg("data", () => UpdateAvatarInput) data: UpdateAvatarInput,
   ): Promise<User> {
     try {
       const updatedUser = await this.userService.updateAvatar(
         userId,
-        data.avatar_id
+        data.avatar_id,
       );
 
       if (!updatedUser) {
@@ -246,13 +277,13 @@ export default class UserResolver {
   @Mutation(() => Boolean)
   async changePassword(
     @Arg("userId", () => Int) userId: number,
-    @Arg("data", () => ChangePasswordInput) data: ChangePasswordInput
+    @Arg("data", () => ChangePasswordInput) data: ChangePasswordInput,
   ): Promise<boolean> {
     try {
       await this.userService.changePassword(
         userId,
         data.current_password,
-        data.new_password
+        data.new_password,
       );
       return true;
     } catch (error) {
@@ -269,7 +300,7 @@ export default class UserResolver {
 
   @Mutation(() => Boolean)
   async deleteAccount(
-    @Arg("userId", () => Int) userId: number
+    @Arg("userId", () => Int) userId: number,
   ): Promise<boolean> {
     try {
       return await this.userService.deleteAccount(userId);
@@ -282,7 +313,7 @@ export default class UserResolver {
   @Mutation(() => Boolean)
   async deleteUserByAdmin(
     @Arg("userId", () => Int) userId: number,
-    @Ctx() context: { token: string | null }
+    @Ctx() context: { token: string | null },
   ): Promise<boolean> {
     try {
       if (!context.token || !process.env.JWT_SECRET) {
@@ -307,7 +338,7 @@ export default class UserResolver {
   @Mutation(() => User)
   async toggleUserAdminStatus(
     @Arg("userId", () => Int) userId: number,
-    @Ctx() context: { token: string | null }
+    @Ctx() context: { token: string | null },
   ): Promise<User> {
     try {
       if (!context.token || !process.env.JWT_SECRET) {
@@ -321,13 +352,27 @@ export default class UserResolver {
       const requestingUser = await User.findOneByOrFail({ id: decodedJWT.id });
       if (!requestingUser.isAdmin) {
         throw new Error(
-          "Unauthorized: Only admins can modify user admin status"
+          "Unauthorized: Only admins can modify user admin status",
         );
       }
 
       return await this.userService.toggleAdminStatus(userId);
     } catch {
       throw new Error("Failed to toggle user admin status");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async logout(@Ctx() { res }: { res: ServerResponse }): Promise<boolean> {
+    try {
+      res.setHeader(
+        "Set-Cookie",
+        "jwt=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0",
+      );
+      return true;
+    } catch (error) {
+      console.error("Error during logout:", error);
+      throw new Error("Failed to logout");
     }
   }
 }
