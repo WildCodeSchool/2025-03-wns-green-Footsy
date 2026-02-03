@@ -68,7 +68,7 @@ npm run migrate:up
 Depuis `server/` : `npm test`. Aucune base de données requise.
 
 ### Tests d’intégration (backend)
-Les tests d’intégration utilisent une base PostgreSQL dédiée (`db_footsy_test`) pour ne pas toucher à la base de dev. **Aucune installation locale de Postgres n’est nécessaire** : on utilise la même image Docker que pour le développement (`compose.dev.yaml`, service `database`).
+Les tests d’intégration utilisent une base PostgreSQL dédiée (`db_footsy_test`) pour ne pas toucher à la base de dev. **Aucune installation locale de Postgres n’est nécessaire** : on utilise la même image Docker que pour le développement (`compose.dev.yaml`, service `database`). Les tests d’intégration couvrent notamment la mutation **login** et la query **activités par utilisateur** (`getActivitiesByUserIdAndFilters`).
 
 1. **Démarrer Postgres avec Docker** (à la racine du repo, même conteneur que en dev) :
    ```bash

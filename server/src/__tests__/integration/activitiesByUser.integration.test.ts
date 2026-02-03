@@ -52,7 +52,21 @@ describe("getActivitiesByUserIdAndFilters (integration)", () => {
     }
 
     // Create dedicated user for this test
+    // First, delete activities to respect FK constraint
+    const activityRepo = dataSource.getRepository(Activity);
     const userRepo = dataSource.getRepository(User);
+    
+    // Delete activities belonging to test user by email
+    await dataSource
+      .createQueryBuilder()
+      .delete()
+      .from(Activity)
+      .where("user_id IN (SELECT id FROM \"user\" WHERE email = :email)", {
+        email: TEST_USER_EMAIL,
+      })
+      .execute();
+    
+    // Then delete the user
     await userRepo.delete({ email: TEST_USER_EMAIL });
     const testUser = await userRepo.save(
       userRepo.create({
@@ -95,7 +109,6 @@ describe("getActivitiesByUserIdAndFilters (integration)", () => {
     );
 
     // Create two activities for the test user
-    const activityRepo = dataSource.getRepository(Activity);
     await activityRepo.save(
       activityRepo.create({
         title: "Trip to work",

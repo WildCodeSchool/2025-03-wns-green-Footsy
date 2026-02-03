@@ -1,9 +1,14 @@
 import react from "@vitejs/plugin-react-swc";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/__tests__/setup.ts",
+  },
   server: {
     host: "0.0.0.0", // Écoute sur toutes les interfaces réseau
     port: 5173,
