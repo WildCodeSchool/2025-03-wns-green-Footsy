@@ -3,12 +3,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useMode } from "../../context/modeContext";
+import { useCurrentUser } from "../../context/userContext";
 import {
   LOGIN,
   type LoginMutationData,
   SIGN_UP,
 } from "../../graphql/operations";
-import { parseLoginResponse, saveToken } from "../../services/authService";
 import {
   type FormErrors,
   formFields,
@@ -28,6 +28,7 @@ import classes from "./SignUpForm.module.scss";
 export default function SignUpForm() {
   const navigate = useNavigate();
   const { mode } = useMode();
+  const { refetch } = useCurrentUser();
 
   const [formData, setFormData] = useState<SignUpFormData>({
     avatar: { id: 5, title: "Mononoke", image: "icon-mononoke.png" },
@@ -61,13 +62,14 @@ export default function SignUpForm() {
         });
 
         if (loginResult.data) {
-          const { token } = parseLoginResponse(loginResult.data.login);
-          saveToken(token);
+          if (refetch) {
+            await refetch();
+          }
           navigate("/dashboard");
         }
       } catch {
         console.error(
-          "Erreur lors de la connexion après inscription. Essayez de vous reconnecter"
+          "Erreur lors de la connexion après inscription. Essayez de vous reconnecter",
         );
       }
     }
@@ -125,8 +127,8 @@ export default function SignUpForm() {
           )}
           {field.id === "password" && errors.passwordInvalid && (
             <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
-              Le mot de passe doit contenir au moins 8 caractères, une majuscule, une
-              minuscule, un chiffre et un caractère spécial.
+              Le mot de passe doit contenir au moins 8 caractères, une
+              majuscule, une minuscule, un chiffre et un caractère spécial.
             </p>
           )}
         </div>

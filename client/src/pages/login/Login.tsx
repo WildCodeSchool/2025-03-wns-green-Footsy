@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import MainButton from "../../components/mainButton/MainButton";
 
 import { useMode } from "../../context/modeContext";
+import { useCurrentUser } from "../../context/userContext";
 import { LOGIN } from "../../graphql/operations";
 
 import AuthLayout from "../../layout/auth-layout/AuthLayout";
@@ -13,16 +14,11 @@ import Footer from "../../layout/footer/Footer";
 import FormLayout from "../../layout/form-layout/FormLayout";
 import FormHeader from "../../layout/form-header/FormHeader";
 
-import { parseLoginResponse, saveToken } from "../../services/authService";
-
 import classes from "./Login.module.scss";
-
-type LoginResponse = {
-  login: string;
-};
 
 export default function Login() {
   const { mode } = useMode();
+  const { refetch } = useCurrentUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -39,26 +35,21 @@ export default function Login() {
         },
       });
 
-      const { token } = parseLoginResponse(
-        (result.data as LoginResponse).login
-      );
-
-      saveToken(token);
-
-      toast.success("Connexion réussie !");
-
-      navigate("/dashboard");
-    } catch (error: any) {
+      if (result.data) {
+        toast.success("Connexion réussie !");
+        if (refetch) {
+          await refetch();
+        }
+        navigate("/dashboard");
+      }
+    } catch (error: unknown) {
       console.error("Login error:", error);
 
-      // Extract more specific error message
       let errorMessage =
         "Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.";
 
-      if (error?.graphQLErrors?.length > 0) {
-        errorMessage = error.graphQLErrors[0].message;
-      } else if (error?.networkError) {
-        errorMessage = "Erreur réseau. Veuillez vérifier votre connexion.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
       }
 
       toast.error(errorMessage);
@@ -70,8 +61,9 @@ export default function Login() {
       {<FormHeader title="Connexion" />}
       <AuthLayout showImageOnMobile={true}>
         <h2
-          className={`${classes.login__title} ${classes[`login__title--${mode}`]
-            }`}
+          className={`${classes.login__title} ${
+            classes[`login__title--${mode}`]
+          }`}
         >
           Connexion
         </h2>
@@ -80,8 +72,9 @@ export default function Login() {
           <div className={classes.login__field}>
             <label
               htmlFor="email"
-              className={`${classes.login__label} ${classes[`login__label--${mode}`]
-                }`}
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
             >
               Email
             </label>
@@ -90,8 +83,9 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`${classes.login__input} ${classes[`login__input--${mode}`]
-                }`}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
               required
             />
           </div>
@@ -99,8 +93,9 @@ export default function Login() {
           <div className={classes.login__field}>
             <label
               htmlFor="password"
-              className={`${classes.login__label} ${classes[`login__label--${mode}`]
-                }`}
+              className={`${classes.login__label} ${
+                classes[`login__label--${mode}`]
+              }`}
             >
               Mot de passe
             </label>
@@ -109,8 +104,9 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`${classes.login__input} ${classes[`login__input--${mode}`]
-                }`}
+              className={`${classes.login__input} ${
+                classes[`login__input--${mode}`]
+              }`}
               required
             />
           </div>
@@ -125,8 +121,9 @@ export default function Login() {
 
         <Link
           to="/signup"
-          className={`${classes.login__link} ${classes[`login__link--${mode}`]
-            }`}
+          className={`${classes.login__link} ${
+            classes[`login__link--${mode}`]
+          }`}
         >
           Vous n'avez pas de compte ? Inscrivez-vous ici !
         </Link>
