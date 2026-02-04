@@ -164,6 +164,12 @@ export const DELETE_ACCOUNT = gql`
   }
 `;
 
+export const LOGOUT = gql`
+  mutation Logout {
+    logout
+  }
+`;
+
 export const GET_ALL_TYPES = gql`
   query GetAllTypes {
    getAllTypes {
