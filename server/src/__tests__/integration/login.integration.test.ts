@@ -1,6 +1,6 @@
 import "reflect-metadata";
 
-import { afterAll, beforeAll, describe, expect, it } from "@jest/globals";
+import { afterAll, beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { ApolloServer } from "@apollo/server";
 import { buildSchema } from "type-graphql";
 import * as argon2 from "argon2";
@@ -82,6 +82,11 @@ describe("Login mutation (integration)", () => {
   });
 
   it("should return token and user data when login credentials are valid", async () => {
+    // Arrange
+    const mockRes = {
+      setHeader: jest.fn(),
+    };
+
     // Act
     const response = await apolloServer.executeOperation(
       {
@@ -93,7 +98,7 @@ describe("Login mutation (integration)", () => {
           },
         },
       },
-      { contextValue: { token: null } }
+      { contextValue: { token: null, res: mockRes } }
     );
 
     // Assert
@@ -107,11 +112,24 @@ describe("Login mutation (integration)", () => {
 
     const loginResult = singleResult.data?.login as string;
     expect(loginResult).toContain(`"mail":"${TEST_USER_EMAIL}"`);
-    expect(loginResult).toContain("token=");
-    expect(loginResult).toMatch(/token=[^;]+/);
+    
+    // Verify cookie was set with HttpOnly flag
+    expect(mockRes.setHeader).toHaveBeenCalledWith(
+      "Set-Cookie",
+      expect.stringContaining("jwt=")
+    );
+    expect(mockRes.setHeader).toHaveBeenCalledWith(
+      "Set-Cookie",
+      expect.stringContaining("HttpOnly")
+    );
   });
 
   it("should return login error when password is invalid", async () => {
+    // Arrange
+    const mockRes = {
+      setHeader: jest.fn(),
+    };
+
     // Act
     const response = await apolloServer.executeOperation(
       {
@@ -123,7 +141,7 @@ describe("Login mutation (integration)", () => {
           },
         },
       },
-      { contextValue: { token: null } }
+      { contextValue: { token: null, res: mockRes } }
     );
 
     // Assert

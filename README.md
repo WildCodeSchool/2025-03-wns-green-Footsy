@@ -82,6 +82,19 @@ Les tests d’intégration utilisent une base PostgreSQL dédiée (`db_footsy_te
    cd server && npm run test:integration
    ```
 
+### Tests d’intégration (frontend)
+- Node.js v18+
+- `@testing-library/react` configuré
+- MSW (Mock Service Worker) pour simuler les requêtes GraphQL
+- Client Apollo simulé
+
+```bash
+cd client
+npm test                   # Touts les tests
+npm run test:integration   # Tests de integration
+npm test -- login.integration.test.tsx # Un seul test
+
+
 ## Commandes utiles
 ### Frontend
 npm --workspace=apps/frontend run dev       # mode dev

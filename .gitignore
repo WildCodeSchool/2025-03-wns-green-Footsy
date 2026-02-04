@@ -4,6 +4,7 @@
 database
 
 .env
+.env.test
 
 **/logs/
 logs/
