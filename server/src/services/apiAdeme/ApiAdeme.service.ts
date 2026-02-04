@@ -1,5 +1,6 @@
 import apiAdeme from "./ApiAdeme.config";
-import { Categorie, QuantityUnit, Type, ApiResponse, THEMATIQUE_UNITS } from "./ApiAdeme.type";
+import { THEMATIQUE_UNITS } from "./ApiAdeme.type";
+import type { Categorie, QuantityUnit, Type, ApiResponse } from "./ApiAdeme.type";
 
 class ApiAdemeService {
     async getCategories(): Promise<Categorie[]> {
