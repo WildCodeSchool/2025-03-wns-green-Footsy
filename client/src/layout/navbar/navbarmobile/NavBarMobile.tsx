@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client/react";
 
 import community from "../../../assets/img/logos_icons/community.png";
 import community_dark from "../../../assets/img/logos_icons/community_dark.png";
@@ -12,7 +11,6 @@ import history_dark from "../../../assets/img/logos_icons/history_dark.png";
 import information from "../../../assets/img/logos_icons/information.png";
 import information_dark from "../../../assets/img/logos_icons/information_dark.png";
 
-import { LOGOUT } from "../../../graphql/operations";
 import classes from "./NavBarMobile.module.scss";
 
 interface NavBarMobileProps {
@@ -21,7 +19,6 @@ interface NavBarMobileProps {
 
 export default function NavBarMobile({ mode }: NavBarMobileProps) {
   const navigate = useNavigate();
-  const [logoutMutation] = useMutation(LOGOUT);
 
   const footprintIcon = mode === "dark" ? footprint_dark : footprint;
   const dashboardIcon = mode === "dark" ? dashboard_dark : dashboard;
@@ -29,20 +26,8 @@ export default function NavBarMobile({ mode }: NavBarMobileProps) {
   const communityIcon = mode === "dark" ? community_dark : community;
   const infoIcon = mode === "dark" ? information_dark : information;
 
-  const handleLogout = async () => {
-    try {
-      await logoutMutation();
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
   return (
     <section className={classes.navbarmobile}>
-      <button type="button" onClick={handleLogout}>
-        Logout
-      </button>
       <button
         type="button"
         onClick={() => navigate("/dashboard")}

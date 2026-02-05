@@ -49,4 +49,10 @@
       color: var(--color-dark-mode-light);
     }
   }
+
+  &__avatar {
+    @media (min-width: 1024px) {
+      display: none;
+    }
+  }
 }
