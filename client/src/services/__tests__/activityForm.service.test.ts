@@ -26,6 +26,18 @@ vi.mock("react-toastify", () => ({
   },
 }));
 
+// Mock localStorage for Node test environment (vitest)
+const mockLocalStorage = {
+  getItem: vi.fn(() => null),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+};
+if (typeof vi.stubGlobal === "function") {
+  vi.stubGlobal("localStorage", mockLocalStorage as unknown as Storage);
+} else {
+  (globalThis as any).localStorage = mockLocalStorage;
+}
+
 // Mock Apollo Client mutation
 const mockCreateActivity = vi.fn();
 
@@ -64,15 +76,15 @@ const createMockSelectEventHelper = (
   id: string,
   value: string
 ): React.ChangeEvent<HTMLSelectElement> =>
-  ({
-    target: {
-      id,
-      value,
-    } as HTMLSelectElement,
-    currentTarget: {} as HTMLSelectElement,
-    preventDefault: vi.fn(),
-    stopPropagation: vi.fn(),
-  } as unknown as React.ChangeEvent<HTMLSelectElement>);
+({
+  target: {
+    id,
+    value,
+  } as HTMLSelectElement,
+  currentTarget: {} as HTMLSelectElement,
+  preventDefault: vi.fn(),
+  stopPropagation: vi.fn(),
+} as unknown as React.ChangeEvent<HTMLSelectElement>);
 
 describe("activityForm.services", () => {
   let mockFormData: ActivityFormData;
@@ -377,10 +389,10 @@ describe("activityForm.services", () => {
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
 
-    it("should reject submission when co2_equivalent is 0", async () => {
+    it("should reject submission when quantity is 0", async () => {
       const invalidFormData = {
         ...mockFormData,
-        co2_equivalent: 0,
+        quantity: 0,
       };
 
       await handleActivitySubmit(
@@ -445,7 +457,7 @@ describe("activityForm.services", () => {
     it("should log error to console when submission fails", async () => {
       const consoleErrorSpy = vi
         .spyOn(console, "error")
-        .mockImplementation(() => {});
+        .mockImplementation(() => { });
       const genericError = new Error("Network error");
       mockCreateActivity.mockRejectedValueOnce(genericError);
 

@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client/react";
 
 import community from "../../../assets/img/logos_icons/community_desktop.png";
 import community_dark from "../../../assets/img/logos_icons/community_dark.png";
@@ -13,9 +12,9 @@ import information from "../../../assets/img/logos_icons/information_desktop.png
 import information_dark from "../../../assets/img/logos_icons/information_dark.png";
 
 import { useCurrentUser } from "../../../context/userContext";
-import { LOGOUT } from "../../../graphql/operations";
 
 import classes from "./NavBarDesktop.module.scss";
+import AvatarMenu from "../../../components/avatar/AvatarMenu";
 
 interface NavBarDesktopProps {
   mode: string;
@@ -24,7 +23,6 @@ interface NavBarDesktopProps {
 export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
   const navigate = useNavigate();
   const { user } = useCurrentUser();
-  const [logoutMutation] = useMutation(LOGOUT);
 
   const footprintIcon = mode === "dark" ? footprint_dark : footprint;
   const dashboardIcon = mode === "dark" ? dashboard_dark : dashboard;
@@ -32,92 +30,82 @@ export default function NavBarDesktop({ mode }: NavBarDesktopProps) {
   const communityIcon = mode === "dark" ? community_dark : community;
   const infoIcon = mode === "dark" ? information_dark : information;
 
-  const handleLogout = async () => {
-    try {
-      await logoutMutation();
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
   return (
     <section className={classes.navbardesktop}>
-      <button type="button" onClick={handleLogout}>
-        Logout
-      </button>
-      <button
-        type="button"
-        onClick={() => navigate("/add-activity")}
-        className={classes.navbardesktop__footprintbutton}
-      >
-        <img
-          src={footprintIcon}
-          alt="footprint"
-          className={classes.navbardesktop__footprinticon}
-        />
-      </button>
-      <div>
+      <div className={classes.navbardesktop__avatar}>
+      {user && <AvatarMenu user={user} />}</div>
         <button
           type="button"
-          onClick={() => navigate("/dashboard")}
-          className={classes.navbardesktop__button}
+          onClick={() => navigate("/add-activity")}
+          className={classes.navbardesktop__footprintbutton}
         >
           <img
-            src={dashboardIcon}
-            alt="dashboard-icon"
-            className={classes.navbardesktop__img}
+            src={footprintIcon}
+            alt="footprint"
+            className={classes.navbardesktop__footprinticon}
           />
-          <h5>Tableau de bord</h5>
         </button>
-        <button
-          type="button"
-          onClick={() => navigate("/history")}
-          className={classes.navbardesktop__button}
-        >
-          <img
-            src={historyIcon}
-            alt="history-icon"
-            className={classes.navbardesktop__img}
-          />
-          <h5>Mon historique</h5>
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("/community")}
-          className={classes.navbardesktop__button}
-        >
-          <img
-            src={communityIcon}
-            alt="community-icon"
-            className={classes.navbardesktop__img}
-          />
-          <h5>Communauté carbone</h5>
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("/information")}
-          className={classes.navbardesktop__button}
-        >
-          <img
-            src={infoIcon}
-            alt="information-icon"
-            className={classes.navbardesktop__img}
-          />
-          <h5>En savoir plus</h5>
-        </button>
-      </div>
-      {user?.isAdmin && (
         <div>
           <button
             type="button"
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/dashboard")}
             className={classes.navbardesktop__button}
           >
-            <h5>Page admin</h5>
+            <img
+              src={dashboardIcon}
+              alt="dashboard-icon"
+              className={classes.navbardesktop__img}
+            />
+            <h5>Tableau de bord</h5>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/history")}
+            className={classes.navbardesktop__button}
+          >
+            <img
+              src={historyIcon}
+              alt="history-icon"
+              className={classes.navbardesktop__img}
+            />
+            <h5>Mon historique</h5>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/community")}
+            className={classes.navbardesktop__button}
+          >
+            <img
+              src={communityIcon}
+              alt="community-icon"
+              className={classes.navbardesktop__img}
+            />
+            <h5>Communauté carbone</h5>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/information")}
+            className={classes.navbardesktop__button}
+          >
+            <img
+              src={infoIcon}
+              alt="information-icon"
+              className={classes.navbardesktop__img}
+            />
+            <h5>En savoir plus</h5>
           </button>
         </div>
-      )}
+        {user?.isAdmin && (
+          <div>
+            <button
+              type="button"
+              onClick={() => navigate("/admin")}
+              className={classes.navbardesktop__button}
+            >
+              <h5>Page admin</h5>
+            </button>
+          </div>
+        )}
     </section>
   );
 }

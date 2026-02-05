@@ -1,0 +1,90 @@
+.avatar {
+  &__image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    position: relative;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: 110px;
+    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    display: none;
+    min-width: 200px;
+
+    &--open {
+      display: block;
+    }
+
+    &__header {
+      padding: 8px 12px;
+      color: #333;
+      font-size: 14px;
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-of-type {
+        margin-bottom: 8px;
+      }
+
+      span{
+        color: grey;
+        font-size: 0.8rem;
+      }
+    }
+
+    &__item {
+      padding: 8px 12px;
+      cursor: pointer;
+      color: #333;
+      font-size: 14px;
+      text-align: center;
+
+      &:hover {
+        background-color: #f5f5f5;
+      }
+
+      &--link {
+        color: #333;
+        background-color: transparent;
+        border: none;
+        display: block;
+        margin: 0 auto;
+                  text-decoration: none;
+
+        &:hover {
+          background-color: transparent;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .avatar {
+    &__image {
+      width: 70px;
+      height: 70px;
+    }
+
+    &__menu {
+      right: 10px;
+      left: auto;
+      transform: none;
+    }
+  }
+}

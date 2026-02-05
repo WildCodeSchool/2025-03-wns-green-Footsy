@@ -12,14 +12,16 @@ import {
   sortActivities,
 } from "../activity.services";
 
-const transportCategory = createMockCategory({ id: 1, title: "Transport" });
+const transportCategory = createMockCategory({ id: 1, title: "Transport", quantity_unit: "km" });
 const alimentationCategory = createMockCategory({
   id: 2,
   title: "Alimentation",
+  quantity_unit: "repas"
 });
 const electroniqueCategory = createMockCategory({
   id: 3,
   title: "Électronique",
+  quantity_unit: "unité"
 });
 
 const mockActivities: Activity[] = [
@@ -32,7 +34,6 @@ const mockActivities: Activity[] = [
     type: createMockType({
       id: 1,
       title: "Vol court-courrier",
-      quantity_unit: "vol",
       category: transportCategory,
     }),
   }),
@@ -45,7 +46,6 @@ const mockActivities: Activity[] = [
     type: createMockType({
       id: 2,
       title: "Repas végétarien",
-      quantity_unit: "repas",
       category: alimentationCategory,
     }),
   }),
@@ -58,7 +58,6 @@ const mockActivities: Activity[] = [
     type: createMockType({
       id: 3,
       title: "Voiture essence",
-      quantity_unit: "km",
       category: transportCategory,
     }),
   }),
@@ -71,7 +70,6 @@ const mockActivities: Activity[] = [
     type: createMockType({
       id: 4,
       title: "Smartphone",
-      quantity_unit: "unité",
       category: electroniqueCategory,
     }),
   }),
@@ -84,7 +82,6 @@ const mockActivities: Activity[] = [
     type: createMockType({
       id: 5,
       title: "Repas avec viande rouge",
-      quantity_unit: "repas",
       category: alimentationCategory,
     }),
   }),
