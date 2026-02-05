@@ -389,10 +389,10 @@ describe("activityForm.services", () => {
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
 
-    it("should reject submission when co2_equivalent is 0", async () => {
+    it("should reject submission when quantity is 0", async () => {
       const invalidFormData = {
         ...mockFormData,
-        co2_equivalent: 0,
+        quantity: 0,
       };
 
       await handleActivitySubmit(
