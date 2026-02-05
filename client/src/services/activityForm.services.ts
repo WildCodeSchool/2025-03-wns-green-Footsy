@@ -107,14 +107,14 @@ export const handleActivitySubmit = async (
     toast.error("La quantité doit être un nombre positif.");
     return;
   }
-
-  if (formData.co2_equivalent < 0) {
-    toast.error("L'équivalent CO2 doit être un nombre positif ou nul.");
+  
+  if (formData.quantity === 0) {
+    toast.error("Veuillez remplir tous les champs.");
     return;
   }
 
-  if (formData.quantity === 0) {
-    toast.error("Veuillez remplir tous les champs.");
+  if (formData.co2_equivalent < 0) {
+    toast.error("L'équivalent CO2 doit être un nombre positif ou nul.");
     return;
   }
 
