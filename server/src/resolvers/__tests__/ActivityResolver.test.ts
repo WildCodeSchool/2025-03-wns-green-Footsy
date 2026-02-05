@@ -36,18 +36,19 @@ describe("ActivityResolver", () => {
     mockCategory1 = createMockCategory({
       id: 1,
       title: "Transport",
+      quantity_unit: "km"
     });
 
     mockCategory2 = createMockCategory({
       id: 2,
       title: "Alimentation",
+      quantity_unit: "kg"
     });
 
     // Create mock types
     mockType1 = createMockType({
       id: 1,
       title: "Voiture",
-      quantity_unit: "km",
       category_id: 1,
       category: mockCategory1,
     });
@@ -55,7 +56,6 @@ describe("ActivityResolver", () => {
     mockType2 = createMockType({
       id: 2,
       title: "Viande",
-      quantity_unit: "kg",
       category_id: 2,
       category: mockCategory2,
     });

@@ -43,12 +43,6 @@ export const activityFormFields = [
     id: "quantity",
     placeholder: "Exemple: 30 (minutes), 10 (km)...",
   },
-  {
-    label: "Équivalent CO2 (en kg)",
-    type: "number",
-    id: "co2_equivalent",
-    placeholder: "Exemple: 2.5",
-  },
 ];
 
 export const handleActivityChange = (
@@ -103,8 +97,7 @@ export const handleActivitySubmit = async (
     !formData.date ||
     !formData.type_id ||
     formData.type_id === 0 ||
-    !formData.quantity ||
-    !formData.co2_equivalent
+    !formData.quantity
   ) {
     toast.error("Veuillez remplir tous les champs.");
     return;
@@ -112,6 +105,11 @@ export const handleActivitySubmit = async (
 
   if (formData.quantity <= 0) {
     toast.error("La quantité doit être un nombre positif.");
+    return;
+  }
+  
+  if (formData.quantity === 0) {
+    toast.error("Veuillez remplir tous les champs.");
     return;
   }
 
@@ -127,26 +125,26 @@ export const handleActivitySubmit = async (
     const variables =
       isEditMode && formData.id
         ? {
-            data: {
-              id: formData.id,
-              title: formData.title,
-              date: dateISO,
-              type_id: formData.type_id,
-              quantity: formData.quantity,
-              co2_equivalent: formData.co2_equivalent,
-              user_id: user.id,
-            },
-          }
+          data: {
+            id: formData.id,
+            title: formData.title,
+            date: dateISO,
+            type_id: formData.type_id,
+            quantity: formData.quantity,
+            co2_equivalent: formData.co2_equivalent,
+            user_id: user.id,
+          },
+        }
         : {
-            data: {
-              title: formData.title,
-              date: dateISO,
-              type_id: formData.type_id,
-              quantity: formData.quantity,
-              co2_equivalent: formData.co2_equivalent,
-              user_id: user.id,
-            },
-          };
+          data: {
+            title: formData.title,
+            date: dateISO,
+            type_id: formData.type_id,
+            quantity: formData.quantity,
+            co2_equivalent: formData.co2_equivalent,
+            user_id: user.id,
+          },
+        };
 
     await createOrUpdateActivity({ variables });
 
@@ -158,14 +156,12 @@ export const handleActivitySubmit = async (
     return "success";
   } catch (error) {
     console.error(
-      `Erreur lors de ${
-        isEditMode ? "la modification" : "l'ajout"
+      `Erreur lors de ${isEditMode ? "la modification" : "l'ajout"
       } de l'activité:`,
       error
     );
     toast.error(
-      `Une erreur est survenue lors de ${
-        isEditMode ? "la modification" : "l'ajout"
+      `Une erreur est survenue lors de ${isEditMode ? "la modification" : "l'ajout"
       } de l'activité. Veuillez réessayer.`
     );
   }

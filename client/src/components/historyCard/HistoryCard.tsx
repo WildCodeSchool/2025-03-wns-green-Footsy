@@ -79,7 +79,7 @@ export function HistoryCard({ activity }: { activity: Activity }) {
             <div className={classes.card__infoGrid}>
               <div className={classes.card__infoItem}>
                 <span className={classes.card__infoValue}>
-                  {activity.quantity ?? "-"} {activity.type.quantity_unit}
+                  {activity.quantity ?? "-"} {activity.type.category.quantity_unit}
                 </span>
               </div>
 

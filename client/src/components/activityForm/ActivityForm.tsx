@@ -86,9 +86,25 @@ export default function ActivityForm({
 
   useEffect(() => {
     setTypesByCategorySelected(
-      types?.filter((type) => type.category_id === formData.category_id) ?? []
+      types?.filter((type) => type.category.id === formData.category_id) ?? []
     );
   }, [types, formData.category_id]);
+
+  // Calcul automatique du CO2
+  useEffect(() => {
+    if (selectedType && formData.quantity > 0) {
+      const calculatedCO2 = selectedType.ecv * formData.quantity;
+      setFormData(prev => ({
+        ...prev,
+        co2_equivalent: parseFloat(calculatedCO2.toFixed(2))
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        co2_equivalent: 0
+      }));
+    }
+  }, [selectedType, formData.quantity]);
 
   if (typesError) {
     return (
@@ -138,14 +154,21 @@ export default function ActivityForm({
               field.type === "select" && field.id === "category_id"
                 ? categories
                 : field.type === "select" && field.id === "type_id"
-                ? typesByCategorySelected
-                : undefined
+                  ? typesByCategorySelected
+                  : undefined
             }
           />
           {field.id === "quantity" && (
-            <p className={classes.activity__unit}>
-              {selectedType?.quantity_unit ?? ""}
-            </p>
+            <>
+              <p className={classes.activity__unit}>
+                {selectedType?.category.quantity_unit ?? ""}
+              </p>
+              {formData.co2_equivalent > 0 && (
+                <h3 className={classes.activity__co2}>
+                  Émissions : <strong>{formData.co2_equivalent} kg CO₂</strong>
+                </h3>
+              )}
+            </>
           )}
         </div>
       ))}

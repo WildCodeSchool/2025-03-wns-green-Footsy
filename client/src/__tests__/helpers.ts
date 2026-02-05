@@ -6,24 +6,26 @@ import type { Activity, Category, Type } from "../types/Activity.types";
 export const createMockCategory = ({
   id,
   title,
+  quantity_unit,
 }: Partial<Category> = {}): Category => {
   return {
     id: id ?? 1,
     title: title ?? "Transport",
+    quantity_unit: quantity_unit ?? "vol",
   };
 };
 
 export const createMockType = ({
   id,
   title,
-  quantity_unit,
   category,
+  ecv,
 }: Partial<Type> = {}): Type => {
   return {
     id: id ?? 1,
     title: title ?? "Vol court-courrier",
-    quantity_unit: quantity_unit ?? "vol",
     category: category ?? createMockCategory(),
+    ecv: ecv ?? 1,
   };
 };
 

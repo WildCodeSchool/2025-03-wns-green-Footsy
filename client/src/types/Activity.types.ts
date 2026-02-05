@@ -11,12 +11,12 @@ export type Activity = {
 export type Type = {
   id: number;
   title: string;
-  quantity_unit: string;
+  ecv: number;
   category: Category;
-  category_id?: number;
 };
 
 export type Category = {
   id: number;
   title: string;
+  quantity_unit: string;
 };

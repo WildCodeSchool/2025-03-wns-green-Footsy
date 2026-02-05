@@ -1,3 +1,6 @@
+import "dotenv/config";
+import "reflect-metadata";
+
 import dataSource from "../config/db";
 import { Users } from "./data/UserSeeder";
 import { Avatars } from "./data/AvatarSeeder";
@@ -5,10 +8,10 @@ import Avatar from "../entities/Avatar";
 import User from "../entities/User";
 import Category from "../entities/Category";
 import Type from "../entities/Type";
-import { Categories } from "./data/CategorySeeder";
-import { Types } from "./data/TypeSeeder";
 import Activity from "../entities/Activity";
 import { Activities } from "./data/ActivitySeeder";
+import ApiAdemeService from "../services/apiAdeme/ApiAdeme.service";
+
 
 export async function seedAvatars() {
   const avatarRepository = dataSource.getRepository(Avatar);
@@ -50,8 +53,32 @@ export async function seedCategories() {
     console.info("Categories already exist, skipping");
     return;
   }
-  await categoryRepo.save(Categories);
-  console.info("Categories seeded");
+
+  console.info("Fetching categories from ADEME API...");
+
+  try {
+    const categoriesFromApi = await ApiAdemeService.getCategories()
+
+    console.info(`✓ ${categoriesFromApi.length} categories retrieved`);
+
+    const filteredCategories = categoriesFromApi.filter((cat) => cat.id >= 1 && cat.id <= 10);
+    console.info(`✓ ${filteredCategories.length} categories kept (ID 1-10)`);
+
+    const categoriesToSave = filteredCategories.map((cat) => ({
+      title: cat.name,
+      quantity_unit: ApiAdemeService.getQuantityUnit(cat.id),
+      ademe_id: cat.id
+    }));
+
+    console.info(`✓ ${categoriesToSave.length} categories prepared for saving`);
+
+    await categoryRepo.save(categoriesToSave);
+    console.info("Categories seeded");
+
+  } catch (error) {
+    console.error("Erreur lors du seed des categories:", error);
+    throw error;
+  }
 }
 
 export async function seedTypes() {
@@ -60,6 +87,7 @@ export async function seedTypes() {
     console.info("Types already exist, skipping");
     return;
   }
+
   const categoryRepo = dataSource.getRepository(Category);
   const categories = await categoryRepo.find();
   if (categories.length === 0) {
@@ -67,20 +95,40 @@ export async function seedTypes() {
     return;
   }
 
-  // Map Types with category relation
-  const typesToSave = Types.map((typeData) => {
-    const category = categories.find((cat) => cat.id === typeData.category_id);
-    if (!category) {
-      throw new Error(`Category with id ${typeData.category_id} not found`);
-    }
-    return {
-      ...typeData,
-      category: category,
-    };
-  });
+  console.info("Fetching types from ADEME API...");
 
-  await typeRepo.save(typesToSave);
-  console.info("Types seeded");
+  try {
+    const allTypesToSave = [];
+
+    for (const category of categories) {
+      if (!category.ademe_id) {
+        console.warn(`⚠ Category "${category.title}" has no ademe_id, skipping`);
+        continue;
+      }
+
+      console.info(`Fetching types for category: ${category.title}...`);
+
+      const typesFromApi = await ApiAdemeService.getTypes(category.ademe_id);
+
+      const typesForCategory = typesFromApi.map((type) => ({
+        title: type.name,
+        ecv: type.ecv,
+        category: category
+      }));
+
+      allTypesToSave.push(...typesForCategory);
+    }
+
+    console.info(`✓ ${allTypesToSave.length} types prepared for saving`);
+
+    await typeRepo.save(allTypesToSave);
+    console.info("Types seeded");
+
+  } catch (error) {
+    console.error("Erreur lors du seed des types:", error);
+    throw error;
+  }
+
 }
 
 export async function seedActivities() {
@@ -111,3 +159,26 @@ export async function seedActivities() {
   await activityRepo.save(activities);
   console.info("Activities seeded");
 }
+
+async function runSeeders() {
+  try {
+    await dataSource.initialize();
+    console.info("Database connected");
+
+    await seedAvatars();
+    await seedUsers();
+    await seedCategories();
+    await seedTypes();
+    //await seedActivities();
+
+    console.info("All seeders completed successfully")
+  } catch (error) {
+    console.error("Seeding failed:", error);
+    process.exit(1);
+  } finally {
+    await dataSource.destroy();
+    process.exit(0);
+  }
+}
+
+runSeeders();
