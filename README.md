@@ -76,6 +76,11 @@ Les tests d’intégration utilisent une base PostgreSQL dédiée (`db_footsy_te
    ```
 2. **Créer la base de test** (une fois par machine, dans ce conteneur) :
    `docker compose -f compose.dev.yaml exec database psql -U postgres -d postgres -c "CREATE DATABASE db_footsy_test;"`
+   **Si le schéma a changé** (nouvelles colonnes, ex. `quantity_unit` sur Category) : supprimer puis recréer la base :
+   ```bash
+   docker compose -f compose.dev.yaml exec database psql -U postgres -d postgres -c "DROP DATABASE db_footsy_test;"
+   docker compose -f compose.dev.yaml exec database psql -U postgres -d postgres -c "CREATE DATABASE db_footsy_test;"
+   ```
 3. **Configurer l’environnement de test** : copier `server/.env.test.example` vers `server/.env.test` et ajuster si besoin (même utilisateur/mot de passe que Postgres Docker).
 4. **Lancer les tests d’intégration** :
    ```bash

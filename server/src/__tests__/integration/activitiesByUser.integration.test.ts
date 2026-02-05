@@ -13,11 +13,12 @@ import CategoryResolver from "../../resolvers/CategoryResolver";
 import FriendResolver from "../../resolvers/FriendResolver";
 import InteractionResolver from "../../resolvers/InteractionResolver";
 import TypeResolver from "../../resolvers/TypeResolver";
-import Avatar from "../../entities/Avatar";
-import User from "../../entities/User";
-import Category from "../../entities/Category";
-import Type from "../../entities/Type";
 import Activity from "../../entities/Activity";
+import Avatar from "../../entities/Avatar";
+import Category from "../../entities/Category";
+import Interaction from "../../entities/Interaction";
+import Type from "../../entities/Type";
+import User from "../../entities/User";
 
 const TEST_USER_EMAIL = "activities-test@footsy.com";
 
@@ -51,23 +52,25 @@ describe("getActivitiesByUserIdAndFilters (integration)", () => {
       );
     }
 
-    // Create dedicated user for this test
-    // First, delete activities to respect FK constraint
-    const activityRepo = dataSource.getRepository(Activity);
+    // Create dedicated user for this test (respect FK: Interaction -> Activity -> User)
     const userRepo = dataSource.getRepository(User);
-    
-    // Delete activities belonging to test user by email
-    await dataSource
-      .createQueryBuilder()
-      .delete()
-      .from(Activity)
-      .where("user_id IN (SELECT id FROM \"user\" WHERE email = :email)", {
-        email: TEST_USER_EMAIL,
-      })
-      .execute();
-    
-    // Then delete the user
-    await userRepo.delete({ email: TEST_USER_EMAIL });
+    const existingUser = await userRepo.findOne({ where: { email: TEST_USER_EMAIL } });
+    if (existingUser) {
+      const activityIds = await dataSource
+        .getRepository(Activity)
+        .find({ where: { user: { id: existingUser.id } }, select: { id: true } })
+        .then((rows) => rows.map((r) => r.id));
+      if (activityIds.length > 0) {
+        await dataSource
+          .createQueryBuilder()
+          .delete()
+          .from(Interaction)
+          .where("activity_id IN (:...ids)", { ids: activityIds })
+          .execute();
+      }
+      await dataSource.getRepository(Activity).delete({ user: { id: existingUser.id } });
+      await userRepo.remove(existingUser);
+    }
     const testUser = await userRepo.save(
       userRepo.create({
         first_name: "Activities",
@@ -81,34 +84,37 @@ describe("getActivitiesByUserIdAndFilters (integration)", () => {
     );
     testUserId = testUser.id;
 
-    // Create two categories
+    // Create two categories (with quantity_unit)
     const categoryRepo = dataSource.getRepository(Category);
     const category1 = await categoryRepo.save(
-      categoryRepo.create({ title: "Transport" })
+      categoryRepo.create({ title: "Transport", quantity_unit: "km" })
     );
     const category2 = await categoryRepo.save(
-      categoryRepo.create({ title: "Alimentation" })
+      categoryRepo.create({ title: "Alimentation", quantity_unit: "kg" })
     );
     category1Id = category1.id;
 
-    // Create two types (one per category)
+    // Create two types (one per category, must provide ecv)
     const typeRepo = dataSource.getRepository(Type);
     const type1 = await typeRepo.save(
       typeRepo.create({
         title: "Voiture",
-        quantity_unit: "km",
+        ecv: 1.23,
         category: category1,
+        category_id: category1.id,
       })
     );
     const type2 = await typeRepo.save(
       typeRepo.create({
         title: "Viande",
-        quantity_unit: "kg",
+        ecv: 2.34,
         category: category2,
+        category_id: category2.id,
       })
     );
 
     // Create two activities for the test user
+    const activityRepo = dataSource.getRepository(Activity);
     await activityRepo.save(
       activityRepo.create({
         title: "Trip to work",
