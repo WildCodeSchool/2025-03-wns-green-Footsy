@@ -80,7 +80,7 @@ const mockRes = {
 const contextValue = { res: mockRes };
 ```
 
-### 3. Ejecutar tests
+### 3. Exécuter les tests
 
 ```bash
 npm test                          # Touts

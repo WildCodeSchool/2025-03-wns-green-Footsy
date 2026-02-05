@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"test": "jest",
-		"test:integration": "node --env-file=.env.test ./node_modules/.bin/jest --config=jest.integration.config.js --runInBand",
+		"test:integration": "dotenv -e .env.test -- jest --config=jest.integration.config.js --runInBand",
 		"test:watch": "jest --watch",
 		"compile": "tsc",
 		"start": "npm run compile && node ./dist/index.js",
@@ -28,10 +28,11 @@
 		"typeorm": "^0.3.25"
 	},
 	"devDependencies": {
-		"tsx": "^4.19.2",
-		"jest": "^29.7.0",
+		"@jest/globals": "^29.7.0",
 		"@types/jest": "^29.5.12",
+		"dotenv-cli": "^11.0.0",
+		"jest": "^29.7.0",
 		"ts-jest": "^29.1.2",
-		"@jest/globals": "^29.7.0"
+		"tsx": "^4.19.2"
 	}
 }

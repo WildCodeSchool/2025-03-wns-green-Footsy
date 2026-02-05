@@ -75,13 +75,13 @@ export default tseslint.config([
 
 Les tests d'intégration vérifient que les composants fonctionnent correctement avec le serveur (simulé avec MSW).
 
-## Estructura
+## Structure
 
 - **`mocks/handlers.ts`**: Requêtes GraphQL simulées utilisant MSW
 - **`helpers.tsx`**: Fonctions auxiliaires (`renderWithProviders`)
 - **`*.integration.test.tsx`**: tests d'intégration des composants
 
-## Rédigez un nouveau test d'intégration
+## Rédiger un nouveau test d'intégration
 
 ### 1. Créer le fichier de test
 
@@ -117,10 +117,10 @@ describe("MyComponent (integration)", () => {
 });
 ```
 
-### 2. Add mocks en `mocks/handlers.ts`
+### 2. Ajouter les mocks dans `mocks/handlers.ts`
 
 ```typescript
-// Add en handlers.ts
+// Ajouter dans handlers.ts
 export const myFeatureHandlers = [
   http.post("/graphql", async ({ request }) => {
     const body = await request.json();
@@ -154,12 +154,12 @@ export const myFeatureHandlers = [
 ### 3. Exécuter le test
 
 ```bash
-npm test -- myFeature.integration.test.tsx
+npm test --myFeature.integration.test.tsx
 ```
 
 ## Tips & Tricks
 
-- **Usar `renderWithProviders`**: Cela encapsule le composant avec tous les providers nécessaires
+- **Utiliser `renderWithProviders`**: Cela encapsule le composant avec tous les providers nécessaires
 - **MSW doit être configuré avant le test**: `beforeAll(() => server.listen())`
 - **Nettoyer l’état entre les tests** : beforeEach(() => localStorage.clear())
 - **Utiliser waitFor pour les opérations asynchrones** : le composant peut prendre du temps à rendre les données
