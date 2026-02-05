@@ -113,7 +113,7 @@ export const handleActivitySubmit = async (
     return;
   }
 
-  if (formData.co2_equivalent === 0) {
+  if (formData.quantity === 0) {
     toast.error("Veuillez remplir tous les champs.");
     return;
   }
