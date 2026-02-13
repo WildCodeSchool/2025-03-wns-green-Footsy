@@ -64,6 +64,7 @@ describe("signUpForm.services", () => {
     mockErrors = {
       emailMismatch: false,
       passwordMismatch: false,
+      passwordInvalid: false,
     };
 
     mockSetFormData = vi.fn();
@@ -102,6 +103,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
+        passwordInvalid: false,
       });
       expect(result.emailMismatch).toBe(true);
     });
@@ -122,6 +124,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
+        passwordInvalid: false,
       });
       expect(result.emailMismatch).toBe(false);
     });
@@ -145,6 +148,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
+        passwordInvalid: false,
       });
       expect(result.passwordMismatch).toBe(true);
     });
@@ -165,6 +169,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
+        passwordInvalid: false,
       });
       expect(result.passwordMismatch).toBe(false);
     });
@@ -191,6 +196,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
+        passwordInvalid: false,
       });
       expect(result.emailMismatch).toBe(false);
     });
@@ -218,6 +224,7 @@ describe("signUpForm.services", () => {
       const errorsWithEmailMismatch = {
         emailMismatch: true,
         passwordMismatch: false,
+        passwordInvalid: false,
       };
 
       await handleSubmit(
@@ -237,6 +244,7 @@ describe("signUpForm.services", () => {
       const errorsWithPasswordMismatch = {
         emailMismatch: false,
         passwordMismatch: true,
+        passwordInvalid: false,
       };
 
       await handleSubmit(

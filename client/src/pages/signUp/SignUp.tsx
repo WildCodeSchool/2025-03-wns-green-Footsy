@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-import FormHeader from "../../layout/form-header/FormHeader";
 import SignUpForm from "../../components/signUpForm/SignUpForm";
 
 import { useMode } from "../../context/modeContext";
