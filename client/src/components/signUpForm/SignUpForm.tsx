@@ -3,7 +3,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useMode } from "../../context/modeContext";
-import { LOGIN, SIGN_UP } from "../../graphql/operations";
+import { useCurrentUser } from "../../context/userContext";
+import {
+  LOGIN,
+  type LoginMutationData,
+  SIGN_UP,
+} from "../../graphql/operations";
 import {
   type FormErrors,
   formFields,
@@ -16,13 +21,14 @@ import type { Avatar } from "../../types/Avatar.types";
 import AvatarSelector from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
 import { Loader } from "../loader/Loader";
-
 import MainButton from "../mainButton/MainButton";
+
 import classes from "./SignUpForm.module.scss";
 
 export default function SignUpForm() {
   const navigate = useNavigate();
   const { mode } = useMode();
+  const { refetch } = useCurrentUser();
 
   const [formData, setFormData] = useState<SignUpFormData>({
     avatar: { id: 5, title: "Mononoke", image: "icon-mononoke.png" },
@@ -30,10 +36,11 @@ export default function SignUpForm() {
   const [errors, setErrors] = useState<FormErrors>({
     emailMismatch: false,
     passwordMismatch: false,
+    passwordInvalid: false,
   });
 
   const [signUpMutation, { loading, error }] = useMutation(SIGN_UP);
-  const [loginMutation] = useMutation(LOGIN);
+  const [loginMutation] = useMutation<LoginMutationData>(LOGIN);
 
   const handleAvatarSelect = (avatar: Avatar) => {
     setFormData((prev) => ({
@@ -42,28 +49,34 @@ export default function SignUpForm() {
     }));
   };
 
-  return (
-    <form
-      onSubmit={async (event) => {
-        event.preventDefault();
-        const result = await handleSubmit(
-          event,
-          formData,
-          errors,
-          signUpMutation
-        );
+  const submitAndLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await handleSubmit(e, formData, errors, signUpMutation);
 
-        if (result === "success") {
-          await loginMutation({
-            variables: {
-              data: { email: formData.email, password: formData.password },
-            },
-          });
+    if (result === "success") {
+      try {
+        const loginResult = await loginMutation({
+          variables: {
+            data: { email: formData.email, password: formData.password },
+          },
+        });
+
+        if (loginResult.data) {
+          if (refetch) {
+            await refetch();
+          }
           navigate("/dashboard");
         }
-      }}
-      className={classes["sign-up-form"]}
-    >
+      } catch {
+        console.error(
+          "Erreur lors de la connexion après inscription. Essayez de vous reconnecter",
+        );
+      }
+    }
+  };
+
+  return (
+    <form onSubmit={submitAndLogin} className={classes["sign-up-form"]}>
       <div className={classes["sign-up-form__header"]}>
         <div className={classes["sign-up-form__avatar"]}>
           <AvatarSelector
@@ -110,6 +123,12 @@ export default function SignUpForm() {
           {field.id === "confirmPassword" && errors.passwordMismatch && (
             <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
               Les mots de passe ne sont pas identiques
+            </p>
+          )}
+          {field.id === "password" && errors.passwordInvalid && (
+            <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
+              Le mot de passe doit contenir au moins 8 caractères, une
+              majuscule, une minuscule, un chiffre et un caractère spécial.
             </p>
           )}
         </div>

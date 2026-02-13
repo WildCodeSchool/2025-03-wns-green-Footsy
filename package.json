@@ -15,6 +15,10 @@
     "install:client": "cd client && npm install",
     "install:server": "cd server && npm install",
     "i": "npm run install:root && npm run install:client && npm run install:server",
-    "docker": "docker compose -f compose.dev.yaml up -d"
+    "docker": "docker compose -f compose.dev.yaml up -d",
+    "test": "cd server && npm test && cd ../client && npm test",
+    "db:create-migration": "cd server && npx typeorm migration:create -n",
+    "db:migrate": "cd server && npx typeorm migration:run",
+    "docker:seeder": "docker compose -f compose.dev.yaml exec backend npm run seed"
   }
 }

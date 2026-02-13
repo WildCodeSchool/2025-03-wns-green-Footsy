@@ -34,6 +34,8 @@ services:
     volumes:
       - ./server/src:/app/src
       - /app/node_modules
+      - ./server/package.json:/app/package.json
+      - ./server/tsconfig.json:/app/tsconfig.json
     healthcheck:
       test:
         [
@@ -41,10 +43,15 @@ services:
           'curl --fail --request POST --header ''Content-Type: application/json'' --url ''http://backend:4000'' --data ''{"query":"query { __typename }"}'' || exit 1',
         ]
     environment:
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+      NODE_ENV: development
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: ${DB_DATABASE}
       DB_USER: ${DB_USER}
       DB_HOST: ${DB_HOST}
+      ADEME_API_KEY: ${ADEME_API_KEY}  
+      ADEME_API_URL: ${ADEME_API_URL}
     env_file:
       - .env
     depends_on:
@@ -69,7 +76,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - ./database:/var/lib/postgresql
 
   # nginx:
   #   image: nginx:1.21.3

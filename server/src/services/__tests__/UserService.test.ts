@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 import UserService from "../UserService";
-import { createMockUser } from "../../__tests__/helpers";
+import { createMockUser, createMockAvatar } from "../../__tests__/helpers";
 
 import type User from "../../entities/User";
 
 jest.mock("argon2", () => ({
   verify: jest.fn(),
+  hash: jest.fn(),
 }));
 
 // Mock des entités avec les méthodes statiques et constructeurs
@@ -32,12 +33,46 @@ jest.mock("../../entities/Avatar", () => {
     title: "Default Avatar",
     image: "avatar.jpg",
     users: [],
+    save: jest.fn(),
   }));
 });
+
+jest.mock("../../entities/Activity", () => ({
+  __esModule: true,
+  default: {
+    find: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
+
+jest.mock("../../entities/Interaction", () => ({
+  __esModule: true,
+  default: {
+    remove: jest.fn(),
+  },
+}));
+
+jest.mock("../../entities/Friend", () => ({
+  __esModule: true,
+  default: {
+    delete: jest.fn(),
+  },
+}));
 
 // Mock des méthodes statiques après la définition des mocks
 const MockedUser = jest.mocked(require("../../entities/User"));
 MockedUser.findOne = jest.fn();
+MockedUser.findOneByOrFail = jest.fn();
+MockedUser.remove = jest.fn();
+
+const MockedAvatar = jest.mocked(require("../../entities/Avatar"));
+MockedAvatar.findOneByOrFail = jest.fn();
+
+const MockedActivity = jest.mocked(require("../../entities/Activity").default);
+const MockedInteraction = jest.mocked(
+  require("../../entities/Interaction").default
+);
+const MockedFriend = jest.mocked(require("../../entities/Friend").default);
 
 describe("UserService", () => {
   let userService: UserService;
@@ -169,6 +204,357 @@ describe("UserService", () => {
         mockUser.hashed_password,
         password
       );
+    });
+  });
+
+  describe("updatePersonalInfo", () => {
+    it("should update user personal information successfully", async () => {
+      // Arrange
+      const userId = 1;
+      const updateData = {
+        first_name: "Updated",
+        last_name: "Name",
+        birthdate: new Date("1995-01-01T00:00:00.000Z"),
+      };
+      const updatedUser = createMockUser({
+        id: userId,
+        first_name: updateData.first_name,
+        last_name: updateData.last_name,
+      });
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(updatedUser)
+      );
+
+      // Act
+      const result = await userService.updatePersonalInfo(userId, updateData);
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(mockUser.first_name).toBe(updateData.first_name);
+      expect(mockUser.last_name).toBe(updateData.last_name);
+      expect(mockUser.save).toHaveBeenCalled();
+      expect(result).toEqual(updatedUser);
+    });
+
+    it("should throw error when user does not exist", async () => {
+      // Arrange
+      const userId = 999;
+      const updateData = {
+        first_name: "Updated",
+        last_name: "Name",
+        birthdate: new Date("1995-01-01T00:00:00.000Z"),
+      };
+
+      MockedUser.findOneByOrFail.mockRejectedValue(new Error("User not found"));
+
+      // Act & Assert
+      await expect(
+        userService.updatePersonalInfo(userId, updateData)
+      ).rejects.toThrow("User not found");
+    });
+  });
+
+  describe("updateAvatar", () => {
+    it("should update user avatar successfully", async () => {
+      // Arrange
+      const userId = 1;
+      const avatarId = 2;
+      const mockAvatar = createMockAvatar({
+        id: 2,
+        title: "New Avatar",
+        image: "new.jpg",
+      });
+      const updatedUser = createMockUser({ id: userId, avatar: mockAvatar });
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      MockedAvatar.findOneByOrFail.mockResolvedValue(mockAvatar);
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(updatedUser)
+      );
+
+      // Act
+      const result = await userService.updateAvatar(userId, avatarId);
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(MockedAvatar.findOneByOrFail).toHaveBeenCalledWith({
+        id: avatarId,
+      });
+      expect(mockUser.avatar).toEqual(mockAvatar);
+      expect(mockUser.save).toHaveBeenCalled();
+      expect(result).toEqual(updatedUser);
+    });
+
+    it("should throw error when avatar does not exist", async () => {
+      // Arrange
+      const userId = 1;
+      const avatarId = 999;
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      MockedAvatar.findOneByOrFail.mockRejectedValue(
+        new Error("Avatar not found")
+      );
+
+      // Act & Assert
+      await expect(userService.updateAvatar(userId, avatarId)).rejects.toThrow(
+        "Avatar not found"
+      );
+    });
+
+    it("should throw error when user does not exist", async () => {
+      // Arrange
+      const userId = 999;
+      const avatarId = 2;
+
+      MockedUser.findOneByOrFail.mockRejectedValue(new Error("User not found"));
+
+      // Act & Assert
+      await expect(userService.updateAvatar(userId, avatarId)).rejects.toThrow(
+        "User not found"
+      );
+    });
+  });
+
+  describe("changePassword", () => {
+    it("should hash new password before saving to database", async () => {
+      // Arrange
+      const userId = 1;
+      const currentPassword = "oldPassword123";
+      const newPassword = "newPassword456";
+      const hashedPassword = "$argon2id$v=19$m=65536...";
+      const mockArgon2 = jest.mocked(require("argon2"));
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      mockArgon2.verify.mockResolvedValue(true);
+      mockArgon2.hash.mockResolvedValue(hashedPassword);
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(mockUser)
+      );
+
+      // Act
+      const result = await userService.changePassword(
+        userId,
+        currentPassword,
+        newPassword
+      );
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+
+      expect(mockArgon2.verify).toHaveBeenCalledWith(
+        "hashedPassword123",
+        currentPassword
+      );
+      expect(mockArgon2.hash).toHaveBeenCalledWith(newPassword);
+
+      expect(mockUser.hashed_password).toBe(hashedPassword);
+      expect(mockUser.hashed_password).not.toBe(newPassword);
+      expect(mockUser.save).toHaveBeenCalled();
+      expect(result).toEqual(mockUser);
+    });
+
+    it("should throw error when current password is incorrect", async () => {
+      // Arrange
+      const userId = 1;
+      const currentPassword = "wrongPassword123";
+      const newPassword = "newPassword456";
+      const mockArgon2 = jest.mocked(require("argon2"));
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      mockArgon2.verify.mockResolvedValue(false);
+
+      // Act & Assert
+      await expect(
+        userService.changePassword(userId, currentPassword, newPassword)
+      ).rejects.toThrow("Current password is incorrect");
+
+      expect(mockArgon2.verify).toHaveBeenCalledWith(
+        mockUser.hashed_password,
+        currentPassword
+      );
+      expect(mockArgon2.hash).not.toHaveBeenCalled();
+    });
+
+    it("should throw error when user does not exist", async () => {
+      // Arrange
+      const userId = 999;
+      const currentPassword = "oldPassword123";
+      const newPassword = "newPassword456";
+
+      MockedUser.findOneByOrFail.mockRejectedValue(new Error("User not found"));
+
+      // Act & Assert
+      await expect(
+        userService.changePassword(userId, currentPassword, newPassword)
+      ).rejects.toThrow("User not found");
+    });
+  });
+
+  describe("deleteAccount", () => {
+    it("should delete user account successfully", async () => {
+      // Arrange
+      const userId = 1;
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      MockedActivity.find.mockResolvedValue([]);
+      MockedActivity.delete.mockResolvedValue({ affected: 0, raw: [] });
+      MockedFriend.delete.mockResolvedValue({ affected: 0, raw: [] });
+      MockedUser.remove.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await userService.deleteAccount(userId);
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(MockedActivity.find).toHaveBeenCalledWith({
+        where: { user: { id: userId } },
+        relations: ["interactions"],
+      });
+      expect(MockedActivity.delete).toHaveBeenCalledWith({
+        user: { id: userId },
+      });
+      expect(MockedFriend.delete).toHaveBeenCalledWith({
+        requester_id: userId,
+      });
+      expect(MockedFriend.delete).toHaveBeenCalledWith({
+        requested_id: userId,
+      });
+      expect(MockedUser.remove).toHaveBeenCalledWith(mockUser);
+      expect(result).toBe(true);
+    });
+
+    it("should delete user with activities and interactions", async () => {
+      // Arrange
+      const userId = 1;
+      const mockInteractions = [
+        { id: 1, emoji: "👍" },
+        { id: 2, emoji: "❤️" },
+      ];
+      const mockActivity = {
+        id: 1,
+        interactions: mockInteractions,
+      };
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      MockedActivity.find.mockResolvedValue([mockActivity]);
+      MockedInteraction.remove.mockResolvedValue(mockInteractions);
+      MockedActivity.delete.mockResolvedValue({ affected: 1, raw: [] });
+      MockedFriend.delete.mockResolvedValue({ affected: 0, raw: [] });
+      MockedUser.remove.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await userService.deleteAccount(userId);
+
+      // Assert
+      expect(MockedInteraction.remove).toHaveBeenCalledWith(
+        mockActivity.interactions
+      );
+      expect(result).toBe(true);
+    });
+
+    it("should throw error when user does not exist", async () => {
+      // Arrange
+      const userId = 999;
+
+      MockedUser.findOneByOrFail.mockRejectedValue(new Error("User not found"));
+
+      // Act & Assert
+      await expect(userService.deleteAccount(userId)).rejects.toThrow(
+        "User not found"
+      );
+    });
+  });
+
+  describe("toggleAdminStatus", () => {
+    it("should promote non-admin user to admin successfully", async () => {
+      // Arrange
+      const userId = 1;
+      const nonAdminUser = createMockUser({
+        id: userId,
+        email: "user@example.com",
+        isAdmin: false,
+      });
+      const promotedUser = createMockUser({
+        id: userId,
+        email: "user@example.com",
+        isAdmin: true,
+      });
+
+      MockedUser.findOneByOrFail.mockResolvedValue(nonAdminUser);
+      nonAdminUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(promotedUser)
+      );
+
+      // Act
+      const result = await userService.toggleAdminStatus(userId);
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(nonAdminUser.isAdmin).toBe(true);
+      expect(nonAdminUser.save).toHaveBeenCalled();
+      expect(result).toEqual(promotedUser);
+    });
+
+    it("should demote admin user to non-admin successfully", async () => {
+      // Arrange
+      const userId = 1;
+      const adminUser = createMockUser({
+        id: userId,
+        email: "admin@example.com",
+        isAdmin: true,
+      });
+      const demotedUser = createMockUser({
+        id: userId,
+        email: "admin@example.com",
+        isAdmin: false,
+      });
+
+      MockedUser.findOneByOrFail.mockResolvedValue(adminUser);
+      adminUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.resolve(demotedUser)
+      );
+
+      // Act
+      const result = await userService.toggleAdminStatus(userId);
+
+      // Assert
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(adminUser.isAdmin).toBe(false);
+      expect(adminUser.save).toHaveBeenCalled();
+      expect(result).toEqual(demotedUser);
+    });
+
+    it("should throw error when user does not exist", async () => {
+      // Arrange
+      const userId = 999;
+
+      MockedUser.findOneByOrFail.mockRejectedValue(new Error("User not found"));
+
+      // Act & Assert
+      await expect(userService.toggleAdminStatus(userId)).rejects.toThrow(
+        "User not found"
+      );
+    });
+
+    it("should handle database save errors", async () => {
+      // Arrange
+      const userId = 1;
+      const dbError = new Error("Database connection failed");
+
+      MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
+      mockUser.save = jest.fn<() => Promise<User>>(() =>
+        Promise.reject(dbError)
+      );
+
+      // Act & Assert
+      await expect(userService.toggleAdminStatus(userId)).rejects.toThrow(
+        "Database connection failed"
+      );
+
+      expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });
+      expect(mockUser.save).toHaveBeenCalled();
     });
   });
 });

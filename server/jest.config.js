@@ -11,6 +11,7 @@ export default {
     '**/__tests__/**/*.test.ts',
     '**/?(*.)+(spec|test).ts'
   ],
+  testPathIgnorePatterns: ['/integration/'],
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
 }; 

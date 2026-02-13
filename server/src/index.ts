@@ -13,7 +13,7 @@ import InteractionResolver from "./resolvers/InteractionResolver";
 import TypeResolver from "./resolvers/TypeResolver";
 import UserResolver from "./resolvers/UserResolver";
 
-import { seedAvatars } from "./seeders/Seeder";
+import { seedAvatars, seedUsers, seedCategories, seedTypes, seedActivities } from "./seeders/Seeder";
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
@@ -27,6 +27,7 @@ async function startServer() {
       console.error("Error during Data Source initialization:", error);
       process.exit(1);
     });
+
   const schema = await buildSchema({
     resolvers: [
       UserResolver,
@@ -38,11 +39,26 @@ async function startServer() {
       InteractionResolver,
     ],
   });
+
   const apolloServer = new ApolloServer({ schema });
+
+  const stamp = new Date().toISOString();
+
+  console.info(`[dev-watch] Reload backend at ${stamp}`);
+
   const { url } = await startStandaloneServer(apolloServer, {
     listen: { port },
+    context: async ({ req, res }) => {
+      const cookies = req.headers.cookie || "";
+      const jwtCookie = cookies
+        .split(";")
+        .find((c) => c.trim().startsWith("jwt="));
+      const token = jwtCookie ? jwtCookie.split("=")[1] : null;
+      return { token, res };
+    },
   });
+
+
   console.info(`Server started on ${url}`);
-  seedAvatars();
 }
 startServer();

@@ -1,6 +1,53 @@
 import { vi } from "vitest";
 import type { SignUpFormData } from "../services/signUpForm.services";
 import type { Avatar } from "../types/Avatar.types";
+import type { Activity, Category, Type } from "../types/Activity.types";
+
+export const createMockCategory = ({
+  id,
+  title,
+  quantity_unit,
+}: Partial<Category> = {}): Category => {
+  return {
+    id: id ?? 1,
+    title: title ?? "Transport",
+    quantity_unit: quantity_unit ?? "vol",
+  };
+};
+
+export const createMockType = ({
+  id,
+  title,
+  category,
+  ecv,
+}: Partial<Type> = {}): Type => {
+  return {
+    id: id ?? 1,
+    title: title ?? "Vol court-courrier",
+    category: category ?? createMockCategory(),
+    ecv: ecv ?? 1,
+  };
+};
+
+export const createMockActivity = ({
+  id,
+  title,
+  quantity,
+  date,
+  co2_equivalent,
+  userId,
+  type,
+}: Partial<Activity> = {}): Activity => {
+  return {
+    id: id ?? 1,
+    title: title ?? "Activité test",
+    quantity: quantity ?? 1,
+    date: date ?? "2025-03-15",
+    co2_equivalent: co2_equivalent ?? 100,
+    userId: userId ?? 1,
+    type: type ?? createMockType(),
+  };
+};
 
 export const createMockAvatar = ({
   id,
@@ -42,12 +89,15 @@ export const createMockUserFormData = ({
 
 export const createMockInputEvent = (name: string, value: string) => {
   return {
-    target: { name, value },
-  } as React.ChangeEvent<HTMLInputElement>;
+    target: { id: name, name, value },
+    currentTarget: { id: name, name, value },
+    preventDefault: vi.fn(),
+    stopPropagation: vi.fn(),
+  } as unknown as React.ChangeEvent<HTMLInputElement>;
 };
 
-export const createMockFormEvent = () => {
+export const createMockFormEvent = (): React.FormEvent<HTMLFormElement> => {
   return {
     preventDefault: vi.fn(),
-  } as unknown as React.FormEvent;
+  } as unknown as React.FormEvent<HTMLFormElement>;
 };

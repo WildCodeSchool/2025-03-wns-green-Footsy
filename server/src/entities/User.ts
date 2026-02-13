@@ -37,8 +37,18 @@ export default class User extends BaseEntity {
   hashed_password: string;
 
   @Field(() => Date)
-  @Column("date")
+  @Column({
+    type: "date",
+    transformer: {
+      to: (value: Date) => value,
+      from: (value: string) => (value ? new Date(value) : null),
+    },
+  })
   birthdate: Date;
+
+  @Field(() => Boolean)
+  @Column({ type: "boolean", default: false })
+  isAdmin: boolean;
 
   @Field(() => Avatar)
   @ManyToOne(() => Avatar, (avatar) => avatar.users, { nullable: false })

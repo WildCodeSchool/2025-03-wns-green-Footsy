@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 
 import logo from "../../assets/img/logos_icons/logo.png";
-
 import MainButton from "../../components/mainButton/MainButton";
-
 import { useMode } from "../../context/modeContext";
 
 import classes from "./Home.module.scss";

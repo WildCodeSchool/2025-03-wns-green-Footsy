@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import community from "../../../assets/img/logos_icons/community.png"; 
+import community from "../../../assets/img/logos_icons/community.png";
 import community_dark from "../../../assets/img/logos_icons/community_dark.png";
 import dashboard from "../../../assets/img/logos_icons/dashboard.png";
 import dashboard_dark from "../../../assets/img/logos_icons/dashboard_dark.png";

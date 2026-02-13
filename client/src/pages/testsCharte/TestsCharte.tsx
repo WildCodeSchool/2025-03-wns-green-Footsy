@@ -1,15 +1,21 @@
 import { useNavigate } from "react-router-dom";
+
 import MainButton from "../../components/mainButton/MainButton";
 
-import classes from "./TestsCharte.module.scss";
+import { useCurrentUser } from "../../context/userContext";
+
 import Footer from "../../layout/footer/Footer";
-import NavBar from "../../layout/navbar/NavBar";
 import MainHeader from "../../layout/main-header/MainHeader";
 import MainLayout from "../../layout/main-layout/MainLayout";
+import NavBar from "../../layout/navbar/NavBar";
 
+import classes from "./TestsCharte.module.scss";
 
 export default function TestCharte() {
   const navigate = useNavigate();
+  const { user } = useCurrentUser();
+
+  if (user) console.log(user);
 
   return (
     <MainLayout>

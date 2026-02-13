@@ -1,0 +1,54 @@
+.admin-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  position: relative;
+  justify-content: center;
+
+  &:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &__input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .admin-switch__slider {
+      background-color: var(--yellow);
+    }
+
+    &:checked + .admin-switch__slider::before {
+      transform: translateX(1.5rem);
+    }
+
+    &:disabled + .admin-switch__slider {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  &__slider {
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.5rem;
+    background-color: #ccc;
+    border-radius: 1.5rem;
+    transition: background-color 0.3s;
+
+    &::before {
+      content: "";
+      position: absolute;
+      height: 1.2rem;
+      width: 1.2rem;
+      left: 0.15rem;
+      top: 0.15rem;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+  }
+}
