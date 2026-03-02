@@ -100,7 +100,7 @@ export default function Dashboard() {
           {period === "year" ? (
             <DashboardPerYear userId={userId} userLoading={userLoading} />
           ) : period === "month" ? (
-            <DashboardPerMonth />
+            <DashboardPerMonth userId={userId} userLoading={userLoading} />
           ) : (
             <DashboardPerWeek />
           )}
