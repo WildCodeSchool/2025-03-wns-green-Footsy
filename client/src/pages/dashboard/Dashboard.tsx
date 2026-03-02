@@ -102,7 +102,7 @@ export default function Dashboard() {
           ) : period === "month" ? (
             <DashboardPerMonth userId={userId} userLoading={userLoading} />
           ) : (
-            <DashboardPerWeek />
+            <DashboardPerWeek userId={userId} userLoading={userLoading} />
           )}
 
           <article className={styles.dbCard}>
