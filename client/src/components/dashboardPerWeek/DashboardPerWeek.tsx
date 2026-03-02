@@ -35,11 +35,10 @@ const parseActivityDate = (value: string) => {
 const addDays = (date: Date, days: number) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 
-// Start of week: Monday 00:00 (FR)
 const startOfWeek = (d: Date) => {
   const base = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const day = base.getDay();
-  const diffToMonday = (day + 6) % 7; // Mon=0, Tue=1, ... Sun=6
+  const diffToMonday = (day + 6) % 7;
   return addDays(base, -diffToMonday);
 };
 
