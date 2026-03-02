@@ -119,10 +119,19 @@ $text: #103019;
 
 .dbSegmented {
   display: flex;
-  background: $green;
+  background: linear-gradient(to bottom, rgba($green2, 0.98), rgba($green, 0.98));
   border-radius: 999px;
   overflow: hidden;
   padding: 2px;
+  border: 1px solid rgba(#000, 0.08);
+  box-shadow:
+    0 6px 16px rgba(#000, 0.12),
+    inset 0 1px 0 rgba(#fff, 0.08);
+}
+
+// Exported for CSS-modules; used from Dashboard.tsx
+.isActive {
+  --is-active: 1;
 }
 
 .dbSegmentedBtnWeek, .dbSegmentedBtnMonth, .dbSegmentedBtnYear {
@@ -133,11 +142,32 @@ $text: #103019;
   cursor: pointer;
   font-weight: 800;
   font-size: 13px;
+  border-radius: 999px;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    transform 120ms ease;
+
+  &:hover {
+    color: rgba(#fff, 0.95);
+    background: rgba(#fff, 0.08);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(#fff, 0.6);
+    outline-offset: 2px;
+  }
 
   &.isActive {
-    background: rgba(#fff, 0.14);
+    background: rgba(#fff, 0.16);
     color: #fff;
-    border-radius: 999px;
+    box-shadow:
+      inset 0 0 0 1px rgba(#fff, 0.18),
+      0 6px 14px rgba(#000, 0.16);
   }
 }
 
