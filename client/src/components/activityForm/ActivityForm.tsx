@@ -24,6 +24,7 @@ import {
 import { useCurrentUser } from "../../context/userContext";
 import type { Activity, Type } from "../../types/Activity.types";
 import { toISODateString } from "../../utils/dateUtils";
+import editIcon from "../../assets/img/logos_icons/edit.png";
 
 interface ActivityFormProps {
   activityToEdit?: Activity;
@@ -54,6 +55,16 @@ export default function ActivityForm({
   const [typesByCategorySelected, setTypesByCategorySelected] = useState<
     Array<Type>
   >([]);
+
+  const [quantityDisplay, setQuantityDisplay] = useState(
+    activityToEdit
+      ? `${activityToEdit.quantity} ${activityToEdit.type.category.quantity_unit}`
+      : ""
+  );
+
+  const [isEditingCO2, setIsEditingCO2] = useState(false);
+
+  const [manualCO2, setManualCO2] = useState<number | null>(null);
 
   const { data: categoriesData } =
     useQuery<GetAllCategoriesData>(GET_ALL_CATEGORIES);
@@ -104,7 +115,9 @@ export default function ActivityForm({
         co2_equivalent: 0
       }));
     }
-  }, [selectedType, formData.quantity]);
+
+    if (isEditingCO2) return;
+  }, [selectedType, formData.quantity, isEditingCO2]);
 
   if (typesError) {
     return (
@@ -140,35 +153,86 @@ export default function ActivityForm({
     >
       {activityFormFields.map((field) => (
         <div key={field.id} className={classes.activity__field}>
-          <FormField
-            label={field.label}
-            type={field.type}
-            id={field.id}
-            name={field.id}
-            value={String(formData[field.id as keyof ActivityFormData] ?? "")}
-            onChange={(event) =>
-              handleActivityChange(event, formData, setFormData)
-            }
-            placeholder={field.placeholder}
-            options={
-              field.type === "select" && field.id === "category_id"
-                ? categories
-                : field.type === "select" && field.id === "type_id"
-                  ? typesByCategorySelected
-                  : undefined
-            }
+          {field.id === "quantity" ? (
+            <FormField
+              label={field.label}
+              type="text"
+              id={field.id}
+              name={field.id}
+              value={quantityDisplay}
+              onChange={(event) => {
+                const raw = event.target.value.replace(/[^0-9.]/g, "");
+                const unit = selectedType?.category.quantity_unit ?? "";
+                setQuantityDisplay(raw ? `${raw} ${unit}` : "");
+                setFormData(prev => ({ ...prev, quantity: Number(raw) }));
+              }}
+              placeholder={selectedType ? `0 ${selectedType.category.quantity_unit}` : field.placeholder}
+            />
+          ) : (
+            <FormField
+              label={field.label}
+              type={field.type}
+              id={field.id}
+              name={field.id}
+              value={String(formData[field.id as keyof ActivityFormData] ?? "")}
+              onChange={(event) => handleActivityChange(event, formData, setFormData)}
+              placeholder={field.placeholder}
+              options={
+                field.type === "select" && field.id === "category_id"
+                  ? categories
+                  : field.type === "select" && field.id === "type_id"
+                    ? typesByCategorySelected
+                    : undefined
+              }
+            />
+          )}
+          {field.id === "quantity" && formData.co2_equivalent > 0 && (
+            <div className={classes.activity__co2}>
+              <h3>
+                Émissions :
+                {isEditingCO2 ? (
+                  <>
+                    <input
+                      type="number"
+                      value={manualCO2 !== null ? manualCO2 : formData.co2_equivalent}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value) || 0;
+                        setManualCO2(val);
+                        setFormData(prev => ({ ...prev, co2_equivalent: val }));
+                      }}
+                      step="0.01"
+                      min="0"
+                    />
+                    <button
+                      type="button"
+                      className={classes.activity__co2Button}
+                      onClick={() => setIsEditingCO2(prev => !prev)}
+                    >
+                      ✓
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <strong>
+                      {manualCO2 !== null && !isEditingCO2
+                        ? `${manualCO2} kg CO₂`
+                        : `${formData.co2_equivalent} kg CO₂`}
+                    </strong>
+                    <button
+                      type="button"
+                      className={classes.activity__co2Button}
+                      onClick={() => setIsEditingCO2(prev => !prev)}
+                    >
+                    <img
+            src={editIcon}
+            alt="Modifier l'équivalent CO₂"
+            className={classes["avatar-selector__edit-icon-image"]}
           />
-          {field.id === "quantity" && (
-            <>
-              <p className={classes.activity__unit}>
-                {selectedType?.category.quantity_unit ?? ""}
-              </p>
-              {formData.co2_equivalent > 0 && (
-                <h3 className={classes.activity__co2}>
-                  Émissions : <strong>{formData.co2_equivalent} kg CO₂</strong>
-                </h3>
-              )}
-            </>
+                    </button>
+                  </>
+                )}
+              </h3>
+            </div>
           )}
         </div>
       ))}

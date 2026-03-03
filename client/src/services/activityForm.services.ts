@@ -20,12 +20,6 @@ export const activityFormFields = [
     placeholder: "JJ/MM/AAAA",
   },
   {
-    label: "Titre",
-    type: "text",
-    id: "title",
-    placeholder: "Donnez un titre à votre activité",
-  },
-  {
     label: "Catégorie",
     type: "select",
     id: "category_id",
@@ -38,10 +32,16 @@ export const activityFormFields = [
     placeholder: "Choisissez un type d'activité",
   },
   {
+    label: "Titre",
+    type: "text",
+    id: "title",
+    placeholder: "Donnez un titre à votre activité",
+  },
+  {
     label: "Durée / Quantité",
     type: "number",
     id: "quantity",
-    placeholder: "Exemple: 30 (minutes), 10 (km)...",
+    placeholder: "0",
   },
 ];
 
@@ -107,7 +107,7 @@ export const handleActivitySubmit = async (
     toast.error("La quantité doit être un nombre positif.");
     return;
   }
-  
+
   if (formData.quantity === 0) {
     toast.error("Veuillez remplir tous les champs.");
     return;
