@@ -1,0 +1,16 @@
+services:
+  backend:
+    environment:
+      DB_DATABASE: db_footsy_test
+    env_file:
+      - /server/.env.test
+
+  database:
+    environment:
+      POSTGRES_DB: db_footsy_test
+    env_file:
+      - /server/.env.test
+
+  frontend:
+    env_file:
+      - /server/.env.test

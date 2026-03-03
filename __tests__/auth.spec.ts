@@ -1,70 +1,12 @@
 import { expect, test } from "@playwright/test";
-
-const GRAPHQL_URL = process.env.E2E_GRAPHQL_URL ?? "http://localhost:4000";
-
-type TestUser = {
-  email: string;
-  password: string;
-};
+import { useE2ETestUser } from "./user.helpers";
 
 test.describe("Authentication", () => {
-  let testUser: TestUser;
-
-  test.beforeAll(async ({ request }) => {
-    const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    testUser = {
-      email: `e2e-auth-${unique}@footsy.com`,
-      password: "TestPassword123",
-    };
-
-    const avatarsResponse = await request.post(GRAPHQL_URL, {
-      data: {
-        query: `
-          query GetAllAvatars {
-            getAllAvatars {
-              id
-              title
-              image
-            }
-          }
-        `,
-      },
-    });
-
-    const avatarsBody = await avatarsResponse.json();
-    const avatar = avatarsBody?.data?.getAllAvatars?.[0];
-
-    expect(
-      avatar,
-      "Aucun avatar disponible pour créer un utilisateur e2e",
-    ).toBeTruthy();
-
-    const signUpResponse = await request.post(GRAPHQL_URL, {
-      data: {
-        query: `
-          mutation SignUp($data: NewUserInput!) {
-            signup(data: $data)
-          }
-        `,
-        variables: {
-          data: {
-            first_name: "E2E",
-            last_name: "Auth",
-            email: testUser.email,
-            password: testUser.password,
-            birthdate: "1990-01-01",
-            avatar,
-          },
-        },
-      },
-    });
-
-    const signUpBody = await signUpResponse.json();
-    expect(signUpBody.errors).toBeFalsy();
-    expect(signUpBody.data?.signup).toBeTruthy();
-  });
+  const testUserSetup = useE2ETestUser();
 
   test("should login successfully with valid credentials", async ({ page }) => {
+    const testUser = testUserSetup.user;
+
     await page.goto("/login");
 
     await expect(
