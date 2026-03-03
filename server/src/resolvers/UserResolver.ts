@@ -301,11 +301,31 @@ export default class UserResolver {
   @Mutation(() => Boolean)
   async deleteAccount(
     @Arg("userId", () => Int) userId: number,
+    @Ctx() context: { token: string | null },
   ): Promise<boolean> {
     try {
+      if (!context.token || !process.env.JWT_SECRET) {
+        throw new Error("Unauthorized: Authentication required");
+      }
+
+      const decoded = jwt.verify(context.token, process.env.JWT_SECRET) as {
+        id: number;
+      };
+
+      if (decoded.id !== userId) {
+        throw new Error("Unauthorized: You can only delete your own account");
+      }
+
       return await this.userService.deleteAccount(userId);
     } catch (error) {
       console.error("Error deleting account:", error);
+      if (
+        error instanceof Error &&
+        (error.message.includes("Unauthorized") ||
+          error.message.includes("Authentication required"))
+      ) {
+        throw error;
+      }
       throw new Error("Failed to delete account");
     }
   }

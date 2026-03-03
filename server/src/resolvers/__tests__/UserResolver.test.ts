@@ -563,15 +563,22 @@ describe("UserResolver", () => {
   });
 
   describe("deleteAccount", () => {
-    it("should delete user account successfully", async () => {
+    it("should delete user account successfully when user deletes own account", async () => {
       // Arrange
       const userId = 1;
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+      (jwt.verify as jest.Mock).mockReturnValue({ id: userId });
       mockUserService.deleteAccount.mockResolvedValue(true);
 
       // Act
-      const result = await userResolver.deleteAccount(userId);
+      const result = await userResolver.deleteAccount(userId, context);
 
       // Assert
+      expect(jwt.verify).toHaveBeenCalledWith(
+        mockToken,
+        process.env.JWT_SECRET,
+      );
       expect(mockUserService.deleteAccount).toHaveBeenCalledWith(userId);
       expect(result).toBe(true);
     });
@@ -579,14 +586,58 @@ describe("UserResolver", () => {
     it("should throw error when delete fails", async () => {
       // Arrange
       const userId = 1;
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+      (jwt.verify as jest.Mock).mockReturnValue({ id: userId });
       mockUserService.deleteAccount.mockRejectedValue(
         new Error("User not found"),
       );
 
       // Act & Assert
-      await expect(userResolver.deleteAccount(userId)).rejects.toThrow(
-        "Failed to delete account",
-      );
+      await expect(
+        userResolver.deleteAccount(userId, context),
+      ).rejects.toThrow("Failed to delete account");
+    });
+
+    it("should throw Unauthorized when token is null", async () => {
+      // Arrange
+      const userId = 1;
+      const context = { token: null };
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteAccount(userId, context),
+      ).rejects.toThrow("Unauthorized: Authentication required");
+      expect(mockUserService.deleteAccount).not.toHaveBeenCalled();
+    });
+
+    it("should throw Unauthorized when user tries to delete another user account", async () => {
+      // Arrange
+      const userId = 2;
+      const decodedUserId = 1;
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+      (jwt.verify as jest.Mock).mockReturnValue({ id: decodedUserId });
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteAccount(userId, context),
+      ).rejects.toThrow("Unauthorized: You can only delete your own account");
+      expect(mockUserService.deleteAccount).not.toHaveBeenCalled();
+    });
+
+    it("should throw Unauthorized when JWT_SECRET is missing", async () => {
+      // Arrange
+      const userId = 1;
+      const mockToken = "valid-user-token";
+      const context = { token: mockToken };
+      delete process.env.JWT_SECRET;
+
+      // Act & Assert
+      await expect(
+        userResolver.deleteAccount(userId, context),
+      ).rejects.toThrow("Unauthorized: Authentication required");
+      expect(mockUserService.deleteAccount).not.toHaveBeenCalled();
     });
   });
 
