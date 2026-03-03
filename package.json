@@ -1,7 +1,10 @@
 {
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
+    "@playwright/test": "^1.58.2",
     "@types/node": "^24.1.0",
+    "concurrently": "^9.2.1",
+    "wait-on": "^8.0.5",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -17,6 +20,11 @@
     "i": "npm run install:root && npm run install:client && npm run install:server",
     "docker": "docker compose -f compose.dev.yaml up -d",
     "test": "cd server && npm test && cd ../client && npm test",
+    "test:create-db": "docker compose -f compose.dev.yaml exec -T database psql -U postgres --no-psqlrc -c \"DROP DATABASE IF EXISTS db_footsy_test;\" && docker compose -f compose.dev.yaml exec -T database psql -U postgres --no-psqlrc -c \"CREATE DATABASE db_footsy_test;\"",
+    "dev:server:test": "cd server && npm run dev:test",
+    "dev:client:local": "cd client && npm run dev",
+    "test:e2e:auth": "npx playwright test __tests__/auth.spec.ts",
+    "test:e2e:auth:docker": "docker compose -f compose.dev.yaml up -d && npm run test:create-db && npx wait-on tcp:5050 http://localhost:8080 && set \"E2E_GRAPHQL_URL=http://localhost:5050\" && npx playwright test __tests__/auth.spec.ts --reporter=html && docker compose -f compose.dev.yaml down",
     "db:create-migration": "cd server && npx typeorm migration:create -n",
     "db:migrate": "cd server && npx typeorm migration:run",
     "docker:seeder": "docker compose -f compose.dev.yaml exec backend npm run seed"
