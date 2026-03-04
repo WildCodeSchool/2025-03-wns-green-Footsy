@@ -16,7 +16,11 @@ import DashboardPerWeek from "../../components/dashboardPerWeek/DashboardPerWeek
 import { getAvatarImageUrl } from "../../components/avatarSelector/AvatarSelector";
 
 import styles from "./Dashboard.module.scss";
+<<<<<<< HEAD
 import { formatCo2 } from "./dashboardUtils";
+=======
+import { formatCo2 } from "../../utils/dashboardUtils";
+>>>>>>> 17d2fa8916ebddf6408884ea14bd931fd785ad6f
 
 type Period = "week" | "month" | "year";
 

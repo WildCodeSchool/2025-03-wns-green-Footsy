@@ -10,7 +10,7 @@ import {
 } from "../../graphql/operations";
 import type { Activity } from "../../types/Activity.types";
 import styles from "../../pages/dashboard/Dashboard.module.scss";
-import { formatCo2 } from "../../pages/dashboard/dashboardUtils";
+import { formatCo2 } from "../../utils/dashboardUtils";
 
 type MonthlyDatum = {
 	date: Date;
@@ -413,4 +413,3 @@ export default function DashboardPerYear({
 		</>
 	);
 }
-
