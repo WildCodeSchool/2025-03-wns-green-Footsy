@@ -1,40 +1,41 @@
 {
-	"name": "server",
-	"version": "1.0.0",
-	"main": "index.js",
-	"type": "module",
-	"scripts": {
-		"test": "jest",
-		"test:integration": "dotenv -e .env.test -- jest --config=jest.integration.config.js --runInBand",
-		"test:watch": "jest --watch",
-		"compile": "tsc",
-		"start": "npm run compile && node ./dist/index.js",
-		"dev": "tsx watch src/index.ts",
-		"seed": "tsx src/seeders/Seeder.ts"
-	},
-	"author": "",
-	"license": "ISC",
-	"description": "",
-	"dependencies": {
-		"@apollo/server": "^5.0.0",
-		"@types/jsonwebtoken": "^9.0.10",
-		"argon2": "^0.43.1",
-		"axios": "^1.13.2",
-		"dotenv": "^17.2.3",
-		"graphql": "^16.11.0",
-		"jsonwebtoken": "^9.0.2",
-		"pg": "^8.16.3",
-		"postgres": "^3.4.7",
-		"reflect-metadata": "^0.2.1",
-		"type-graphql": "^2.0.0-rc.2",
-		"typeorm": "^0.3.25"
-	},
-	"devDependencies": {
-		"@jest/globals": "^29.7.0",
-		"@types/jest": "^29.5.12",
-		"dotenv-cli": "^11.0.0",
-		"jest": "^29.7.0",
-		"ts-jest": "^29.1.2",
-		"tsx": "^4.19.2"
-	}
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:integration": "dotenv -e .env.test -- jest --config=jest.integration.config.js --runInBand",
+    "test:watch": "jest --watch",
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js",
+    "dev:test": "node --env-file=.env.test --watch --import tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "seed": "tsx src/seeders/Seeder.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@apollo/server": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "argon2": "^0.43.1",
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "graphql": "^16.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7",
+    "reflect-metadata": "^0.2.1",
+    "type-graphql": "^2.0.0-rc.2",
+    "typeorm": "^0.3.25"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.12",
+    "dotenv-cli": "^11.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "tsx": "^4.19.2"
+  }
 }
