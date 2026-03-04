@@ -11,6 +11,8 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Flip, ToastContainer } from "react-toastify";
 
+import { AllCommunityModule, ModuleRegistry } from "ag-charts-community";
+
 import App from "./App";
 
 import AdminRoute from "./components/protectedRoutes/AdminRoute";
@@ -31,6 +33,8 @@ import TestCharte from "./pages/testsCharte/TestsCharte";
 
 import "./reset.css";
 import "./index.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const router = createBrowserRouter([
   {

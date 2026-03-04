@@ -8,6 +8,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
+import { Between } from "typeorm";
 
 import Activity from "../entities/Activity";
 import Type from "../entities/Type";
@@ -69,6 +70,54 @@ class ActivityFilterInput {
 
 @Resolver()
 export default class ActivityResolver {
+  async findActivitiesByUserIdAndYear(
+    userId: number,
+    year: number
+  ): Promise<Activity[]> {
+    // Use real Date objects for TypeORM date comparisons.
+    // Column type is "date" (no time), so local midnight boundaries are fine.
+    const startDate = new Date(year, 0, 1);
+    const endDate = new Date(year, 11, 31);
+
+    return await Activity.find({
+      where: {
+        user: { id: userId },
+        date: Between(startDate, endDate),
+      },
+      relations: ["type", "type.category"],
+      order: { date: "ASC" },
+    });
+  }
+
+  @Query(() => [Activity])
+  async getActivitiesByUserIdAndYear(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("year", () => Int) year: number
+  ): Promise<Activity[]> {
+    return await this.findActivitiesByUserIdAndYear(userId, year);
+  }
+
+  async findActivitiesByUserIdAndCategory(
+    userId: number,
+    categoryId: number
+  ): Promise<Activity[]> {
+    return await Activity.find({
+      where: {
+        user: { id: userId },
+        type: { category: { id: categoryId } },
+      },
+      relations: ["type", "type.category"],
+      order: { date: "ASC" },
+    });
+  }
+
+  @Query(() => [Activity])
+  async getActivitiesByUserIdAndCategory(
+    @Arg("userId", () => Int) userId: number,
+    @Arg("categoryId", () => Int) categoryId: number
+  ): Promise<Activity[]> {
+    return await this.findActivitiesByUserIdAndCategory(userId, categoryId);
+  }
   @Query(() => [Activity])
   async getAllActivities(): Promise<Activity[]> {
     return await Activity.find();
