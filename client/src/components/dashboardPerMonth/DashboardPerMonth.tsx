@@ -12,7 +12,6 @@ import type { Activity } from "../../types/Activity.types";
 import styles from "../../pages/dashboard/Dashboard.module.scss";
 import { formatCo2 } from "../../utils/dashboardUtils";
 
-
 type DailyDatum = {
   date: Date;
   co2Kg: number;
