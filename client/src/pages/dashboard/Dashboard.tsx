@@ -72,22 +72,28 @@ export default function Dashboard() {
           <div className={styles.dbControls}>
             <div className={styles.dbSegmented} role="tablist" aria-label="Période">
               <button
-                className={`${styles.dbSegmentedBtnWeek} ${period === "week" ? "isActive" : ""}`}
+                className={`${styles.dbSegmentedBtnWeek} ${period === "week" ? styles.isActive : ""}`}
                 type="button"
+                role="tab"
+                aria-selected={period === "week"}
                 onClick={() => setPeriod("week")}
               >
                 Semaine
               </button>
               <button
-                className={`${styles.dbSegmentedBtnMonth} ${period === "month" ? "isActive" : ""}`}
+                className={`${styles.dbSegmentedBtnMonth} ${period === "month" ? styles.isActive : ""}`}
                 type="button"
+                role="tab"
+                aria-selected={period === "month"}
                 onClick={() => setPeriod("month")}
               >
                 Mois
               </button>
               <button
-                className={`${styles.dbSegmentedBtnYear} ${period === "year" ? "isActive" : ""}`}
+                className={`${styles.dbSegmentedBtnYear} ${period === "year" ? styles.isActive : ""}`}
                 type="button"
+                role="tab"
+                aria-selected={period === "year"}
                 onClick={() => setPeriod("year")}
               >
                 Année
@@ -100,9 +106,9 @@ export default function Dashboard() {
           {period === "year" ? (
             <DashboardPerYear userId={userId} userLoading={userLoading} />
           ) : period === "month" ? (
-            <DashboardPerMonth />
+            <DashboardPerMonth userId={userId} userLoading={userLoading} />
           ) : (
-            <DashboardPerWeek />
+            <DashboardPerWeek userId={userId} userLoading={userLoading} />
           )}
 
           <article className={styles.dbCard}>
