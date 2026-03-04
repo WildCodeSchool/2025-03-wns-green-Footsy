@@ -101,6 +101,14 @@ export default function ActivityForm({
     );
   }, [types, formData.category_id]);
 
+  useEffect(() => {
+    if (selectedType) {
+      const newQuantityDisplay = `${formData.quantity} ${selectedType.category.quantity_unit}`;
+      setQuantityDisplay(newQuantityDisplay);
+      setManualCO2(null);
+    }
+  }, [selectedType, formData.quantity]);
+
   // Calcul automatique du CO2
   useEffect(() => {
     if (selectedType && formData.quantity > 0) {
