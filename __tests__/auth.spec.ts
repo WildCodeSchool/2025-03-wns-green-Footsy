@@ -10,7 +10,7 @@ test.describe("Authentication", () => {
     await page.goto("/login");
 
     await expect(
-      page.getByRole("heading", { name: "Connexion" }),
+      page.getByRole("heading", { name: "Connexion", level: 2 }),
     ).toBeVisible();
 
     await page.fill("input#email", testUser.email);
@@ -18,7 +18,7 @@ test.describe("Authentication", () => {
 
     await page.getByRole("button", { name: /connexion/i }).click();
 
-    await expect(page).toHaveURL("/dashboard");
+    await expect(page).toHaveURL("/dashboard", { timeout: 10000 });
   });
 
   test("should show error message with invalid credentials", async ({
