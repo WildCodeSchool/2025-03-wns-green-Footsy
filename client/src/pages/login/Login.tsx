@@ -115,7 +115,6 @@ export default function Login() {
             type="submit"
             mode={mode}
             content={loading ? "Connexion..." : "Connexion"}
-            disabled={loading}
           />
         </form>
 

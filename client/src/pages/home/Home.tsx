@@ -34,7 +34,6 @@ export default function Home() {
               mode={mode}
               content="Commencer"
               accent={false}
-              className={classes["home__button-custom"]}
             />
           </Link>
         </div>
