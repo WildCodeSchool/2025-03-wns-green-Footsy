@@ -42,7 +42,8 @@ export default function Dashboard() {
   const me = friendsRankingData?.getFriendsCo2Ranking.me ?? null;
   const total = friendsRankingData?.getFriendsCo2Ranking.total ?? 0;
 
-  const formatAvg = (avg: number | null) => (avg == null ? "—" : formatCo2(avg));
+  const formatAvg = (avg: number | null) =>
+    avg == null ? "—" : formatCo2(avg);
 
   const podium = useMemo(() => {
     return {
@@ -70,7 +71,11 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.dbControls}>
-            <div className={styles.dbSegmented} role="tablist" aria-label="Période">
+            <div
+              className={styles.dbSegmented}
+              role="tablist"
+              aria-label="Période"
+            >
               <button
                 className={`${styles.dbSegmentedBtnWeek} ${period === "week" ? styles.isActive : ""}`}
                 type="button"
@@ -128,9 +133,7 @@ export default function Dashboard() {
                   Connectez-vous pour afficher le classement.
                 </div>
               ) : total === 0 ? (
-                <div className={styles.dbChartStatus}>
-                  Aucun ami trouvé.
-                </div>
+                <div className={styles.dbChartStatus}>Aucun ami trouvé.</div>
               ) : (
                 <>
                   <div className={styles.dbFriendsPodium}>
@@ -145,10 +148,14 @@ export default function Dashboard() {
                         ) : null}
                       </div>
                       <div className={styles.dbName}>
-                        {podium.second ? `${podium.second.user.first_name}` : "—"}
+                        {podium.second
+                          ? `${podium.second.user.first_name}`
+                          : "—"}
                       </div>
                       <div className={styles.dbSub}>
-                        {podium.second ? formatAvg(podium.second.averageCo2Kg) : "—"}
+                        {podium.second
+                          ? formatAvg(podium.second.averageCo2Kg)
+                          : "—"}
                       </div>
                     </div>
 
@@ -167,7 +174,9 @@ export default function Dashboard() {
                         {podium.first ? `${podium.first.user.first_name}` : "—"}
                       </div>
                       <div className={styles.dbSub}>
-                        {podium.first ? formatAvg(podium.first.averageCo2Kg) : "—"}
+                        {podium.first
+                          ? formatAvg(podium.first.averageCo2Kg)
+                          : "—"}
                       </div>
                     </div>
 
@@ -185,7 +194,9 @@ export default function Dashboard() {
                         {podium.third ? `${podium.third.user.first_name}` : "—"}
                       </div>
                       <div className={styles.dbSub}>
-                        {podium.third ? formatAvg(podium.third.averageCo2Kg) : "—"}
+                        {podium.third
+                          ? formatAvg(podium.third.averageCo2Kg)
+                          : "—"}
                       </div>
                     </div>
                   </div>
@@ -202,8 +213,12 @@ export default function Dashboard() {
                         ) : null}
                       </div>
                       <div className={styles.dbYouLabel}>Votre classement</div>
-                      <div className={styles.dbYouRank}>{me ? `${me.rank}e` : "—"}</div>
-                      <div className={styles.dbYouKg}>{me ? formatAvg(me.averageCo2Kg) : "—"}</div>
+                      <div className={styles.dbYouRank}>
+                        {me ? `${me.rank}e` : "—"}
+                      </div>
+                      <div className={styles.dbYouKg}>
+                        {me ? formatAvg(me.averageCo2Kg) : "—"}
+                      </div>
                     </div>
                   </div>
                 </>

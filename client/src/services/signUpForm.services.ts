@@ -61,7 +61,7 @@ export const handleChange = (
   event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   formData: SignUpFormData,
   setFormData: React.Dispatch<React.SetStateAction<SignUpFormData>>,
-  setErrors: React.Dispatch<React.SetStateAction<FormErrors>>
+  setErrors: React.Dispatch<React.SetStateAction<FormErrors>>,
 ) => {
   const { name, value } = event.target;
   const newFormData = {
@@ -103,20 +103,20 @@ export const handleSubmit = async (
   formData: SignUpFormData,
   errors: FormErrors,
   // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
-  signUpMutation: any
+  signUpMutation: any,
 ) => {
   event.preventDefault();
 
   if (errors.emailMismatch || errors.passwordMismatch) {
     toast.error(
-      "Veuillez corriger les erreurs avant de soumettre le formulaire."
+      "Veuillez corriger les erreurs avant de soumettre le formulaire.",
     );
     return;
   }
 
   if (errors.passwordInvalid) {
     toast.error(
-      "Le mot de passe doit faire au moins 8 caractères et contenir une majuscule, une minuscule, un chiffre et un caractère spécial."
+      "Le mot de passe doit faire au moins 8 caractères et contenir une majuscule, une minuscule, un chiffre et un caractère spécial.",
     );
     return;
   }

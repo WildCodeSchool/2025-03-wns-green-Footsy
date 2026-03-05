@@ -20,7 +20,10 @@ export class ActivityService {
       return this.activityRepository.find({
         where: {
           user: { id: userId },
-          date: Between(startDate as unknown as Date, endDate as unknown as Date),
+          date: Between(
+            startDate as unknown as Date,
+            endDate as unknown as Date,
+          ),
         },
         relations: ["type", "type.category"],
         order: { date: "ASC" },
@@ -57,7 +60,7 @@ export class ActivityService {
   get updateActivity() {
     return async (
       id: number,
-      updateData: Partial<Activity>
+      updateData: Partial<Activity>,
     ): Promise<Activity | null> => {
       const activity = await this.activityRepository.findOne({ where: { id } });
       if (!activity) {

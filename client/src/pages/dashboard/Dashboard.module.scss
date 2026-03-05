@@ -12,7 +12,6 @@ $text: #103019;
   box-shadow: 0 2px 0 rgba($green, 0.06);
 }
 
-
 // Layout page
 
 .dbPage {
@@ -81,7 +80,6 @@ $text: #103019;
   background: rgba($green, 0.35);
 }
 
-
 // Controls (month + segmented)
 
 .dbControls,
@@ -90,8 +88,6 @@ $text: #103019;
   align-items: center;
   gap: 14px;
 }
-
-
 
 .dbArrowPrevious,
 .dbArrowNext {
@@ -119,7 +115,11 @@ $text: #103019;
 
 .dbSegmented {
   display: flex;
-  background: linear-gradient(to bottom, rgba($green2, 0.98), rgba($green, 0.98));
+  background: linear-gradient(
+    to bottom,
+    rgba($green2, 0.98),
+    rgba($green, 0.98)
+  );
   border-radius: 999px;
   overflow: hidden;
   padding: 2px;
@@ -134,7 +134,9 @@ $text: #103019;
   --is-active: 1;
 }
 
-.dbSegmentedBtnWeek, .dbSegmentedBtnMonth, .dbSegmentedBtnYear {
+.dbSegmentedBtnWeek,
+.dbSegmentedBtnMonth,
+.dbSegmentedBtnYear {
   border: none;
   background: transparent;
   color: rgba(#fff, 0.78);
@@ -171,7 +173,6 @@ $text: #103019;
   }
 }
 
-
 // Total
 
 .dbTotalWrap {
@@ -198,7 +199,6 @@ $text: #103019;
   color: $green;
 }
 
-
 // Grid
 
 .dbGrid {
@@ -209,7 +209,6 @@ $text: #103019;
   gap: 12px;
   min-height: 0;
 }
-
 
 // Card base
 
@@ -352,7 +351,6 @@ $text: #103019;
   color: rgba($green, 0.6);
 }
 
-
 // Pie layout
 
 .dbPieRow {
@@ -390,7 +388,6 @@ $text: #103019;
   font-size: 13px;
   opacity: 0.95;
 }
-
 
 // Friends
 
@@ -520,7 +517,6 @@ $text: #103019;
   opacity: 0.85;
 }
 
-
 // Responsive
 
 // Tablet & down
@@ -532,7 +528,10 @@ $text: #103019;
     );
     height: auto;
     min-height: calc(
-      100dvh - var(--app-header-height, 15vh) - var(--app-footer-height, 2.75rem)
+      100dvh - var(--app-header-height, 15vh) - var(
+          --app-footer-height,
+          2.75rem
+        )
     );
     overflow-y: auto;
     overflow-x: hidden;

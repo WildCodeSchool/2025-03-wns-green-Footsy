@@ -70,7 +70,7 @@ MockedAvatar.findOneByOrFail = jest.fn();
 
 const MockedActivity = jest.mocked(require("../../entities/Activity").default);
 const MockedInteraction = jest.mocked(
-  require("../../entities/Interaction").default
+  require("../../entities/Interaction").default,
 );
 const MockedFriend = jest.mocked(require("../../entities/Friend").default);
 
@@ -133,7 +133,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(userService.findByEmail(email)).rejects.toThrow(
-        "Database connection failed"
+        "Database connection failed",
       );
 
       expect(MockedUser.findOne).toHaveBeenCalledWith({
@@ -162,7 +162,7 @@ describe("UserService", () => {
       });
       expect(mockArgon2.verify).toHaveBeenCalledWith(
         mockUser.hashed_password,
-        password
+        password,
       );
       expect(result).toEqual(mockUser);
     });
@@ -174,7 +174,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(
-        userService.authenticateUser(email, password)
+        userService.authenticateUser(email, password),
       ).rejects.toThrow("User not found");
 
       expect(MockedUser.findOne).toHaveBeenCalledWith({
@@ -193,7 +193,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(
-        userService.authenticateUser(email, password)
+        userService.authenticateUser(email, password),
       ).rejects.toThrow("Invalid password");
 
       expect(MockedUser.findOne).toHaveBeenCalledWith({
@@ -202,7 +202,7 @@ describe("UserService", () => {
       });
       expect(mockArgon2.verify).toHaveBeenCalledWith(
         mockUser.hashed_password,
-        password
+        password,
       );
     });
   });
@@ -224,7 +224,7 @@ describe("UserService", () => {
 
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
       mockUser.save = jest.fn<() => Promise<User>>(() =>
-        Promise.resolve(updatedUser)
+        Promise.resolve(updatedUser),
       );
 
       // Act
@@ -251,7 +251,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(
-        userService.updatePersonalInfo(userId, updateData)
+        userService.updatePersonalInfo(userId, updateData),
       ).rejects.toThrow("User not found");
     });
   });
@@ -271,7 +271,7 @@ describe("UserService", () => {
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
       MockedAvatar.findOneByOrFail.mockResolvedValue(mockAvatar);
       mockUser.save = jest.fn<() => Promise<User>>(() =>
-        Promise.resolve(updatedUser)
+        Promise.resolve(updatedUser),
       );
 
       // Act
@@ -294,12 +294,12 @@ describe("UserService", () => {
 
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
       MockedAvatar.findOneByOrFail.mockRejectedValue(
-        new Error("Avatar not found")
+        new Error("Avatar not found"),
       );
 
       // Act & Assert
       await expect(userService.updateAvatar(userId, avatarId)).rejects.toThrow(
-        "Avatar not found"
+        "Avatar not found",
       );
     });
 
@@ -312,7 +312,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(userService.updateAvatar(userId, avatarId)).rejects.toThrow(
-        "User not found"
+        "User not found",
       );
     });
   });
@@ -330,14 +330,14 @@ describe("UserService", () => {
       mockArgon2.verify.mockResolvedValue(true);
       mockArgon2.hash.mockResolvedValue(hashedPassword);
       mockUser.save = jest.fn<() => Promise<User>>(() =>
-        Promise.resolve(mockUser)
+        Promise.resolve(mockUser),
       );
 
       // Act
       const result = await userService.changePassword(
         userId,
         currentPassword,
-        newPassword
+        newPassword,
       );
 
       // Assert
@@ -345,7 +345,7 @@ describe("UserService", () => {
 
       expect(mockArgon2.verify).toHaveBeenCalledWith(
         "hashedPassword123",
-        currentPassword
+        currentPassword,
       );
       expect(mockArgon2.hash).toHaveBeenCalledWith(newPassword);
 
@@ -367,12 +367,12 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(
-        userService.changePassword(userId, currentPassword, newPassword)
+        userService.changePassword(userId, currentPassword, newPassword),
       ).rejects.toThrow("Current password is incorrect");
 
       expect(mockArgon2.verify).toHaveBeenCalledWith(
         mockUser.hashed_password,
-        currentPassword
+        currentPassword,
       );
       expect(mockArgon2.hash).not.toHaveBeenCalled();
     });
@@ -387,7 +387,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(
-        userService.changePassword(userId, currentPassword, newPassword)
+        userService.changePassword(userId, currentPassword, newPassword),
       ).rejects.toThrow("User not found");
     });
   });
@@ -449,7 +449,7 @@ describe("UserService", () => {
 
       // Assert
       expect(MockedInteraction.remove).toHaveBeenCalledWith(
-        mockActivity.interactions
+        mockActivity.interactions,
       );
       expect(result).toBe(true);
     });
@@ -462,7 +462,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(userService.deleteAccount(userId)).rejects.toThrow(
-        "User not found"
+        "User not found",
       );
     });
   });
@@ -484,7 +484,7 @@ describe("UserService", () => {
 
       MockedUser.findOneByOrFail.mockResolvedValue(nonAdminUser);
       nonAdminUser.save = jest.fn<() => Promise<User>>(() =>
-        Promise.resolve(promotedUser)
+        Promise.resolve(promotedUser),
       );
 
       // Act
@@ -513,7 +513,7 @@ describe("UserService", () => {
 
       MockedUser.findOneByOrFail.mockResolvedValue(adminUser);
       adminUser.save = jest.fn<() => Promise<User>>(() =>
-        Promise.resolve(demotedUser)
+        Promise.resolve(demotedUser),
       );
 
       // Act
@@ -534,7 +534,7 @@ describe("UserService", () => {
 
       // Act & Assert
       await expect(userService.toggleAdminStatus(userId)).rejects.toThrow(
-        "User not found"
+        "User not found",
       );
     });
 
@@ -545,12 +545,12 @@ describe("UserService", () => {
 
       MockedUser.findOneByOrFail.mockResolvedValue(mockUser);
       mockUser.save = jest.fn<() => Promise<User>>(() =>
-        Promise.reject(dbError)
+        Promise.reject(dbError),
       );
 
       // Act & Assert
       await expect(userService.toggleAdminStatus(userId)).rejects.toThrow(
-        "Database connection failed"
+        "Database connection failed",
       );
 
       expect(MockedUser.findOneByOrFail).toHaveBeenCalledWith({ id: userId });

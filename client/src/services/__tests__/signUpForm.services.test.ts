@@ -36,7 +36,7 @@ const mockSignUpMutation = vi.fn();
 const getSetErrorsCallback = (
   mockSetErrors: MockedFunction<
     React.Dispatch<React.SetStateAction<FormErrors>>
-  >
+  >,
 ) => {
   return mockSetErrors.mock.calls[0][0] as (prev: FormErrors) => FormErrors;
 };
@@ -86,7 +86,7 @@ describe("signUpForm.services", () => {
     it("should detect email mismatch when emails differ", () => {
       const event = createMockInputEvent(
         "confirmEmail",
-        "different@example.com"
+        "different@example.com",
       );
 
       const formDataWithEmail = {
@@ -103,7 +103,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
-        passwordInvalid: false
+        passwordInvalid: false,
       });
       expect(result.emailMismatch).toBe(true);
     });
@@ -124,7 +124,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
-        passwordInvalid: false
+        passwordInvalid: false,
       });
       expect(result.emailMismatch).toBe(false);
     });
@@ -132,7 +132,7 @@ describe("signUpForm.services", () => {
     it("should detect password mismatch when passwords differ", () => {
       const event = createMockInputEvent(
         "confirmPassword",
-        "differentpassword"
+        "differentpassword",
       );
 
       const formDataWithPassword = {
@@ -148,7 +148,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
-        passwordInvalid: false
+        passwordInvalid: false,
       });
       expect(result.passwordMismatch).toBe(true);
     });
@@ -169,7 +169,7 @@ describe("signUpForm.services", () => {
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
-        passwordInvalid: false
+        passwordInvalid: false,
       });
       expect(result.passwordMismatch).toBe(false);
     });
@@ -177,7 +177,7 @@ describe("signUpForm.services", () => {
     it("should not check mismatch when email or confirmEmail is empty", () => {
       const event = createMockInputEvent(
         "confirmEmail",
-        "different@example.com"
+        "different@example.com",
       );
 
       const formDataWithEmptyEmail = {
@@ -189,14 +189,14 @@ describe("signUpForm.services", () => {
         event,
         formDataWithEmptyEmail,
         mockSetFormData,
-        mockSetErrors
+        mockSetErrors,
       );
 
       const setErrorsCallback = getSetErrorsCallback(mockSetErrors);
       const result = setErrorsCallback({
         emailMismatch: false,
         passwordMismatch: false,
-        passwordInvalid: false
+        passwordInvalid: false,
       });
       expect(result.emailMismatch).toBe(false);
     });
@@ -214,7 +214,7 @@ describe("signUpForm.services", () => {
         mockEvent,
         mockFormData,
         mockErrors,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(mockEvent.preventDefault).toHaveBeenCalled();
@@ -224,18 +224,18 @@ describe("signUpForm.services", () => {
       const errorsWithEmailMismatch = {
         emailMismatch: true,
         passwordMismatch: false,
-        passwordInvalid: false
+        passwordInvalid: false,
       };
 
       await handleSubmit(
         mockEvent,
         mockFormData,
         errorsWithEmailMismatch,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez corriger les erreurs avant de soumettre le formulaire."
+        "Veuillez corriger les erreurs avant de soumettre le formulaire.",
       );
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
@@ -244,18 +244,18 @@ describe("signUpForm.services", () => {
       const errorsWithPasswordMismatch = {
         emailMismatch: false,
         passwordMismatch: true,
-        passwordInvalid: false
+        passwordInvalid: false,
       };
 
       await handleSubmit(
         mockEvent,
         mockFormData,
         errorsWithPasswordMismatch,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez corriger les erreurs avant de soumettre le formulaire."
+        "Veuillez corriger les erreurs avant de soumettre le formulaire.",
       );
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
@@ -271,11 +271,11 @@ describe("signUpForm.services", () => {
         mockEvent,
         incompleteFormData,
         mockErrors,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs et sélectionner un avatar."
+        "Veuillez remplir tous les champs et sélectionner un avatar.",
       );
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
@@ -290,11 +290,11 @@ describe("signUpForm.services", () => {
         mockEvent,
         formDataWithoutAvatar,
         mockErrors,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs et sélectionner un avatar."
+        "Veuillez remplir tous les champs et sélectionner un avatar.",
       );
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
@@ -306,7 +306,7 @@ describe("signUpForm.services", () => {
         mockEvent,
         mockFormData,
         mockErrors,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(mockSignUpMutation).toHaveBeenCalledWith({
@@ -339,11 +339,11 @@ describe("signUpForm.services", () => {
         mockEvent,
         mockFormData,
         mockErrors,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Cette adresse e-mail est déjà utilisée."
+        "Cette adresse e-mail est déjà utilisée.",
       );
     });
 
@@ -355,11 +355,11 @@ describe("signUpForm.services", () => {
         mockEvent,
         mockFormData,
         mockErrors,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Erreur lors de l'inscription. Veuillez réessayer."
+        "Erreur lors de l'inscription. Veuillez réessayer.",
       );
     });
   });
@@ -369,14 +369,14 @@ describe("signUpForm.services", () => {
       // Test form data update
       const emailChangeEvent = createMockInputEvent(
         "email",
-        "newuser@example.com"
+        "newuser@example.com",
       );
 
       handleChange(
         emailChangeEvent,
         mockFormData,
         mockSetFormData,
-        mockSetErrors
+        mockSetErrors,
       );
 
       expect(mockSetFormData).toHaveBeenCalledWith({
@@ -404,7 +404,7 @@ describe("signUpForm.services", () => {
         mockEvent,
         completeFormData,
         mockErrors,
-        mockSignUpMutation
+        mockSignUpMutation,
       );
 
       expect(mockSignUpMutation).toHaveBeenCalledWith({

@@ -1,4 +1,13 @@
-import { Field, Float, InputType, Int, ObjectType, Query, Resolver, Arg } from "type-graphql";
+import {
+  Field,
+  Float,
+  InputType,
+  Int,
+  ObjectType,
+  Query,
+  Resolver,
+  Arg,
+} from "type-graphql";
 import { In } from "typeorm";
 
 import Friend from "../entities/Friend";
@@ -7,14 +16,14 @@ import Activity from "../entities/Activity";
 
 @InputType()
 class FriendInput {
-    @Field(()=> Int)
-    requester_id: number;
+  @Field(() => Int)
+  requester_id: number;
 
-    @Field(()=> Int)
-    requested_id: number;
+  @Field(() => Int)
+  requested_id: number;
 
-    @Field(() => Boolean)
-    accepted: boolean;
+  @Field(() => Boolean)
+  accepted: boolean;
 }
 
 @ObjectType()
@@ -56,7 +65,10 @@ export default class FriendResolver {
 
     const ids: number[] = [];
     for (const friend of friendships) {
-      const otherId = friend.requester_id === userId ? friend.requested_id : friend.requester_id;
+      const otherId =
+        friend.requester_id === userId
+          ? friend.requested_id
+          : friend.requester_id;
       ids.push(otherId);
     }
     return Array.from(new Set(ids));
@@ -64,7 +76,7 @@ export default class FriendResolver {
 
   @Query(() => [User])
   async getAcceptedFriends(
-    @Arg("userId", () => Int) userId: number
+    @Arg("userId", () => Int) userId: number,
   ): Promise<User[]> {
     const friendIds = await this.getAcceptedFriendIds(userId);
     if (friendIds.length === 0) return [];
@@ -77,7 +89,7 @@ export default class FriendResolver {
 
   @Query(() => FriendCo2RankingResponse)
   async getFriendsCo2Ranking(
-    @Arg("userId", () => Int) userId: number
+    @Arg("userId", () => Int) userId: number,
   ): Promise<FriendCo2RankingResponse> {
     const friendIds = await this.getAcceptedFriendIds(userId);
     const groupIds = Array.from(new Set([userId, ...friendIds]));
@@ -126,7 +138,8 @@ export default class FriendResolver {
       const bVal = b.averageCo2Kg ?? Number.POSITIVE_INFINITY;
       if (aVal !== bVal) return aVal - bVal;
       // If same average, prefer more data (more activities), then stable by id.
-      if (a.activitiesCount !== b.activitiesCount) return b.activitiesCount - a.activitiesCount;
+      if (a.activitiesCount !== b.activitiesCount)
+        return b.activitiesCount - a.activitiesCount;
       return a.user.id - b.user.id;
     });
 
@@ -142,4 +155,3 @@ export default class FriendResolver {
     };
   }
 }
-

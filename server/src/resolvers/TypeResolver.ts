@@ -6,13 +6,13 @@ export default class TypeResolver {
   @Query(() => [Type])
   async getAllTypes(): Promise<Type[]> {
     return await Type.find({
-    relations: ['category']
-  });
-}
+      relations: ["category"],
+    });
+  }
 
   @Query(() => [Type])
   async getTypesByCategoryId(
-    @Arg("categoryId", () => Int) categoryId: number
+    @Arg("categoryId", () => Int) categoryId: number,
   ): Promise<Type[]> {
     return await Type.find({ where: { category_id: categoryId } });
   }

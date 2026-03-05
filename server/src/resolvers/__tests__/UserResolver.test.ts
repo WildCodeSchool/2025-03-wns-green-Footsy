@@ -594,9 +594,9 @@ describe("UserResolver", () => {
       );
 
       // Act & Assert
-      await expect(
-        userResolver.deleteAccount(userId, context),
-      ).rejects.toThrow("Failed to delete account");
+      await expect(userResolver.deleteAccount(userId, context)).rejects.toThrow(
+        "Failed to delete account",
+      );
     });
 
     it("should throw Unauthorized when token is null", async () => {
@@ -605,9 +605,9 @@ describe("UserResolver", () => {
       const context = { token: null };
 
       // Act & Assert
-      await expect(
-        userResolver.deleteAccount(userId, context),
-      ).rejects.toThrow("Unauthorized: Authentication required");
+      await expect(userResolver.deleteAccount(userId, context)).rejects.toThrow(
+        "Unauthorized: Authentication required",
+      );
       expect(mockUserService.deleteAccount).not.toHaveBeenCalled();
     });
 
@@ -620,9 +620,9 @@ describe("UserResolver", () => {
       (jwt.verify as jest.Mock).mockReturnValue({ id: decodedUserId });
 
       // Act & Assert
-      await expect(
-        userResolver.deleteAccount(userId, context),
-      ).rejects.toThrow("Unauthorized: You can only delete your own account");
+      await expect(userResolver.deleteAccount(userId, context)).rejects.toThrow(
+        "Unauthorized: You can only delete your own account",
+      );
       expect(mockUserService.deleteAccount).not.toHaveBeenCalled();
     });
 
@@ -634,9 +634,9 @@ describe("UserResolver", () => {
       delete process.env.JWT_SECRET;
 
       // Act & Assert
-      await expect(
-        userResolver.deleteAccount(userId, context),
-      ).rejects.toThrow("Unauthorized: Authentication required");
+      await expect(userResolver.deleteAccount(userId, context)).rejects.toThrow(
+        "Unauthorized: Authentication required",
+      );
       expect(mockUserService.deleteAccount).not.toHaveBeenCalled();
     });
   });

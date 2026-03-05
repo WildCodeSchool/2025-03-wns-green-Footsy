@@ -37,13 +37,13 @@ describe("ActivityResolver", () => {
     mockCategory1 = createMockCategory({
       id: 1,
       title: "Transport",
-      quantity_unit: "km"
+      quantity_unit: "km",
     });
 
     mockCategory2 = createMockCategory({
       id: 2,
       title: "Alimentation",
-      quantity_unit: "kg"
+      quantity_unit: "kg",
     });
 
     // Create mock types
@@ -117,7 +117,7 @@ describe("ActivityResolver", () => {
       // Act
       const result = await activityResolver.findActivitiesByUserIdAndYear(
         userId,
-        year
+        year,
       );
 
       // Assert
@@ -146,7 +146,7 @@ describe("ActivityResolver", () => {
       // Act
       const result = await activityResolver.findActivitiesByUserIdAndCategory(
         userId,
-        categoryId
+        categoryId,
       );
 
       // Assert
@@ -178,9 +178,8 @@ describe("ActivityResolver", () => {
       jest.spyOn(Activity, "find").mockResolvedValue(mockActivities);
 
       // Act
-      const result = await activityResolver.getActivitiesByUserIdAndFilters(
-        filterData
-      );
+      const result =
+        await activityResolver.getActivitiesByUserIdAndFilters(filterData);
 
       // Assert
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
@@ -205,9 +204,8 @@ describe("ActivityResolver", () => {
       jest.spyOn(Activity, "find").mockResolvedValue(filteredActivities);
 
       // Act
-      const result = await activityResolver.getActivitiesByUserIdAndFilters(
-        filterData
-      );
+      const result =
+        await activityResolver.getActivitiesByUserIdAndFilters(filterData);
 
       // Assert
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
@@ -233,9 +231,8 @@ describe("ActivityResolver", () => {
       jest.spyOn(Activity, "find").mockResolvedValue([]);
 
       // Act
-      const result = await activityResolver.getActivitiesByUserIdAndFilters(
-        filterData
-      );
+      const result =
+        await activityResolver.getActivitiesByUserIdAndFilters(filterData);
 
       // Assert
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
@@ -260,7 +257,7 @@ describe("ActivityResolver", () => {
 
       // Act & Assert
       await expect(
-        activityResolver.getActivitiesByUserIdAndFilters(filterData)
+        activityResolver.getActivitiesByUserIdAndFilters(filterData),
       ).rejects.toThrow("User not found");
 
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 999 } });
@@ -280,9 +277,8 @@ describe("ActivityResolver", () => {
       jest.spyOn(Activity, "find").mockResolvedValue(mockActivities);
 
       // Act
-      const result = await activityResolver.getActivitiesByUserIdAndFilters(
-        filterData
-      );
+      const result =
+        await activityResolver.getActivitiesByUserIdAndFilters(filterData);
 
       // Assert
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
@@ -304,9 +300,8 @@ describe("ActivityResolver", () => {
       jest.spyOn(Activity, "find").mockResolvedValue([]);
 
       // Act
-      const result = await activityResolver.getActivitiesByUserIdAndFilters(
-        filterData
-      );
+      const result =
+        await activityResolver.getActivitiesByUserIdAndFilters(filterData);
 
       // Assert
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
@@ -337,9 +332,8 @@ describe("ActivityResolver", () => {
       jest.spyOn(Activity, "find").mockResolvedValue(filteredActivities);
 
       // Act
-      const result = await activityResolver.getActivitiesByUserIdAndFilters(
-        filterData
-      );
+      const result =
+        await activityResolver.getActivitiesByUserIdAndFilters(filterData);
 
       // Assert
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 5 } });
@@ -366,7 +360,7 @@ describe("ActivityResolver", () => {
 
       // Act & Assert
       await expect(
-        activityResolver.getActivitiesByUserIdAndFilters(filterData)
+        activityResolver.getActivitiesByUserIdAndFilters(filterData),
       ).rejects.toThrow("Database connection failed");
 
       expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });

@@ -217,11 +217,11 @@
   :global(.footer) {
     margin-top: auto;
     width: 100%;
-    
+
     @media (max-width: 1023px) {
       display: none;
     }
-    
+
     @media (min-width: 1024px) {
       display: flex;
       justify-content: flex-end;

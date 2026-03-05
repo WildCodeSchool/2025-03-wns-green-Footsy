@@ -12,7 +12,6 @@ import Activity from "../entities/Activity";
 import { Activities } from "./data/ActivitySeeder";
 import ApiAdemeService from "../services/apiAdeme/ApiAdeme.service";
 
-
 export async function seedAvatars() {
   const avatarRepository = dataSource.getRepository(Avatar);
   const existingAvatars = await avatarRepository.find();
@@ -57,24 +56,25 @@ export async function seedCategories() {
   console.info("Fetching categories from ADEME API...");
 
   try {
-    const categoriesFromApi = await ApiAdemeService.getCategories()
+    const categoriesFromApi = await ApiAdemeService.getCategories();
 
     console.info(`✓ ${categoriesFromApi.length} categories retrieved`);
 
-    const filteredCategories = categoriesFromApi.filter((cat) => cat.id >= 1 && cat.id <= 10);
+    const filteredCategories = categoriesFromApi.filter(
+      (cat) => cat.id >= 1 && cat.id <= 10,
+    );
     console.info(`✓ ${filteredCategories.length} categories kept (ID 1-10)`);
 
     const categoriesToSave = filteredCategories.map((cat) => ({
       title: cat.name,
       quantity_unit: ApiAdemeService.getQuantityUnit(cat.id),
-      ademe_id: cat.id
+      ademe_id: cat.id,
     }));
 
     console.info(`✓ ${categoriesToSave.length} categories prepared for saving`);
 
     await categoryRepo.save(categoriesToSave);
     console.info("Categories seeded");
-
   } catch (error) {
     console.error("Erreur lors du seed des categories:", error);
     throw error;
@@ -102,7 +102,9 @@ export async function seedTypes() {
 
     for (const category of categories) {
       if (!category.ademe_id) {
-        console.warn(`⚠ Category "${category.title}" has no ademe_id, skipping`);
+        console.warn(
+          `⚠ Category "${category.title}" has no ademe_id, skipping`,
+        );
         continue;
       }
 
@@ -113,7 +115,7 @@ export async function seedTypes() {
       const typesForCategory = typesFromApi.map((type) => ({
         title: type.name,
         ecv: type.ecv,
-        category: category
+        category: category,
       }));
 
       allTypesToSave.push(...typesForCategory);
@@ -123,12 +125,10 @@ export async function seedTypes() {
 
     await typeRepo.save(allTypesToSave);
     console.info("Types seeded");
-
   } catch (error) {
     console.error("Erreur lors du seed des types:", error);
     throw error;
   }
-
 }
 
 export async function seedActivities() {
@@ -171,7 +171,7 @@ async function runSeeders() {
     await seedTypes();
     //await seedActivities();
 
-    console.info("All seeders completed successfully")
+    console.info("All seeders completed successfully");
   } catch (error) {
     console.error("Seeding failed:", error);
     process.exit(1);

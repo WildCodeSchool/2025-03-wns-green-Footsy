@@ -72,7 +72,7 @@ class ActivityFilterInput {
 export default class ActivityResolver {
   async findActivitiesByUserIdAndYear(
     userId: number,
-    year: number
+    year: number,
   ): Promise<Activity[]> {
     // Use real Date objects for TypeORM date comparisons.
     // Column type is "date" (no time), so local midnight boundaries are fine.
@@ -92,14 +92,14 @@ export default class ActivityResolver {
   @Query(() => [Activity])
   async getActivitiesByUserIdAndYear(
     @Arg("userId", () => Int) userId: number,
-    @Arg("year", () => Int) year: number
+    @Arg("year", () => Int) year: number,
   ): Promise<Activity[]> {
     return await this.findActivitiesByUserIdAndYear(userId, year);
   }
 
   async findActivitiesByUserIdAndCategory(
     userId: number,
-    categoryId: number
+    categoryId: number,
   ): Promise<Activity[]> {
     return await Activity.find({
       where: {
@@ -114,7 +114,7 @@ export default class ActivityResolver {
   @Query(() => [Activity])
   async getActivitiesByUserIdAndCategory(
     @Arg("userId", () => Int) userId: number,
-    @Arg("categoryId", () => Int) categoryId: number
+    @Arg("categoryId", () => Int) categoryId: number,
   ): Promise<Activity[]> {
     return await this.findActivitiesByUserIdAndCategory(userId, categoryId);
   }
@@ -125,13 +125,13 @@ export default class ActivityResolver {
 
   @Query(() => Activity, { nullable: true })
   async getActivityById(
-    @Arg("id", () => Int) id: number
+    @Arg("id", () => Int) id: number,
   ): Promise<Activity | null> {
     return await Activity.findOne({ where: { id } });
   }
   @Query(() => [Activity])
   async getActivitiesByUserId(
-    @Arg("userId", () => Int) userId: number
+    @Arg("userId", () => Int) userId: number,
   ): Promise<Activity[]> {
     return await Activity.find({
       where: { user: { id: userId } },
@@ -141,7 +141,7 @@ export default class ActivityResolver {
 
   @Query(() => [Activity])
   async getActivitiesByUserIdAndFilters(
-    @Arg("data", () => ActivityFilterInput) data: ActivityFilterInput
+    @Arg("data", () => ActivityFilterInput) data: ActivityFilterInput,
   ): Promise<Activity[]> {
     const { user_id, category_id } = data;
     const user = await User.findOne({ where: { id: user_id } });
@@ -164,7 +164,7 @@ export default class ActivityResolver {
 
   @Mutation(() => Activity)
   async createActivity(
-    @Arg("data", () => CreateActivityInput) data: CreateActivityInput
+    @Arg("data", () => CreateActivityInput) data: CreateActivityInput,
   ): Promise<Activity> {
     const user = await User.findOne({ where: { id: data.user_id } });
     if (!user) throw new Error("User not found");
@@ -183,7 +183,7 @@ export default class ActivityResolver {
 
   @Mutation(() => Activity, { nullable: true })
   async updateActivity(
-    @Arg("data", () => UpdateActivityInput) data: UpdateActivityInput
+    @Arg("data", () => UpdateActivityInput) data: UpdateActivityInput,
   ): Promise<Activity | null> {
     const activity = await Activity.findOne({ where: { id: data.id } });
     if (!activity) return null;

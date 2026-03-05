@@ -16,13 +16,13 @@ export interface UserServiceInterface {
   authenticateUser(email: string, password: string): Promise<User>;
   updatePersonalInfo(
     userId: number,
-    data: UpdatePersonalInfoInput
+    data: UpdatePersonalInfoInput,
   ): Promise<User>;
   updateAvatar(userId: number, avatarId: number): Promise<User>;
   changePassword(
     userId: number,
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<User>;
   deleteAccount(userId: number): Promise<boolean>;
   toggleAdminStatus(userId: number): Promise<User>;
@@ -57,7 +57,7 @@ export default class UserService implements UserServiceInterface {
 
   async updatePersonalInfo(
     userId: number,
-    data: UpdatePersonalInfoInput
+    data: UpdatePersonalInfoInput,
   ): Promise<User> {
     const user = await User.findOneByOrFail({ id: userId });
 
@@ -82,13 +82,13 @@ export default class UserService implements UserServiceInterface {
   async changePassword(
     userId: number,
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<User> {
     const user = await User.findOneByOrFail({ id: userId });
 
     const isValidCurrentPassword = await argon2.verify(
       user.hashed_password,
-      currentPassword
+      currentPassword,
     );
     if (!isValidCurrentPassword) {
       throw new Error("Current password is incorrect");

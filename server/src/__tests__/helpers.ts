@@ -55,7 +55,7 @@ export const createMockUser = ({
 };
 
 export const createMockCategory = (
-  overrides: Partial<Category> = {}
+  overrides: Partial<Category> = {},
 ): Category =>
   Object.assign(new Category(), {
     id: 1,
@@ -76,7 +76,7 @@ export const createMockType = (overrides: Partial<Type> = {}): Type =>
   });
 
 export const createMockActivity = (
-  overrides: Partial<Activity> = {}
+  overrides: Partial<Activity> = {},
 ): Activity =>
   Object.assign(new Activity(), {
     id: 1,

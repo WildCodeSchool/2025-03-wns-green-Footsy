@@ -70,7 +70,7 @@ export const LOGIN = gql`
 export const GET_ACTIVITIES_BY_USER_ID = gql`
   query GetActivitiesByUserId($userId: Int!) {
     getActivitiesByUserId(userId: $userId) {
-     id
+      id
       title
       date
       quantity
@@ -115,7 +115,7 @@ export const GET_ACTIVITIES_BY_USER_ID_AND_CATEGORY = gql`
     getActivitiesByUserIdAndCategory(userId: $userId, categoryId: $categoryId) {
       id
       title
-      date  
+      date
       quantity
       co2_equivalent
       type {
@@ -237,7 +237,7 @@ export const LOGOUT = gql`
 
 export const GET_ALL_TYPES = gql`
   query GetAllTypes {
-   getAllTypes {
+    getAllTypes {
       id
       title
       ecv

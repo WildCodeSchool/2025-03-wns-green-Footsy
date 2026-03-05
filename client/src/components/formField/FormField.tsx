@@ -16,7 +16,9 @@ type FormFieldProps = {
   id: string;
   name: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => void;
   placeholder?: string;
   required?: boolean;
   options?: SelectOption[];
@@ -39,23 +41,25 @@ export default function FormField({
     <div className={classes["form-field"]}>
       <label
         htmlFor={id}
-        className={`${classes["form-field__label"]} ${classes[`form-field__label--${mode}`]
-          }`}
+        className={`${classes["form-field__label"]} ${
+          classes[`form-field__label--${mode}`]
+        }`}
       >
         {label}
         {required && (
           <span className={classes["form-field__label--required"]}> *</span>
         )}
       </label>
-      {type === 'select' ? (
+      {type === "select" ? (
         <select
           id={id}
           name={name}
           value={value}
           onChange={onChange}
           required={required}
-          className={`${classes["form-field__input"]} ${classes[`form-field__input--${mode}`]
-            }`}
+          className={`${classes["form-field__input"]} ${
+            classes[`form-field__input--${mode}`]
+          }`}
         >
           <option value="">{placeholder}</option>
           {options?.map((option) => (
@@ -73,8 +77,9 @@ export default function FormField({
           onChange={onChange}
           placeholder={placeholder}
           required={required}
-          className={`${classes["form-field__input"]} ${classes[`form-field__input--${mode}`]
-            }`}
+          className={`${classes["form-field__input"]} ${
+            classes[`form-field__input--${mode}`]
+          }`}
         />
       )}
     </div>

@@ -3,8 +3,8 @@ import { useMode } from "../../context/modeContext";
 import classes from "./Footer.module.scss";
 
 export default function Footer() {
-    const { mode } = useMode();
-     return (
+  const { mode } = useMode();
+  return (
     <section className={`footer ${classes["footer"]}`}>
       <Link
         to="/credits"
@@ -23,5 +23,5 @@ export default function Footer() {
         CGU
       </Link>
     </section>
-  ); 
+  );
 }

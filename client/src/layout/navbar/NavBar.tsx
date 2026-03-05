@@ -11,10 +11,10 @@ export default function NavBar() {
     <section className={`${classes.navbar} ${classes[`navbar--${mode}`]}`}>
       <div className={classes.mobile}>
         <NavBarMobile mode={mode} />
-        </div>
+      </div>
       <div className={classes.desktop}>
         <NavBarDesktop mode={mode} />
-        </div>
+      </div>
     </section>
   );
 }
