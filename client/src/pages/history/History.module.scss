@@ -1,0 +1,49 @@
+.history {
+  padding: 1rem 5rem;
+
+  &__title {
+    display: none;
+
+    @media (min-width: 1024px) {
+      display: block;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary, #333);
+      padding: 0 0 3rem 10rem;
+      margin: 0;
+    }
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: 1rem;
+
+    @media (min-width: 1024px) {
+      flex-direction: row;
+      gap: 2.5rem;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__empty {
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  &__activities {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__group--title {
+    padding: 0 0 0.5rem 1.5rem;
+    border-bottom: 2px solid var(--white);
+  }
+}

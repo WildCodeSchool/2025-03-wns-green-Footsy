@@ -1,0 +1,60 @@
+.navbardesktop {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 17rem;
+
+    &__button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 17rem;
+    background-color: var(--color-dark);;
+    border:0.01rem solid var(--sea-green);
+    cursor: pointer;
+    padding: 1rem;
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+
+    &__avatar {
+      position: absolute;
+      top: 3rem
+    }
+
+    &__img {
+      width: 1.5rem;
+      height: 1.5rem;
+      object-fit: contain;
+    }
+
+    h5 {
+      color: white;
+      text-align: left;
+      padding-left: 1rem;
+    }
+
+    &__footprintbutton {
+      background-color: var(--color-dark-green);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem;
+
+      &:hover {
+            transform: scale(1.15);
+        }
+    }
+
+    &__footprinticon {
+      width: 6rem;
+      height: 6rem;
+      object-fit: contain;
+    }
+  }

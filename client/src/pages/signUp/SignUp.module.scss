@@ -1,0 +1,36 @@
+.sign-up {
+  &__title {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2rem;
+
+    @media (max-width: 1023px) {
+      display: none;
+    }
+
+    &--light {
+      color: var(--color-dark);
+    }
+
+    &--dark {
+      color: var(--color-dark-mode-light);
+    }
+  }
+
+  &__link {
+    display: inline-block;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    margin-top: 1.5rem;
+
+    &--light {
+      color: var(--color-dark);
+    }
+
+    &--dark {
+      color: var(--color-dark-mode-light);
+    }
+  }
+}

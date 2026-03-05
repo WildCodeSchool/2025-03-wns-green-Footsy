@@ -1,0 +1,63 @@
+.navbar {
+  // MainLayout adds margin-right on desktop to all direct children.
+  // This navbar contains fixed-position elements; keep it flush.
+  margin-right: 0 !important;
+
+  .mobile {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1200;
+
+    // Themed "glass" bar so the page scrolls behind.
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    @media (min-width: 1024px) {
+      display: none;
+    }
+  }
+
+  &--light {
+    .mobile {
+      background: linear-gradient(
+        to top,
+        rgba(208, 220, 173, 0.92),
+        rgba(208, 220, 173, 0.78)
+      );
+    }
+  }
+
+  &--dark {
+    .mobile {
+      background: linear-gradient(
+        to top,
+        rgba(1, 22, 36, 0.92),
+        rgba(1, 22, 36, 0.72)
+      );
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .desktop {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 1200;
+    background-color: var(--sea-green);
+    margin-right: 0 !important;
+
+    @media (min-width: 1024px) {
+      display: block;
+    }
+  }
+}
