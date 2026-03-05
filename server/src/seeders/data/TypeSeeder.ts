@@ -19,9 +19,9 @@ const Types = [
     },
     {
       id: 4,
-      title: "Électricité",
-      quantity_unit: "kWh",
-      category_id: 3, // Énergie
+      title: "Chauffage",
+      quantity_unit: "m²",
+      category_id: 3, // Chauffage
     },
   ];
   

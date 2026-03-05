@@ -8,6 +8,8 @@ import { useMode } from "../../context/modeContext";
 import { useCurrentUser } from "../../context/userContext";
 import {
   CHANGE_PASSWORD,
+  DELETE_ACCOUNT,
+  LOGOUT,
   UPDATE_AVATAR,
   UPDATE_PERSONAL_INFO,
 } from "../../graphql/operations";
@@ -17,6 +19,8 @@ import AvatarSelector from "../avatarSelector/AvatarSelector";
 import FormField from "../formField/FormField";
 import { Loader } from "../loader/Loader";
 import MainButton from "../mainButton/MainButton";
+import { Modal } from "../modal/Modal";
+import { ConfirmContent } from "../modal/ConfirmContent";
 import SupportSection from "../supportSection/SupportSection";
 
 import classes from "./SettingsForm.module.scss";
@@ -54,6 +58,23 @@ export default function SettingsForm() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingBirthdate, setIsEditingBirthdate] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
+
+  const [logoutMutation] = useMutation(LOGOUT);
+  const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT, {
+    onCompleted: async () => {
+      try {
+        await logoutMutation();
+      } finally {
+        window.location.href = "/login";
+      }
+    },
+    onError: () => {
+      toast.error("Erreur lors de la suppression du compte");
+      setIsDeleteAccountModalOpen(false);
+    },
+  });
 
   useEffect(() => {
     if (user) {
@@ -521,15 +542,33 @@ export default function SettingsForm() {
           Tu veux quitter Wild Carbon ?{" "}
           <button
             type="button"
-            onClick={() =>
-              toast.info("Fonctionnalité en cours de développement")
-            }
+            onClick={() => setIsDeleteAccountModalOpen(true)}
             className={classes["settings-form__delete-link"]}
+            disabled={!user}
           >
             Supprimer mon compte.
           </button>
         </p>
       </div>
+
+      <Modal
+        isOpen={isDeleteAccountModalOpen}
+        onClose={() => setIsDeleteAccountModalOpen(false)}
+        title="Supprimer mon compte"
+      >
+        <ConfirmContent
+          message="Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible."
+          onConfirm={async () => {
+            if (user) {
+              await deleteAccountMutation({
+                variables: { userId: user.id },
+              });
+              setIsDeleteAccountModalOpen(false);
+            }
+          }}
+          onCancel={() => setIsDeleteAccountModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

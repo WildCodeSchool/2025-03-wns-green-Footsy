@@ -13,6 +13,7 @@ import type Type from "../../entities/Type";
 import User from "../../entities/User";
 
 import ActivityResolver from "../ActivityResolver";
+import { Between } from "typeorm";
 
 describe("ActivityResolver", () => {
   let activityResolver: ActivityResolver;
@@ -97,6 +98,68 @@ describe("ActivityResolver", () => {
       co2_equivalent: 1.7,
       user: mockUser,
       type: mockType1,
+    });
+  });
+
+  describe("getActivitiesByUserIdAndYear", () => {
+    it("should return activities for a user within the specified year", async () => {
+      // Arrange
+      const userId = 1;
+      const year = 2024;
+
+      const mockActivities = [mockActivity1, mockActivity2, mockActivity3];
+
+      jest.spyOn(Activity, "find").mockResolvedValue(mockActivities);
+
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31);
+
+      // Act
+      const result = await activityResolver.findActivitiesByUserIdAndYear(
+        userId,
+        year
+      );
+
+      // Assert
+      expect(Activity.find).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+          date: Between(startDate, endDate),
+        },
+        relations: ["type", "type.category"],
+        order: { date: "ASC" },
+      });
+      expect(result).toEqual(mockActivities);
+      expect(result).toHaveLength(3);
+    });
+  });
+
+  describe("getActivitiesByUserIdAndCategory", () => {
+    it("should return activities for a user within the specified category", async () => {
+      // Arrange
+      const userId = 1;
+      const categoryId = 1;
+
+      const filteredActivities = [mockActivity1, mockActivity3];
+      jest.spyOn(Activity, "find").mockResolvedValue(filteredActivities);
+
+      // Act
+      const result = await activityResolver.findActivitiesByUserIdAndCategory(
+        userId,
+        categoryId
+      );
+
+      // Assert
+      expect(Activity.find).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+          type: { category: { id: categoryId } },
+        },
+        relations: ["type", "type.category"],
+        order: { date: "ASC" },
+      });
+      expect(result).toEqual(filteredActivities);
+      expect(result).toHaveLength(2);
     });
   });
 

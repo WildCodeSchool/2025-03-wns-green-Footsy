@@ -5,7 +5,7 @@ import classes from "./Footer.module.scss";
 export default function Footer() {
     const { mode } = useMode();
      return (
-    <section className={classes["footer"]}>
+    <section className={`footer ${classes["footer"]}`}>
       <Link
         to="/credits"
         className={`${classes["footer__link"]} ${

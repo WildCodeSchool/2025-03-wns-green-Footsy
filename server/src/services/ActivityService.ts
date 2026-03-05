@@ -1,4 +1,5 @@
 import Activity from "../entities/Activity";
+import { Between } from "typeorm";
 
 export class ActivityService {
   private get activityRepository() {
@@ -8,6 +9,35 @@ export class ActivityService {
   get findAllByUserId() {
     return async (userId: number): Promise<Activity[]> => {
       return this.activityRepository.find({ where: { user: { id: userId } } });
+    };
+  }
+
+  get findActivitiesByUserIdAndYear() {
+    return async (userId: number, year: number): Promise<Activity[]> => {
+      const startDate = `${year}-01-01`;
+      const endDate = `${year}-12-31`;
+
+      return this.activityRepository.find({
+        where: {
+          user: { id: userId },
+          date: Between(startDate as unknown as Date, endDate as unknown as Date),
+        },
+        relations: ["type", "type.category"],
+        order: { date: "ASC" },
+      });
+    };
+  }
+
+  get findActivitiesByUserIdAndCategory() {
+    return async (userId: number, categoryId: number): Promise<Activity[]> => {
+      return this.activityRepository.find({
+        where: {
+          user: { id: userId },
+          type: { category: { id: categoryId } },
+        },
+        relations: ["type", "type.category"],
+        order: { date: "ASC" },
+      });
     };
   }
 

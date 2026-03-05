@@ -18,21 +18,53 @@ $text: #103019;
 .dbPage {
   background: $bg;
   color: $text;
-  padding: 26px 28px 40px;
-  min-height: 100%;
+  padding: 18px 28px 18px;
+  box-sizing: border-box;
+  height: calc(
+    100svh - var(--app-header-height, 15vh) - var(--app-footer-height, 2.75rem)
+  );
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .dbPage {
+    margin-bottom: 20px;
+  }
+
+  .dbGrid {
+    padding-bottom: 12px;
+  }
+}
+
+.dbGrid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 12px;
+}
+
+// Keep main dashboard content nicely centered on wide screens
+.dbTop,
+.dbTotalWrap,
+.dbGrid {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
 }
 
 .dbTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 14px;
 }
 
 .dbTitle {
   h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 900;
     font-style: italic;
     color: $green;
@@ -87,10 +119,19 @@ $text: #103019;
 
 .dbSegmented {
   display: flex;
-  background: $green;
+  background: linear-gradient(to bottom, rgba($green2, 0.98), rgba($green, 0.98));
   border-radius: 999px;
   overflow: hidden;
   padding: 2px;
+  border: 1px solid rgba(#000, 0.08);
+  box-shadow:
+    0 6px 16px rgba(#000, 0.12),
+    inset 0 1px 0 rgba(#fff, 0.08);
+}
+
+// Exported for CSS-modules; used from Dashboard.tsx
+.isActive {
+  --is-active: 1;
 }
 
 .dbSegmentedBtnWeek, .dbSegmentedBtnMonth, .dbSegmentedBtnYear {
@@ -101,11 +142,32 @@ $text: #103019;
   cursor: pointer;
   font-weight: 800;
   font-size: 13px;
+  border-radius: 999px;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    transform 120ms ease;
+
+  &:hover {
+    color: rgba(#fff, 0.95);
+    background: rgba(#fff, 0.08);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(#fff, 0.6);
+    outline-offset: 2px;
+  }
 
   &.isActive {
-    background: rgba(#fff, 0.14);
+    background: rgba(#fff, 0.16);
     color: #fff;
-    border-radius: 999px;
+    box-shadow:
+      inset 0 0 0 1px rgba(#fff, 0.18),
+      0 6px 14px rgba(#000, 0.16);
   }
 }
 
@@ -114,6 +176,19 @@ $text: #103019;
 
 .dbTotalWrap {
   margin-top: 14px;
+}
+
+.dbPeriodHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dbTotalInline {
+  font-weight: 900;
+  color: $green;
+  white-space: nowrap;
 }
 
 .dbTotal {
@@ -127,11 +202,12 @@ $text: #103019;
 // Grid
 
 .dbGrid {
-  margin-top: 18px;
+  margin-top: 10px;
   display: grid;
   grid-template-columns: 1.35fr 1fr;
   grid-template-rows: auto auto;
-  gap: 18px;
+  gap: 12px;
+  min-height: 0;
 }
 
 
@@ -139,17 +215,22 @@ $text: #103019;
 
 .dbCard {
   @include card;
-  padding: 16px 16px 14px;
+  padding: 12px 12px 10px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
 }
 
 .dbCardLarge {
   grid-row: 1 / span 2;
+  overflow: hidden;
 }
 
 .dbCardHeader {
   h2 {
-    margin: 0 0 12px;
-    font-size: 16px;
+    justify-self: center;
+    margin: 0 0 10px;
+    font-size: 15px;
     font-weight: 900;
     color: $green;
   }
@@ -157,16 +238,63 @@ $text: #103019;
 
 .dbCardBody {
   position: relative;
+  min-height: 0;
+  overflow: hidden;
 }
 
+// Center the time-series chart vertically inside the large card
+.dbCardLarge {
+  .dbCardBody {
+    display: flex;
+    flex-direction: column;
+  }
 
-// Chart placeholder (style proche visuel)
+  .dbChart {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+}
 
-.dbChartPlaceholder {
-  position: relative;
-  height: 330px;
-  border-radius: 10px;
-  background: rgba(#fff, 0.08);
+// Real chart containers (AgCharts autoSize needs a height)
+.dbChart {
+  height: clamp(220px, 34vh, 380px);
+  width: 100%;
+  overflow: hidden;
+
+  // ag-charts-react mounts a wrapper div; make it fill our box
+  > div {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.dbPieChart {
+  width: 100%;
+  max-width: 600px;
+  height: clamp(260px, 38vh, 400px);
+  margin: 0 auto;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  // ag-charts-react mounts a div wrapper; make it fill our box
+  > div {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.dbChartStatus,
+.dbPieStatus {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: rgba($green, 0.78);
+  text-align: center;
+  padding: 8px;
 }
 
 // Tooltip + marker
@@ -228,11 +356,11 @@ $text: #103019;
 // Pie layout
 
 .dbPieRow {
-  display: grid;
-  grid-template-columns: 1fr 210px;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 14px;
-  min-height: 250px;
+  min-height: clamp(240px, 34vh, 340px);
 }
 
 .dbPiePlaceholder {
@@ -266,23 +394,33 @@ $text: #103019;
 
 // Friends
 
+// Friends card body (podium/crown can slightly overflow)
+.dbCardBody.dbFriends {
+  overflow: visible;
+  padding-top: 8px;
+}
+
 .dbFriends {
   display: grid;
-  grid-template-columns: 1fr 200px;
-  gap: 14px;
+  grid-template-columns: 1fr 160px;
+  gap: 10px;
   align-items: center;
+  min-width: 0;
 }
 
 .dbFriendsPodium {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: end;
-  gap: 10px;
+  gap: 6px;
+  justify-items: center;
+  min-width: 0;
 }
 
 .dbRank {
   font-weight: 950;
   color: $green;
+  font-size: 12px;
 }
 
 // podium items
@@ -293,7 +431,7 @@ $text: #103019;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .dbPodiumItem1 {
@@ -302,31 +440,39 @@ $text: #103019;
 
 .dbCrown {
   position: absolute;
-  top: 12px;
-  font-size: 22px;
+  top: 10px;
+  font-size: 18px;
 }
 
 .dbAvatar {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   border-radius: 999px;
   background: rgba(#fff, 0.35);
   border: 2px solid rgba($green, 0.25);
 
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+    display: block;
+  }
+
   &.isBig {
-    width: 76px;
-    height: 76px;
+    width: 60px;
+    height: 60px;
   }
 }
 
 .dbName {
   font-weight: 900;
-  font-size: 13px;
+  font-size: 12px;
   color: $green;
 }
 
 .dbSub {
-  font-size: 11px;
+  font-size: 10px;
   opacity: 0.85;
 }
 
@@ -334,12 +480,13 @@ $text: #103019;
 .dbYou {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  justify-self: end;
 }
 
 .dbYouLine {
   width: 2px;
-  height: 120px;
+  height: 78px;
   background: rgba($green, 0.25);
   border-radius: 999px;
 }
@@ -348,25 +495,27 @@ $text: #103019;
   width: 100%;
   display: grid;
   justify-items: center;
-  gap: 4px;
+  align-content: center;
+  gap: 3px;
+  min-width: 0;
 }
 
 .dbYouLabel {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
   color: $green;
   opacity: 0.9;
 }
 
 .dbYouRank {
-  margin-top: 6px;
-  font-size: 26px;
+  margin-top: 2px;
+  font-size: 20px;
   font-weight: 950;
   color: $green;
 }
 
 .dbYouKg {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
   opacity: 0.85;
 }
@@ -374,24 +523,61 @@ $text: #103019;
 
 // Responsive
 
-@media (max-width: 980px) {
-
+// Tablet & down
+@media (max-width: 1024px) {
   .dbPage {
-    margin-bottom: 115px;
+    padding: 14px 18px 14px;
+    padding-bottom: calc(
+      14px + var(--app-mobile-nav-height, 4.25rem) + env(safe-area-inset-bottom)
+    );
+    height: auto;
+    min-height: calc(
+      100dvh - var(--app-header-height, 15vh) - var(--app-footer-height, 2.75rem)
+    );
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dbTitle h1 {
+    font-size: 22px;
+  }
+
+  .dbTitleUnderline {
+    width: min(260px, 70vw);
+  }
+
+  .dbSegmentedBtnWeek,
+  .dbSegmentedBtnMonth,
+  .dbSegmentedBtnYear {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .dbCardHeader h2 {
+    font-size: 14px;
+  }
+
+  .dbPeriodHeader {
+    align-items: center;
+  }
+
+  .dbTotalInline {
+    font-size: 13px;
   }
 
   .dbTotal {
     font-size: 25px;
   }
 
-.dbTop {
+  .dbTop {
     flex-direction: column;
     align-items: center;
     gap: 12px;
   }
 
   .dbControls {
-display: flex;
+    display: flex;
     flex-direction: column-reverse;
     align-items: center;
     gap: 12px;
@@ -403,20 +589,91 @@ display: flex;
     align-items: center;
   }
 
-  
   .dbGrid {
     grid-template-columns: 1fr;
+    overflow: visible;
   }
 
   .dbCardLarge {
     grid-row: auto;
   }
 
+  .dbChart {
+    height: clamp(210px, 32vh, 320px);
+  }
+
+  .dbPieRow {
+    flex-direction: column;
+  }
+
+  .dbPieChart {
+    max-width: 460px;
+    height: clamp(220px, 32vh, 300px);
+  }
+
+  .dbCategoryPill {
+    width: 100%;
+    max-width: 460px;
+  }
+
   .dbFriends {
     grid-template-columns: 1fr;
   }
 
-  .dbPieRow {
-    grid-template-columns: 1fr;
+  .dbFriendsPodium {
+    gap: 4px;
+  }
+
+  .dbPodiumItem1 {
+    transform: translateY(-4px);
+  }
+
+  .dbAvatar {
+    width: 48px;
+    height: 48px;
+
+    &.isBig {
+      width: 56px;
+      height: 56px;
+    }
+  }
+}
+
+// Small phones
+@media (max-width: 479px) {
+  .dbPage {
+    padding: 12px 16px 12px;
+  }
+
+  .dbGrid {
+    gap: 10px;
+  }
+
+  .dbCard {
+    height: auto;
+    padding: 10px 10px 8px;
+  }
+
+  // Prevent the time-series chart from being too tall on small screens
+  .dbChart {
+    // Give enough room for X-axis labels while keeping the card compact
+    height: clamp(240px, 36vh, 340px);
+  }
+
+  .dbControls,
+  .dbControlsButtons {
+    gap: 10px;
+  }
+
+  .dbMonth {
+    min-width: 90px;
+  }
+
+  .dbCardBody.dbFriends {
+    padding-top: 10px;
+  }
+
+  .dbPodiumItem1 {
+    transform: translateY(0);
   }
 }
