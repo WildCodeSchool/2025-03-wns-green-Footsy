@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/client/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { z } from "zod";
 import { toISODateString, formatDateForDisplay } from "../../utils/dateUtils";
 
 import { useMode } from "../../context/modeContext";
@@ -34,6 +35,41 @@ type SettingsFormData = {
   newPassword: string;
   confirmPassword: string;
 };
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+
+const settingsPersonalInfoSchema = z.object({
+  firstName: z.string().trim().min(1, "Le prénom est requis."),
+  lastName: z.string().trim().min(1, "Le nom est requis."),
+  birthdate: z
+    .string()
+    .trim()
+    .min(1, "La date de naissance est requise.")
+    .refine((value) => !Number.isNaN(new Date(value).getTime()), {
+      message: "La date de naissance est invalide.",
+    }),
+});
+
+const settingsPasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Le mot de passe actuel est requis."),
+    newPassword: z
+      .string()
+      .regex(
+        passwordRegex,
+        "Le mot de passe doit faire au moins 8 caractères et contenir une majuscule, une minuscule, un chiffre et un caractère spécial.",
+      ),
+    confirmPassword: z.string(),
+  })
+  .superRefine((data, context) => {
+    if (data.newPassword !== data.confirmPassword) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Les mots de passe ne correspondent pas",
+      });
+    }
+  });
 
 export default function SettingsForm() {
   const { mode } = useMode();
@@ -92,7 +128,7 @@ export default function SettingsForm() {
   }, [user]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -124,25 +160,37 @@ export default function SettingsForm() {
   const savePersonalInfo = async (
     overrides?: Partial<
       Pick<SettingsFormData, "firstName" | "lastName" | "birthdate">
-    >
+    >,
   ) => {
     if (!user) return false;
 
     try {
-      // Convert birthdate to ISO format for GraphQL Date scalar
-      const birthdateString = overrides?.birthdate ?? formData.birthdate;
-      if (!birthdateString) {
-        toast.error("La date de naissance est requise");
+      const personalInfoToValidate = {
+        firstName: overrides?.firstName ?? formData.firstName,
+        lastName: overrides?.lastName ?? formData.lastName,
+        birthdate: overrides?.birthdate ?? formData.birthdate,
+      };
+
+      const parsedPersonalInfo = settingsPersonalInfoSchema.safeParse(
+        personalInfoToValidate,
+      );
+      if (!parsedPersonalInfo.success) {
+        toast.error(
+          parsedPersonalInfo.error.issues[0]?.message ?? "Formulaire invalide.",
+        );
         return false;
       }
-      const birthdateISO = new Date(birthdateString).toISOString();
+
+      const birthdateISO = new Date(
+        parsedPersonalInfo.data.birthdate,
+      ).toISOString();
 
       await updatePersonalInfo({
         variables: {
           userId: user.id,
           data: {
-            first_name: overrides?.firstName ?? formData.firstName,
-            last_name: overrides?.lastName ?? formData.lastName,
+            first_name: parsedPersonalInfo.data.firstName,
+            last_name: parsedPersonalInfo.data.lastName,
             birthdate: birthdateISO,
           },
         },
@@ -165,13 +213,16 @@ export default function SettingsForm() {
 
     if (!user) return;
 
-    if (formData.newPassword !== formData.confirmPassword) {
-      toast.error("Les mots de passe ne correspondent pas");
-      return;
-    }
+    const parsedPasswordForm = settingsPasswordSchema.safeParse({
+      currentPassword: formData.currentPassword,
+      newPassword: formData.newPassword,
+      confirmPassword: formData.confirmPassword,
+    });
 
-    if (formData.newPassword.length < 6) {
-      toast.error("Le mot de passe doit contenir au moins 6 caractères");
+    if (!parsedPasswordForm.success) {
+      toast.error(
+        parsedPasswordForm.error.issues[0]?.message ?? "Formulaire invalide.",
+      );
       return;
     }
 
@@ -180,8 +231,8 @@ export default function SettingsForm() {
         variables: {
           userId: user.id,
           data: {
-            current_password: formData.currentPassword,
-            new_password: formData.newPassword,
+            current_password: parsedPasswordForm.data.currentPassword,
+            new_password: parsedPasswordForm.data.newPassword,
           },
         },
       });
@@ -201,7 +252,7 @@ export default function SettingsForm() {
           "graphQLErrors" in err &&
           Array.isArray(
             (err as { graphQLErrors?: Array<{ message?: string }> })
-              .graphQLErrors
+              .graphQLErrors,
           ) &&
           (err as { graphQLErrors: Array<{ message?: string }> })
             .graphQLErrors[0]?.message) ||

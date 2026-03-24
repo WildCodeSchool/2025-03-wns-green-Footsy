@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { z } from "zod";
 import type { User } from "../types/User.types";
 
 export type ActivityFormData = {
@@ -11,6 +12,25 @@ export type ActivityFormData = {
   co2_equivalent: number;
   user_id: number;
 };
+
+const activityFormSchema = z.object({
+  id: z.number().int().positive().optional(),
+  title: z.string().trim().min(1, "Le titre est requis."),
+  date: z
+    .string()
+    .trim()
+    .min(1, "La date est requise.")
+    .refine((value) => !Number.isNaN(new Date(value).getTime()), {
+      message: "La date est invalide.",
+    }),
+  category_id: z.number().int().nonnegative(),
+  type_id: z.number().int().positive("Le type d'activité est requis."),
+  quantity: z.number().positive("La quantité doit être un nombre positif."),
+  co2_equivalent: z
+    .number()
+    .nonnegative("L'équivalent CO2 doit être un nombre positif ou nul."),
+  user_id: z.number().int().nonnegative(),
+});
 
 export const activityFormFields = [
   {
@@ -89,6 +109,12 @@ export const handleActivitySubmit = async (
 
   if (!user) {
     toast.error("Vous devez être connecté pour ajouter une activité.");
+    return;
+  }
+
+  const parsedForm = activityFormSchema.safeParse(formData);
+  if (!parsedForm.success) {
+    toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
     return;
   }
 

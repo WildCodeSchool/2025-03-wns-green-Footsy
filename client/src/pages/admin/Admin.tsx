@@ -16,7 +16,7 @@ import NavBar from "../../layout/navbar/NavBar";
 
 import { getUserStatusBadge } from "../../services/admin.services";
 
-import type { User } from "../../types/User.types";
+import { UserSchema, type User } from "../../types/User.types";
 
 import classes from "./Admin.module.scss";
 
@@ -36,7 +36,13 @@ export default function Admin() {
     return null;
   }
 
-  const allUsers = [...(data?.getAllUsers ?? [])].sort((a, b) =>
+  const parsedUsers = UserSchema.array().safeParse(data?.getAllUsers ?? []);
+
+  if (!parsedUsers.success) {
+    console.error("Invalid getAllUsers payload", parsedUsers.error.flatten());
+  }
+
+  const allUsers = [...(parsedUsers.success ? parsedUsers.data : [])].sort((a, b) =>
     a.last_name.toLowerCase().localeCompare(b.last_name.toLowerCase())
   );
 
@@ -51,7 +57,7 @@ export default function Admin() {
 
           {!loading && (
             <div className={classes.admin__container}>
-              {data?.getAllUsers && data.getAllUsers.length > 0 ? (
+              {allUsers.length > 0 ? (
                 <table className={classes["users-table"]}>
                   <thead>
                     <tr>
