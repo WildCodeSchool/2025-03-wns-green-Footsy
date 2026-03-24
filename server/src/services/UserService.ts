@@ -6,17 +6,17 @@ import Interaction from "../entities/Interaction";
 import User from "../entities/User";
 
 import type {
-  NewUserInput,
-  UpdatePersonalInfoInput,
-} from "../resolvers/UserResolver";
+  NewUserServiceInput,
+  UpdatePersonalInfoServiceInput,
+} from "../schemas/user.schema";
 
 export interface UserServiceInterface {
-  create(data: NewUserInput): Promise<User>;
+  create(data: NewUserServiceInput): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
   authenticateUser(email: string, password: string): Promise<User>;
   updatePersonalInfo(
     userId: number,
-    data: UpdatePersonalInfoInput,
+    data: UpdatePersonalInfoServiceInput,
   ): Promise<User>;
   updateAvatar(userId: number, avatarId: number): Promise<User>;
   changePassword(
@@ -29,7 +29,7 @@ export interface UserServiceInterface {
 }
 
 export default class UserService implements UserServiceInterface {
-  async create(data: NewUserInput): Promise<User> {
+  async create(data: NewUserServiceInput): Promise<User> {
     const user = User.create({ ...data, hashed_password: data.password });
     return user.save();
   }
@@ -57,7 +57,7 @@ export default class UserService implements UserServiceInterface {
 
   async updatePersonalInfo(
     userId: number,
-    data: UpdatePersonalInfoInput,
+    data: UpdatePersonalInfoServiceInput,
   ): Promise<User> {
     const user = await User.findOneByOrFail({ id: userId });
 
