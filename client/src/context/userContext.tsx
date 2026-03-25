@@ -4,7 +4,7 @@ import {
   GET_CURRENT_USER,
   type GetCurrentUserData,
 } from "../graphql/operations";
-import type { User } from "../types/User.types";
+import { UserSchema, type User } from "../types/User.types";
 
 type UserContextType = {
   user?: User;
@@ -29,7 +29,20 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     },
   );
 
-  const user = loading ? undefined : error ? undefined : data?.currentUser;
+  const parsedUser = data?.currentUser
+    ? UserSchema.safeParse(data.currentUser)
+    : undefined;
+
+  if (parsedUser && !parsedUser.success) {
+    console.error("Invalid currentUser payload", parsedUser.error.flatten());
+  }
+
+  const user =
+    loading || error || !parsedUser
+      ? undefined
+      : parsedUser.success
+        ? parsedUser.data
+        : undefined;
 
   return (
     <UserContext.Provider

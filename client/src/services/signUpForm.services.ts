@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
+import { z } from "zod";
 
-import type { Avatar } from "../types/Avatar.types";
+import { AvatarSchema, type Avatar } from "../types/Avatar.types";
 
 export type SignUpFormData = {
   name?: string;
@@ -20,6 +21,49 @@ export type FormErrors = {
 };
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+
+const signUpFormSchema = z
+  .object({
+    name: z.string().trim().min(1, "Le nom est requis."),
+    surname: z.string().trim().min(1, "Le prénom est requis."),
+    birthdate: z
+      .string()
+      .trim()
+      .min(1, "La date de naissance est requise.")
+      .refine((value) => !Number.isNaN(new Date(value).getTime()), {
+        message: "La date de naissance est invalide.",
+      }),
+    email: z.string().trim().email("L'adresse e-mail est invalide."),
+    confirmEmail: z
+      .string()
+      .trim()
+      .email("La confirmation d'e-mail est invalide."),
+    password: z
+      .string()
+      .regex(
+        passwordRegex,
+        "Le mot de passe doit faire au moins 8 caractères et contenir une majuscule, une minuscule, un chiffre et un caractère spécial.",
+      ),
+    confirmPassword: z.string(),
+    avatar: AvatarSchema,
+  })
+  .superRefine((data, context) => {
+    if (data.email !== data.confirmEmail) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmEmail"],
+        message: "Les adresses e-mail ne sont pas identiques.",
+      });
+    }
+
+    if (data.password !== data.confirmPassword) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Les mots de passe ne sont pas identiques.",
+      });
+    }
+  });
 
 export const formFields = [
   {
@@ -130,6 +174,12 @@ export const handleSubmit = async (
     !formData.avatar
   ) {
     toast.error("Veuillez remplir tous les champs et sélectionner un avatar.");
+    return;
+  }
+
+  const parsedForm = signUpFormSchema.safeParse(formData);
+  if (!parsedForm.success) {
+    toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
     return;
   }
 

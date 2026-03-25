@@ -132,12 +132,12 @@ describe("signUpForm.services", () => {
     it("should detect password mismatch when passwords differ", () => {
       const event = createMockInputEvent(
         "confirmPassword",
-        "differentpassword",
+        "Different123!",
       );
 
       const formDataWithPassword = {
         ...mockFormData,
-        password: "password123",
+        password: "Password123!",
       };
 
       handleChange(event, formDataWithPassword, mockSetFormData, mockSetErrors);
@@ -154,11 +154,11 @@ describe("signUpForm.services", () => {
     });
 
     it("should not detect password mismatch when passwords match", () => {
-      const event = createMockInputEvent("confirmPassword", "password123");
+      const event = createMockInputEvent("confirmPassword", "Password123!");
 
       const formDataWithPassword = {
         ...mockFormData,
-        password: "password123",
+        password: "Password123!",
       };
 
       handleChange(event, formDataWithPassword, mockSetFormData, mockSetErrors);
@@ -391,8 +391,8 @@ describe("signUpForm.services", () => {
         birthdate: "1995-05-15",
         email: "jane.smith@example.com",
         confirmEmail: "jane.smith@example.com",
-        password: "securepassword123",
-        confirmPassword: "securepassword123",
+        password: "SecurePassword123!",
+        confirmPassword: "SecurePassword123!",
         avatar: mockAvatar,
       };
 
@@ -414,7 +414,7 @@ describe("signUpForm.services", () => {
             last_name: "Smith",
             email: "jane.smith@example.com",
             birthdate: new Date("1995-05-15").toISOString(),
-            password: "securepassword123",
+            password: "SecurePassword123!",
             avatar: {
               id: mockAvatar.id,
               title: mockAvatar.title,

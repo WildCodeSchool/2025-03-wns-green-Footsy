@@ -13,6 +13,10 @@ import { Between } from "typeorm";
 import Activity from "../entities/Activity";
 import Type from "../entities/Type";
 import User from "../entities/User";
+import {
+  CreateActivityInputSchema,
+  UpdateActivityInputSchema,
+} from "../schemas/activity.schema";
 
 @InputType()
 export class CreateActivityInput {
@@ -166,15 +170,24 @@ export default class ActivityResolver {
   async createActivity(
     @Arg("data", () => CreateActivityInput) data: CreateActivityInput,
   ): Promise<Activity> {
-    const user = await User.findOne({ where: { id: data.user_id } });
+    // Validate input with Zod
+    const parsed = CreateActivityInputSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid input");
+    }
+
+    const user = await User.findOne({ where: { id: parsed.data.user_id } });
     if (!user) throw new Error("User not found");
 
-    const type = await Type.findOne({ where: { id: data.type_id } });
+    const type = await Type.findOne({ where: { id: parsed.data.type_id } });
     if (!type) throw new Error("Type not found");
 
     const activity = Activity.create({
-      ...data,
-      date: data.date instanceof Date ? data.date : new Date(data.date),
+      ...parsed.data,
+      date:
+        parsed.data.date instanceof Date
+          ? parsed.data.date
+          : new Date(parsed.data.date as string),
       user,
       type,
     });
@@ -185,31 +198,39 @@ export default class ActivityResolver {
   async updateActivity(
     @Arg("data", () => UpdateActivityInput) data: UpdateActivityInput,
   ): Promise<Activity | null> {
-    const activity = await Activity.findOne({ where: { id: data.id } });
+    // Validate input with Zod
+    const parsed = UpdateActivityInputSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid input");
+    }
+
+    const activity = await Activity.findOne({ where: { id: parsed.data.id } });
     if (!activity) return null;
 
-    if (data.title !== undefined) {
-      activity.title = data.title;
+    if (parsed.data.title !== undefined) {
+      activity.title = parsed.data.title;
     }
-    if (data.quantity !== undefined) {
-      activity.quantity = data.quantity;
+    if (parsed.data.quantity !== undefined) {
+      activity.quantity = parsed.data.quantity;
     }
-    if (data.date !== undefined) {
+    if (parsed.data.date !== undefined) {
       activity.date =
-        data.date instanceof Date ? data.date : new Date(data.date);
+        parsed.data.date instanceof Date
+          ? parsed.data.date
+          : new Date(parsed.data.date as string);
     }
-    if (data.co2_equivalent !== undefined) {
-      activity.co2_equivalent = data.co2_equivalent;
+    if (parsed.data.co2_equivalent !== undefined) {
+      activity.co2_equivalent = parsed.data.co2_equivalent;
     }
 
-    if (data.user_id !== undefined) {
-      const user = await User.findOne({ where: { id: data.user_id } });
+    if (parsed.data.user_id !== undefined) {
+      const user = await User.findOne({ where: { id: parsed.data.user_id } });
       if (!user) throw new Error("User not found");
       activity.user = user;
     }
 
-    if (data.type_id !== undefined) {
-      const type = await Type.findOne({ where: { id: data.type_id } });
+    if (parsed.data.type_id !== undefined) {
+      const type = await Type.findOne({ where: { id: parsed.data.type_id } });
       if (!type) throw new Error("Type not found");
       activity.type = type;
     }
