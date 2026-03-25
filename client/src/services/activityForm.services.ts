@@ -68,7 +68,7 @@ export const activityFormFields = [
 export const handleActivityChange = (
   event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   formData: ActivityFormData,
-  setFormData: React.Dispatch<React.SetStateAction<ActivityFormData>>
+  setFormData: React.Dispatch<React.SetStateAction<ActivityFormData>>,
 ) => {
   const { id, value } = event.target;
 
@@ -103,18 +103,12 @@ export const handleActivitySubmit = async (
   user: User | undefined,
   // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
   createOrUpdateActivity: any,
-  isEditMode = false
+  isEditMode = false,
 ) => {
   event.preventDefault();
 
   if (!user) {
     toast.error("Vous devez être connecté pour ajouter une activité.");
-    return;
-  }
-
-  const parsedForm = activityFormSchema.safeParse(formData);
-  if (!parsedForm.success) {
-    toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
     return;
   }
 
@@ -129,13 +123,14 @@ export const handleActivitySubmit = async (
     return;
   }
 
-  if (formData.quantity <= 0) {
-    toast.error("La quantité doit être un nombre positif.");
+  const parsedForm = activityFormSchema.safeParse(formData);
+  if (!parsedForm.success) {
+    toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
     return;
   }
 
-  if (formData.quantity === 0) {
-    toast.error("Veuillez remplir tous les champs.");
+  if (formData.quantity <= 0) {
+    toast.error("La quantité doit être un nombre positif.");
     return;
   }
 
@@ -151,44 +146,46 @@ export const handleActivitySubmit = async (
     const variables =
       isEditMode && formData.id
         ? {
-          data: {
-            id: formData.id,
-            title: formData.title,
-            date: dateISO,
-            type_id: formData.type_id,
-            quantity: formData.quantity,
-            co2_equivalent: formData.co2_equivalent,
-            user_id: user.id,
-          },
-        }
+            data: {
+              id: formData.id,
+              title: formData.title,
+              date: dateISO,
+              type_id: formData.type_id,
+              quantity: formData.quantity,
+              co2_equivalent: formData.co2_equivalent,
+              user_id: user.id,
+            },
+          }
         : {
-          data: {
-            title: formData.title,
-            date: dateISO,
-            type_id: formData.type_id,
-            quantity: formData.quantity,
-            co2_equivalent: formData.co2_equivalent,
-            user_id: user.id,
-          },
-        };
+            data: {
+              title: formData.title,
+              date: dateISO,
+              type_id: formData.type_id,
+              quantity: formData.quantity,
+              co2_equivalent: formData.co2_equivalent,
+              user_id: user.id,
+            },
+          };
 
     await createOrUpdateActivity({ variables });
 
     toast.success(
       isEditMode
         ? "Activité modifiée avec succès !"
-        : "Activité ajoutée avec succès !"
+        : "Activité ajoutée avec succès !",
     );
     return "success";
   } catch (error) {
     console.error(
-      `Erreur lors de ${isEditMode ? "la modification" : "l'ajout"
+      `Erreur lors de ${
+        isEditMode ? "la modification" : "l'ajout"
       } de l'activité:`,
-      error
+      error,
     );
     toast.error(
-      `Une erreur est survenue lors de ${isEditMode ? "la modification" : "l'ajout"
-      } de l'activité. Veuillez réessayer.`
+      `Une erreur est survenue lors de ${
+        isEditMode ? "la modification" : "l'ajout"
+      } de l'activité. Veuillez réessayer.`,
     );
   }
 };
