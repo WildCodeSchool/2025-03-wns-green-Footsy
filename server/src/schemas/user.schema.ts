@@ -8,6 +8,8 @@ const BirthdateSchema = z
 
 export const AvatarSchema = z.object({
   id: z.number().int().positive(),
+  title: z.string().trim().min(1),
+  image: z.string().trim().min(1),
 });
 
 export const NewUserInputSchema = z.object({
@@ -16,6 +18,7 @@ export const NewUserInputSchema = z.object({
   email: z.string().trim().email(),
   password: z.string().min(8).regex(PASSWORD_REGEX),
   birthdate: BirthdateSchema,
+  avatar: AvatarSchema,
 });
 
 export type NewUserServiceInput = z.infer<typeof NewUserInputSchema>;

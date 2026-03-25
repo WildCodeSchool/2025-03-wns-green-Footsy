@@ -181,7 +181,7 @@ describe("UserResolver", () => {
   describe("signup", () => {
     const newUserData = {
       email: "newuser@example.com",
-      password: "password123",
+      password: "Password123!",
       first_name: "John",
       last_name: "Smith",
       birthdate: new Date("1995-06-15"),
@@ -282,7 +282,7 @@ describe("UserResolver", () => {
       // Arrange
       const newUserData = {
         email: "complete@example.com",
-        password: "password123",
+        password: "Password123!",
         first_name: "Complete",
         last_name: "User",
         birthdate: new Date("1990-01-01"),
@@ -319,7 +319,7 @@ describe("UserResolver", () => {
     // Arrange
     const newUserDataFail = {
       email: "invalid-email",
-      password: "password123",
+      password: "Password123!",
       first_name: "John",
       last_name: "Smith",
       birthdate: new Date("1995-06-15"),
@@ -338,7 +338,7 @@ describe("UserResolver", () => {
     // Arrange
     const newUserDataFail = {
       email: "existing@example.com",
-      password: "password123",
+      password: "Password123!",
       first_name: "John",
       last_name: "Smith",
       birthdate: new Date("1995-06-15"),

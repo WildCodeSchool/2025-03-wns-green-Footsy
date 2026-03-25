@@ -151,12 +151,6 @@ export const handleSubmit = async (
 ) => {
   event.preventDefault();
 
-  const parsedForm = signUpFormSchema.safeParse(formData);
-  if (!parsedForm.success) {
-    toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
-    return;
-  }
-
   if (errors.emailMismatch || errors.passwordMismatch) {
     toast.error(
       "Veuillez corriger les erreurs avant de soumettre le formulaire.",
@@ -180,6 +174,12 @@ export const handleSubmit = async (
     !formData.avatar
   ) {
     toast.error("Veuillez remplir tous les champs et sélectionner un avatar.");
+    return;
+  }
+
+  const parsedForm = signUpFormSchema.safeParse(formData);
+  if (!parsedForm.success) {
+    toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
     return;
   }
 
