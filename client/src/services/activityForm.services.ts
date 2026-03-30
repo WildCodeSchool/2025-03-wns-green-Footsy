@@ -112,57 +112,38 @@ export const handleActivitySubmit = async (
     return;
   }
 
-  if (
-    !formData.title ||
-    !formData.date ||
-    !formData.type_id ||
-    formData.type_id === 0 ||
-    !formData.quantity
-  ) {
-    toast.error("Veuillez remplir tous les champs.");
-    return;
-  }
-
   const parsedForm = activityFormSchema.safeParse(formData);
   if (!parsedForm.success) {
     toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
     return;
   }
 
-  if (formData.quantity <= 0) {
-    toast.error("La quantité doit être un nombre positif.");
-    return;
-  }
-
-  if (formData.co2_equivalent < 0) {
-    toast.error("L'équivalent CO2 doit être un nombre positif ou nul.");
-    return;
-  }
+  const validData = parsedForm.data;
 
   try {
     // Convert date string (YYYY-MM-DD) to ISO format for GraphQL Date scalar
-    const dateISO = new Date(formData.date).toISOString();
+    const dateISO = new Date(validData.date).toISOString();
 
     const variables =
-      isEditMode && formData.id
+      isEditMode && validData.id
         ? {
             data: {
-              id: formData.id,
-              title: formData.title,
+              id: validData.id,
+              title: validData.title,
               date: dateISO,
-              type_id: formData.type_id,
-              quantity: formData.quantity,
-              co2_equivalent: formData.co2_equivalent,
+              type_id: validData.type_id,
+              quantity: validData.quantity,
+              co2_equivalent: validData.co2_equivalent,
               user_id: user.id,
             },
           }
         : {
             data: {
-              title: formData.title,
+              title: validData.title,
               date: dateISO,
-              type_id: formData.type_id,
-              quantity: formData.quantity,
-              co2_equivalent: formData.co2_equivalent,
+              type_id: validData.type_id,
+              quantity: validData.quantity,
+              co2_equivalent: validData.co2_equivalent,
               user_id: user.id,
             },
           };

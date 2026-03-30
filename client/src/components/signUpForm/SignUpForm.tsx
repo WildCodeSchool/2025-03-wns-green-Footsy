@@ -51,7 +51,7 @@ export default function SignUpForm() {
 
   const submitAndLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await handleSubmit(e, formData, errors, signUpMutation);
+    const result = await handleSubmit(e, formData, signUpMutation);
 
     if (result === "success") {
       try {

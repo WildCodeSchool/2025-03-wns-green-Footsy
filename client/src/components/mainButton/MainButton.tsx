@@ -6,6 +6,7 @@ interface MainButtonProps {
   content: string | React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit";
+  disabled?: boolean;
 }
 
 export default function MainButton({
@@ -14,6 +15,7 @@ export default function MainButton({
   content,
   onClick,
   type = "button",
+  disabled = false,
 }: MainButtonProps) {
   return (
     <button
@@ -22,6 +24,7 @@ export default function MainButton({
         classes[`button-${mode}${accent === true ? "-accent" : ""}`]
       }`}
       onClick={onClick}
+      disabled={disabled}
     >
       {content}
     </button>

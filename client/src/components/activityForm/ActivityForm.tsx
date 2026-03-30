@@ -59,7 +59,7 @@ export default function ActivityForm({
   const [quantityDisplay, setQuantityDisplay] = useState(
     activityToEdit
       ? `${activityToEdit.quantity} ${activityToEdit.type.category.quantity_unit}`
-      : ""
+      : "",
   );
 
   const [isEditingCO2, setIsEditingCO2] = useState(false);
@@ -97,7 +97,7 @@ export default function ActivityForm({
 
   useEffect(() => {
     setTypesByCategorySelected(
-      types?.filter((type) => type.category.id === formData.category_id) ?? []
+      types?.filter((type) => type.category.id === formData.category_id) ?? [],
     );
   }, [types, formData.category_id]);
 
@@ -113,14 +113,14 @@ export default function ActivityForm({
   useEffect(() => {
     if (selectedType && formData.quantity > 0) {
       const calculatedCO2 = selectedType.ecv * formData.quantity;
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        co2_equivalent: parseFloat(calculatedCO2.toFixed(2))
+        co2_equivalent: parseFloat(calculatedCO2.toFixed(2)),
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        co2_equivalent: 0
+        co2_equivalent: 0,
       }));
     }
 
@@ -147,7 +147,7 @@ export default function ActivityForm({
           formData,
           user,
           mutation,
-          isEditMode
+          isEditMode,
         );
         if (result === "success") {
           if (onSuccess) {
@@ -172,9 +172,13 @@ export default function ActivityForm({
                 const raw = event.target.value.replace(/[^0-9.]/g, "");
                 const unit = selectedType?.category.quantity_unit ?? "";
                 setQuantityDisplay(raw ? `${raw} ${unit}` : "");
-                setFormData(prev => ({ ...prev, quantity: Number(raw) }));
+                setFormData((prev) => ({ ...prev, quantity: Number(raw) }));
               }}
-              placeholder={selectedType ? `0 ${selectedType.category.quantity_unit}` : field.placeholder}
+              placeholder={
+                selectedType
+                  ? `0 ${selectedType.category.quantity_unit}`
+                  : field.placeholder
+              }
             />
           ) : (
             <FormField
@@ -183,7 +187,9 @@ export default function ActivityForm({
               id={field.id}
               name={field.id}
               value={String(formData[field.id as keyof ActivityFormData] ?? "")}
-              onChange={(event) => handleActivityChange(event, formData, setFormData)}
+              onChange={(event) =>
+                handleActivityChange(event, formData, setFormData)
+              }
               placeholder={field.placeholder}
               options={
                 field.type === "select" && field.id === "category_id"
@@ -202,11 +208,16 @@ export default function ActivityForm({
                   <>
                     <input
                       type="number"
-                      value={manualCO2 !== null ? manualCO2 : formData.co2_equivalent}
+                      value={
+                        manualCO2 !== null ? manualCO2 : formData.co2_equivalent
+                      }
                       onChange={(e) => {
                         const val = parseFloat(e.target.value) || 0;
                         setManualCO2(val);
-                        setFormData(prev => ({ ...prev, co2_equivalent: val }));
+                        setFormData((prev) => ({
+                          ...prev,
+                          co2_equivalent: val,
+                        }));
                       }}
                       step="0.01"
                       min="0"
@@ -214,7 +225,7 @@ export default function ActivityForm({
                     <button
                       type="button"
                       className={classes.activity__co2Button}
-                      onClick={() => setIsEditingCO2(prev => !prev)}
+                      onClick={() => setIsEditingCO2((prev) => !prev)}
                     >
                       ✓
                     </button>
@@ -229,13 +240,13 @@ export default function ActivityForm({
                     <button
                       type="button"
                       className={classes.activity__co2Button}
-                      onClick={() => setIsEditingCO2(prev => !prev)}
+                      onClick={() => setIsEditingCO2((prev) => !prev)}
                     >
-                    <img
-            src={editIcon}
-            alt="Modifier l'équivalent CO₂"
-            className={classes["avatar-selector__edit-icon-image"]}
-          />
+                      <img
+                        src={editIcon}
+                        alt="Modifier l'équivalent CO₂"
+                        className={classes["avatar-selector__edit-icon-image"]}
+                      />
                     </button>
                   </>
                 )}
