@@ -9,11 +9,12 @@ import {
 
 import Activity from "../../entities/Activity";
 import type Category from "../../entities/Category";
-import type Type from "../../entities/Type";
+import Type from "../../entities/Type";
 import User from "../../entities/User";
 
 import ActivityResolver from "../ActivityResolver";
 import { Between } from "typeorm";
+import type { CreateActivityInput } from "../ActivityResolver";
 
 describe("ActivityResolver", () => {
   let activityResolver: ActivityResolver;
@@ -374,6 +375,154 @@ describe("ActivityResolver", () => {
         where: { user: { id: 1 } },
         relations: ["type", "type.category"],
       });
+    });
+  });
+
+  describe("createActivity", () => {
+    const validCreateInput: CreateActivityInput = {
+      title: "Trajet domicile-travail",
+      quantity: 25.5,
+      date: new Date("2025-11-18"),
+      co2_equivalent: 5.1,
+      user_id: 1,
+      type_id: 1,
+    };
+
+    it("should create an activity when user and type exist and input is valid", async () => {
+      jest.spyOn(User, "findOne").mockResolvedValue(mockUser);
+      jest.spyOn(Type, "findOne").mockResolvedValue(mockType1);
+
+      const savedActivity = createMockActivity({
+        id: 10,
+        title: validCreateInput.title,
+        quantity: validCreateInput.quantity,
+        date: validCreateInput.date,
+        co2_equivalent: validCreateInput.co2_equivalent,
+        user: mockUser,
+        type: mockType1,
+      });
+
+      const createSpy = jest
+        .spyOn(Activity, "create")
+        .mockReturnValue(savedActivity);
+      const saveSpy = jest
+        .spyOn(savedActivity, "save")
+        .mockResolvedValue(savedActivity);
+
+      const result = await activityResolver.createActivity(validCreateInput);
+
+      expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(Type.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(createSpy).toHaveBeenCalled();
+      expect(saveSpy).toHaveBeenCalled();
+      expect(result).toEqual(savedActivity);
+    });
+
+    it("should throw 'User not found' when user_id does not match any user", async () => {
+      jest.spyOn(User, "findOne").mockResolvedValue(null);
+      jest.spyOn(Type, "findOne").mockResolvedValue(mockType1);
+
+      await expect(
+        activityResolver.createActivity({
+          ...validCreateInput,
+          user_id: 999,
+        })
+      ).rejects.toThrow("User not found");
+
+      expect(User.findOne).toHaveBeenCalledWith({ where: { id: 999 } });
+      expect(Type.findOne).not.toHaveBeenCalled();
+      expect(Activity.create).not.toHaveBeenCalled();
+    });
+
+    it("should throw 'Type not found' when type_id does not match any type", async () => {
+      jest.spyOn(User, "findOne").mockResolvedValue(mockUser);
+      jest.spyOn(Type, "findOne").mockResolvedValue(null);
+
+      await expect(
+        activityResolver.createActivity({
+          ...validCreateInput,
+          type_id: 999,
+        })
+      ).rejects.toThrow("Type not found");
+
+      expect(User.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(Type.findOne).toHaveBeenCalledWith({ where: { id: 999 } });
+      expect(Activity.create).not.toHaveBeenCalled();
+    });
+
+    it("should normalize date when passed as string (ISO)", async () => {
+      jest.spyOn(User, "findOne").mockResolvedValue(mockUser);
+      jest.spyOn(Type, "findOne").mockResolvedValue(mockType1);
+
+      const savedActivity = createMockActivity({
+        ...validCreateInput,
+        date: new Date("2024-11-18"),
+        user: mockUser,
+        type: mockType1,
+      });
+      jest.spyOn(Activity, "create").mockReturnValue(savedActivity);
+      jest.spyOn(savedActivity, "save").mockResolvedValue(savedActivity);
+
+      await activityResolver.createActivity({
+        ...validCreateInput,
+        date: "2024-11-18" as unknown as Date,
+      });
+
+      expect(Activity.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          date: expect.any(Date),
+        })
+      );
+    });
+
+    it("should create activity with nullable quantity (undefined)", async () => {
+      jest.spyOn(User, "findOne").mockResolvedValue(mockUser);
+      jest.spyOn(Type, "findOne").mockResolvedValue(mockType1);
+
+      const inputWithoutQuantity = {
+        ...validCreateInput,
+        quantity: undefined,
+      };
+      const savedActivity = createMockActivity({
+        ...inputWithoutQuantity,
+        user: mockUser,
+        type: mockType1,
+      });
+      jest.spyOn(Activity, "create").mockReturnValue(savedActivity);
+      jest.spyOn(savedActivity, "save").mockResolvedValue(savedActivity);
+
+      const result = await activityResolver.createActivity(
+        inputWithoutQuantity as CreateActivityInput
+      );
+
+      expect(Activity.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          quantity: undefined,
+        })
+      );
+      expect(result).toEqual(savedActivity);
+    });
+
+    it("should propagate database errors on save", async () => {
+      jest.spyOn(User, "findOne").mockResolvedValue(mockUser);
+      jest.spyOn(Type, "findOne").mockResolvedValue(mockType1);
+
+      const createdActivity = createMockActivity({
+        ...validCreateInput,
+        user: mockUser,
+        type: mockType1,
+      });
+      jest.spyOn(Activity, "create").mockReturnValue(createdActivity);
+      jest
+        .spyOn(createdActivity, "save")
+        .mockRejectedValue(new Error("value too long for column \"title\""));
+
+      await expect(
+        activityResolver.createActivity(validCreateInput)
+      ).rejects.toThrow("value too long for column \"title\"");
+
+      expect(Activity.create).toHaveBeenCalled();
+      expect(createdActivity.save).toHaveBeenCalled();
     });
   });
 });
