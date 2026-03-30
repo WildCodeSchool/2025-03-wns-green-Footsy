@@ -68,13 +68,14 @@
     &__link {
       text-decoration: none;
       display: inline-block;
-    }
-  }
+       width: 324px;
 
-  &__button-custom {
-    width: 324px !important;
-    height: 87px !important;
-    font-size: 24px !important;
+    button {
+      width: 100% !important;
+      height: 87px !important;
+      font-size: 24px !important;
+    }
+    }
   }
 }
 
@@ -120,18 +121,13 @@
       padding: 3rem 0;
     }
 
-    &__button {
-      padding: 1.2rem 2.5rem;
-      font-size: 1.8rem;
-      width: 450px;
-      max-width: 500px;
-    }
+    &__link {
+        width: 450px;
 
-    &__button-custom {
-      width: 450px !important;
-      max-width: 500px;
-      font-size: 1.8rem !important;
-    }
+        button {
+          font-size: 1.8rem !important;
+        }
+      }
   }
 }
 
@@ -154,12 +150,15 @@
         margin-top: -2.5rem;
       }
 
-      &__button {
-        padding: 1.5rem 3rem;
-        font-size: 3.8rem;
+    &__actions {
+      &__link {
         width: 650px;
-        max-width: 800px;
+
+        button {
+          font-size: 3.8rem !important;
+        }
       }
+    }
     }
 
     &__hero {
