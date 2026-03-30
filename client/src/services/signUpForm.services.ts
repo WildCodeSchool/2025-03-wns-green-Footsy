@@ -33,11 +33,14 @@ const signUpFormSchema = z
       .refine((value) => !Number.isNaN(new Date(value).getTime()), {
         message: "La date de naissance est invalide.",
       }),
-    email: z.string().trim().email("L'adresse e-mail est invalide."),
+    email: z
+      .string()
+      .trim()
+      .pipe(z.email("L'adresse e-mail est invalide.")),
     confirmEmail: z
       .string()
       .trim()
-      .email("La confirmation d'e-mail est invalide."),
+      .pipe(z.email("La confirmation d'e-mail est invalide.")),
     password: z
       .string()
       .regex(
@@ -145,37 +148,10 @@ export const handleChange = (
 export const handleSubmit = async (
   event: React.FormEvent,
   formData: SignUpFormData,
-  errors: FormErrors,
   // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
   signUpMutation: any,
 ) => {
   event.preventDefault();
-
-  if (errors.emailMismatch || errors.passwordMismatch) {
-    toast.error(
-      "Veuillez corriger les erreurs avant de soumettre le formulaire.",
-    );
-    return;
-  }
-
-  if (errors.passwordInvalid) {
-    toast.error(
-      "Le mot de passe doit faire au moins 8 caractères et contenir une majuscule, une minuscule, un chiffre et un caractère spécial.",
-    );
-    return;
-  }
-
-  if (
-    !formData.name ||
-    !formData.surname ||
-    !formData.birthdate ||
-    !formData.email ||
-    !formData.password ||
-    !formData.avatar
-  ) {
-    toast.error("Veuillez remplir tous les champs et sélectionner un avatar.");
-    return;
-  }
 
   const parsedForm = signUpFormSchema.safeParse(formData);
   if (!parsedForm.success) {
@@ -183,19 +159,21 @@ export const handleSubmit = async (
     return;
   }
 
+  const validData = parsedForm.data;
+
   try {
     await signUpMutation({
       variables: {
         data: {
-          first_name: formData.surname,
-          last_name: formData.name,
-          email: formData.email,
-          birthdate: new Date(formData.birthdate).toISOString(),
-          password: formData.password,
+          first_name: validData.surname,
+          last_name: validData.name,
+          email: validData.email,
+          birthdate: new Date(validData.birthdate).toISOString(),
+          password: validData.password,
           avatar: {
-            id: formData.avatar.id,
-            title: formData.avatar.title,
-            image: formData.avatar.image,
+            id: validData.avatar.id,
+            title: validData.avatar.title,
+            image: validData.avatar.image,
           },
         },
       },
