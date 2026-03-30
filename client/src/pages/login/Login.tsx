@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { z } from "zod";
 
 import MainButton from "../../components/mainButton/MainButton";
 
@@ -16,6 +17,11 @@ import FormHeader from "../../layout/form-header/FormHeader";
 
 import classes from "./Login.module.scss";
 
+const loginFormSchema = z.object({
+  email: z.string().trim().email("Veuillez saisir une adresse e-mail valide."),
+  password: z.string().min(1, "Le mot de passe est requis."),
+});
+
 export default function Login() {
   const { mode } = useMode();
   const { refetch } = useCurrentUser();
@@ -27,6 +33,12 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const parsedForm = loginFormSchema.safeParse({ email, password });
+    if (!parsedForm.success) {
+      toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
+      return;
+    }
 
     try {
       const result = await loginMutation({

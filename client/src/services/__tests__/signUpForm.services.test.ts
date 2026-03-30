@@ -50,7 +50,6 @@ describe("signUpForm.services", () => {
     React.Dispatch<React.SetStateAction<FormErrors>>
   >;
   let mockAvatar: Avatar;
-  let mockErrors: FormErrors;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -60,12 +59,6 @@ describe("signUpForm.services", () => {
     mockFormData = createMockUserFormData({
       avatar: mockAvatar,
     });
-
-    mockErrors = {
-      emailMismatch: false,
-      passwordMismatch: false,
-      passwordInvalid: false,
-    };
 
     mockSetFormData = vi.fn();
     mockSetErrors = vi.fn();
@@ -130,14 +123,11 @@ describe("signUpForm.services", () => {
     });
 
     it("should detect password mismatch when passwords differ", () => {
-      const event = createMockInputEvent(
-        "confirmPassword",
-        "differentpassword",
-      );
+      const event = createMockInputEvent("confirmPassword", "Different123!");
 
       const formDataWithPassword = {
         ...mockFormData,
-        password: "password123",
+        password: "Password123!",
       };
 
       handleChange(event, formDataWithPassword, mockSetFormData, mockSetErrors);
@@ -154,11 +144,11 @@ describe("signUpForm.services", () => {
     });
 
     it("should not detect password mismatch when passwords match", () => {
-      const event = createMockInputEvent("confirmPassword", "password123");
+      const event = createMockInputEvent("confirmPassword", "Password123!");
 
       const formDataWithPassword = {
         ...mockFormData,
-        password: "password123",
+        password: "Password123!",
       };
 
       handleChange(event, formDataWithPassword, mockSetFormData, mockSetErrors);
@@ -210,52 +200,43 @@ describe("signUpForm.services", () => {
     });
 
     it("should prevent default form submission", async () => {
-      await handleSubmit(
-        mockEvent,
-        mockFormData,
-        mockErrors,
-        mockSignUpMutation,
-      );
+      await handleSubmit(mockEvent, mockFormData, mockSignUpMutation);
 
       expect(mockEvent.preventDefault).toHaveBeenCalled();
     });
 
-    it("should show error when there are email mismatch errors", async () => {
-      const errorsWithEmailMismatch = {
-        emailMismatch: true,
-        passwordMismatch: false,
-        passwordInvalid: false,
+    it("should show error when emails do not match", async () => {
+      const formDataWithEmailMismatch = {
+        ...mockFormData,
+        confirmEmail: "different@example.com",
       };
 
       await handleSubmit(
         mockEvent,
-        mockFormData,
-        errorsWithEmailMismatch,
+        formDataWithEmailMismatch,
         mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez corriger les erreurs avant de soumettre le formulaire.",
+        "Les adresses e-mail ne sont pas identiques.",
       );
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
 
-    it("should show error when there are password mismatch errors", async () => {
-      const errorsWithPasswordMismatch = {
-        emailMismatch: false,
-        passwordMismatch: true,
-        passwordInvalid: false,
+    it("should show error when passwords do not match", async () => {
+      const formDataWithPasswordMismatch = {
+        ...mockFormData,
+        confirmPassword: "DifferentPassword123!",
       };
 
       await handleSubmit(
         mockEvent,
-        mockFormData,
-        errorsWithPasswordMismatch,
+        formDataWithPasswordMismatch,
         mockSignUpMutation,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez corriger les erreurs avant de soumettre le formulaire.",
+        "Les mots de passe ne sont pas identiques.",
       );
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
@@ -263,20 +244,13 @@ describe("signUpForm.services", () => {
     it("should show error when required fields are missing", async () => {
       const incompleteFormData = {
         ...mockFormData,
-        name: undefined,
-        email: undefined,
+        name: "",
+        email: "",
       };
 
-      await handleSubmit(
-        mockEvent,
-        incompleteFormData,
-        mockErrors,
-        mockSignUpMutation,
-      );
+      await handleSubmit(mockEvent, incompleteFormData, mockSignUpMutation);
 
-      expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs et sélectionner un avatar.",
-      );
+      expect(toast.error).toHaveBeenCalledWith("Le nom est requis.");
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
 
@@ -286,15 +260,10 @@ describe("signUpForm.services", () => {
         avatar: undefined,
       };
 
-      await handleSubmit(
-        mockEvent,
-        formDataWithoutAvatar,
-        mockErrors,
-        mockSignUpMutation,
-      );
+      await handleSubmit(mockEvent, formDataWithoutAvatar, mockSignUpMutation);
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs et sélectionner un avatar.",
+        expect.stringContaining("expected object"),
       );
       expect(mockSignUpMutation).not.toHaveBeenCalled();
     });
@@ -302,12 +271,7 @@ describe("signUpForm.services", () => {
     it("should call signUpMutation with correct data when form is valid", async () => {
       mockSignUpMutation.mockResolvedValueOnce({});
 
-      await handleSubmit(
-        mockEvent,
-        mockFormData,
-        mockErrors,
-        mockSignUpMutation,
-      );
+      await handleSubmit(mockEvent, mockFormData, mockSignUpMutation);
 
       expect(mockSignUpMutation).toHaveBeenCalledWith({
         variables: {
@@ -335,12 +299,7 @@ describe("signUpForm.services", () => {
       const emailInUseError = new Error("Email already in use");
       mockSignUpMutation.mockRejectedValueOnce(emailInUseError);
 
-      await handleSubmit(
-        mockEvent,
-        mockFormData,
-        mockErrors,
-        mockSignUpMutation,
-      );
+      await handleSubmit(mockEvent, mockFormData, mockSignUpMutation);
 
       expect(toast.error).toHaveBeenCalledWith(
         "Cette adresse e-mail est déjà utilisée.",
@@ -351,12 +310,7 @@ describe("signUpForm.services", () => {
       const genericError = new Error("Network error");
       mockSignUpMutation.mockRejectedValueOnce(genericError);
 
-      await handleSubmit(
-        mockEvent,
-        mockFormData,
-        mockErrors,
-        mockSignUpMutation,
-      );
+      await handleSubmit(mockEvent, mockFormData, mockSignUpMutation);
 
       expect(toast.error).toHaveBeenCalledWith(
         "Erreur lors de l'inscription. Veuillez réessayer.",
@@ -391,8 +345,8 @@ describe("signUpForm.services", () => {
         birthdate: "1995-05-15",
         email: "jane.smith@example.com",
         confirmEmail: "jane.smith@example.com",
-        password: "securepassword123",
-        confirmPassword: "securepassword123",
+        password: "SecurePassword123!",
+        confirmPassword: "SecurePassword123!",
         avatar: mockAvatar,
       };
 
@@ -400,12 +354,7 @@ describe("signUpForm.services", () => {
 
       mockSignUpMutation.mockResolvedValueOnce({});
 
-      await handleSubmit(
-        mockEvent,
-        completeFormData,
-        mockErrors,
-        mockSignUpMutation,
-      );
+      await handleSubmit(mockEvent, completeFormData, mockSignUpMutation);
 
       expect(mockSignUpMutation).toHaveBeenCalledWith({
         variables: {
@@ -414,7 +363,7 @@ describe("signUpForm.services", () => {
             last_name: "Smith",
             email: "jane.smith@example.com",
             birthdate: new Date("1995-05-15").toISOString(),
-            password: "securepassword123",
+            password: "SecurePassword123!",
             avatar: {
               id: mockAvatar.id,
               title: mockAvatar.title,

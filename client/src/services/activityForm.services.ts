@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { z } from "zod";
 import type { User } from "../types/User.types";
 
 export type ActivityFormData = {
@@ -11,6 +12,25 @@ export type ActivityFormData = {
   co2_equivalent: number;
   user_id: number;
 };
+
+const activityFormSchema = z.object({
+  id: z.number().int().positive().optional(),
+  title: z.string().trim().min(1, "Le titre est requis."),
+  date: z
+    .string()
+    .trim()
+    .min(1, "La date est requise.")
+    .refine((value) => !Number.isNaN(new Date(value).getTime()), {
+      message: "La date est invalide.",
+    }),
+  category_id: z.number().int().nonnegative(),
+  type_id: z.number().int().positive("Le type d'activité est requis."),
+  quantity: z.number().positive("La quantité doit être un nombre positif."),
+  co2_equivalent: z
+    .number()
+    .nonnegative("L'équivalent CO2 doit être un nombre positif ou nul."),
+  user_id: z.number().int().nonnegative(),
+});
 
 export const activityFormFields = [
   {
@@ -48,7 +68,7 @@ export const activityFormFields = [
 export const handleActivityChange = (
   event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   formData: ActivityFormData,
-  setFormData: React.Dispatch<React.SetStateAction<ActivityFormData>>
+  setFormData: React.Dispatch<React.SetStateAction<ActivityFormData>>,
 ) => {
   const { id, value } = event.target;
 
@@ -83,7 +103,7 @@ export const handleActivitySubmit = async (
   user: User | undefined,
   // biome-ignore lint/suspicious/noExplicitAny: Apollo Client mutation function type
   createOrUpdateActivity: any,
-  isEditMode = false
+  isEditMode = false,
 ) => {
   event.preventDefault();
 
@@ -92,77 +112,61 @@ export const handleActivitySubmit = async (
     return;
   }
 
-  if (
-    !formData.title ||
-    !formData.date ||
-    !formData.type_id ||
-    formData.type_id === 0 ||
-    !formData.quantity
-  ) {
-    toast.error("Veuillez remplir tous les champs.");
+  const parsedForm = activityFormSchema.safeParse(formData);
+  if (!parsedForm.success) {
+    toast.error(parsedForm.error.issues[0]?.message ?? "Formulaire invalide.");
     return;
   }
 
-  if (formData.quantity <= 0) {
-    toast.error("La quantité doit être un nombre positif.");
-    return;
-  }
-
-  if (formData.quantity === 0) {
-    toast.error("Veuillez remplir tous les champs.");
-    return;
-  }
-
-  if (formData.co2_equivalent < 0) {
-    toast.error("L'équivalent CO2 doit être un nombre positif ou nul.");
-    return;
-  }
+  const validData = parsedForm.data;
 
   try {
     // Convert date string (YYYY-MM-DD) to ISO format for GraphQL Date scalar
-    const dateISO = new Date(formData.date).toISOString();
+    const dateISO = new Date(validData.date).toISOString();
 
     const variables =
-      isEditMode && formData.id
+      isEditMode && validData.id
         ? {
-          data: {
-            id: formData.id,
-            title: formData.title,
-            date: dateISO,
-            type_id: formData.type_id,
-            quantity: formData.quantity,
-            co2_equivalent: formData.co2_equivalent,
-            user_id: user.id,
-          },
-        }
+            data: {
+              id: validData.id,
+              title: validData.title,
+              date: dateISO,
+              type_id: validData.type_id,
+              quantity: validData.quantity,
+              co2_equivalent: validData.co2_equivalent,
+              user_id: user.id,
+            },
+          }
         : {
-          data: {
-            title: formData.title,
-            date: dateISO,
-            type_id: formData.type_id,
-            quantity: formData.quantity,
-            co2_equivalent: formData.co2_equivalent,
-            user_id: user.id,
-          },
-        };
+            data: {
+              title: validData.title,
+              date: dateISO,
+              type_id: validData.type_id,
+              quantity: validData.quantity,
+              co2_equivalent: validData.co2_equivalent,
+              user_id: user.id,
+            },
+          };
 
     await createOrUpdateActivity({ variables });
 
     toast.success(
       isEditMode
         ? "Activité modifiée avec succès !"
-        : "Activité ajoutée avec succès !"
+        : "Activité ajoutée avec succès !",
     );
     return "success";
   } catch (error) {
     console.error(
-      `Erreur lors de ${isEditMode ? "la modification" : "l'ajout"
+      `Erreur lors de ${
+        isEditMode ? "la modification" : "l'ajout"
       } de l'activité:`,
-      error
+      error,
     );
     toast.error(
-      `Une erreur est survenue lors de ${isEditMode ? "la modification" : "l'ajout"
-      } de l'activité. Veuillez réessayer.`
+      `Une erreur est survenue lors de ${
+        isEditMode ? "la modification" : "l'ajout"
+      } de l'activité. Veuillez réessayer.`,
     );
   }
 };

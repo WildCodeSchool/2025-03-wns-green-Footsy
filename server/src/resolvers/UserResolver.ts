@@ -17,6 +17,11 @@ import User from "../entities/User";
 import type { UserServiceInterface } from "../services/UserService";
 import UserService from "../services/UserService";
 import { AvatarInput } from "./AvatarResolver";
+import {
+  NewUserInputSchema,
+  UserInputSchema,
+  UpdatePersonalInfoInputSchema,
+} from "../schemas/user.schema";
 
 @InputType()
 export class NewUserInput {
@@ -165,13 +170,19 @@ export default class UserResolver {
     @Ctx() { res }: { res: ServerResponse },
   ) {
     try {
+      // Validate input with Zod (validates all fields including avatar)
+      const parsed = NewUserInputSchema.safeParse(userData);
+      if (!parsed.success) {
+        throw new Error(parsed.error.issues[0]?.message || "Invalid input");
+      }
+
       if (!process.env.JWT_SECRET)
         throw new Error("Missing env variable: JWT_SECRET");
 
-      const hashedPassword = await argon2.hash(userData.password);
+      const hashedPassword = await argon2.hash(parsed.data.password);
 
       const user = await this.userService.create({
-        ...userData,
+        ...parsed.data,
         password: hashedPassword,
       });
       const token = jwt.sign(getUserTokenContent(user), process.env.JWT_SECRET);
@@ -197,14 +208,20 @@ export default class UserResolver {
     @Ctx() { res }: { res: ServerResponse },
   ) {
     try {
+      // Validate input with Zod
+      const parsed = UserInputSchema.safeParse(userData);
+      if (!parsed.success) {
+        throw new Error(parsed.error.issues[0]?.message || "Invalid input");
+      }
+
       if (!process.env.JWT_SECRET) {
         console.error("JWT_SECRET is not set in the environment variables.");
         throw new Error("Missing env variable: JWT_SECRET");
       }
 
       const user = await this.userService.authenticateUser(
-        userData.email,
-        userData.password,
+        parsed.data.email,
+        parsed.data.password,
       );
 
       if (!user) {
@@ -240,7 +257,13 @@ export default class UserResolver {
     @Arg("data", () => UpdatePersonalInfoInput) data: UpdatePersonalInfoInput,
   ): Promise<User> {
     try {
-      return await this.userService.updatePersonalInfo(userId, data);
+      // Validate input with Zod (validates all fields including avatar)
+      const parsed = UpdatePersonalInfoInputSchema.safeParse(data);
+      if (!parsed.success) {
+        throw new Error(parsed.error.issues[0]?.message || "Invalid input");
+      }
+
+      return await this.userService.updatePersonalInfo(userId, parsed.data);
     } catch (error) {
       console.error("Error updating personal info:", error);
       if (error instanceof Error) {

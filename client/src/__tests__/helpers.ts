@@ -81,8 +81,8 @@ export const createMockUserFormData = ({
     birthdate: birthdate ?? "1990-08-04",
     email: email ?? "jane.doe@example.com",
     confirmEmail: confirmEmail ?? "jane.doe@example.com",
-    password: password ?? "password123",
-    confirmPassword: confirmPassword ?? "password123",
+    password: password ?? "Password123!",
+    confirmPassword: confirmPassword ?? "Password123!",
     avatar: avatar ?? createMockAvatar(),
   };
 };
