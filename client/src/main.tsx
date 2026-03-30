@@ -144,7 +144,7 @@ createRoot(rootElement).render(
         <UserProvider>
           <RouterProvider router={router} />
           <ToastContainer
-            position="bottom-right"
+            position="top-right"
             autoClose={3000}
             limit={5}
             closeOnClick
