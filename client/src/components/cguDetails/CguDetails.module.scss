@@ -1,0 +1,158 @@
+.cguDetails {
+  max-width: 860px;
+  margin: 0;
+  padding: 2rem;
+
+  &__section {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--beige);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    h2 {
+      color: var(--dark-green);
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      color: var(--green);
+      font-size: 1rem;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p {
+      color: var(--dark-green);
+      line-height: 1.75;
+      margin-bottom: 0.8rem;
+    }
+
+    ul {
+      padding-left: 1.4rem;
+      margin-bottom: 0.8rem;
+    }
+
+    li {
+      color: var(--dark-green);
+      line-height: 1.75;
+      margin-bottom: 0.3rem;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+
+    th {
+      background-color: var(--dark-green);
+      color: var(--beige);
+      text-align: left;
+      padding: 0.7rem 1rem;
+      font-weight: var(--weight-semibold);
+    }
+
+    td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--beige);
+      color: var(--dark-green);
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td {
+      background-color: rgba(208, 220, 173, 0.2);
+    }
+  }
+
+  &__address {
+    font-style: normal;
+    background-color: var(--dark-green);
+    color: var(--beige);
+    padding: 1.4rem 1.8rem;
+    border-radius: 8px;
+    line-height: 2;
+    margin-top: 1rem;
+    word-break: break-word;
+  overflow-wrap: anywhere;
+
+    strong {
+      color: var(--sea-green);
+      font-weight: var(--weight-semibold);
+    }
+  }
+
+  &__link {
+    color: var(--fir-green);
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--lawn-green);
+    }
+  }
+}
+
+/* ── RESPONSIVE ── */
+
+@media (max-width: 600px) {
+  .cguDetails {
+
+    padding: 1.5rem 1rem 3rem;
+
+    &__section {
+      margin-bottom: 1.8rem;
+      padding-bottom: 1.2rem;
+    }
+
+    &__section h2 {
+      font-size: 1.05rem;
+      line-height: 1.4;
+      margin-bottom: 0.6rem;
+    }
+
+    &__section h3 {
+      font-size: 0.95rem;
+      margin: 1rem 0 0.4rem;
+    }
+
+    &__section p {
+      font-size: 0.85rem;         
+      line-height: 1.6;            
+      margin-bottom: 0.7rem;
+    }
+
+    &__section ul {
+      padding-left: 1.2rem;
+      margin-bottom: 0.6rem;
+    }
+
+    &__section li {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ✅ TABLE SCROLL */
+    &__tableWrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    &__table {
+      min-width: 480px; 
+      font-size: 0.8rem;
+    }
+
+    &__table th,
+    &__table td {
+      padding: 0.45rem 0.5rem;
+    }
+
+    /* ✅ ADDRESS */
+    &__address {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      padding: 1rem 1.2rem;
+    }
+  }
+}

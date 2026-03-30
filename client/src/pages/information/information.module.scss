@@ -1,0 +1,11 @@
+.information {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    margin: 5rem;
+
+&__title {
+    color:var(--dark-green)
+}
+}

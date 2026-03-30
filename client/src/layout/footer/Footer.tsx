@@ -7,14 +7,6 @@ export default function Footer() {
   return (
     <section className={`footer ${classes["footer"]}`}>
       <Link
-        to="/credits"
-        className={`${classes["footer__link"]} ${
-          classes[`footer__link--${mode}`]
-        }`}
-      >
-        Crédits
-      </Link>
-      <Link
         to="/CGU"
         className={`${classes["footer__link"]} ${
           classes[`footer__link--${mode}`]
