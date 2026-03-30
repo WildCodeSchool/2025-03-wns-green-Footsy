@@ -59,7 +59,7 @@ const createMockUser = (overrides?: Partial<User>): User => ({
 
 // Helper function to create mock activity form data
 const createMockActivityFormData = (
-  overrides?: Partial<ActivityFormData>
+  overrides?: Partial<ActivityFormData>,
 ): ActivityFormData => ({
   title: "Morning Run",
   date: "2024-01-15",
@@ -74,17 +74,17 @@ const createMockActivityFormData = (
 // Helper to create mock select event
 const createMockSelectEventHelper = (
   id: string,
-  value: string
+  value: string,
 ): React.ChangeEvent<HTMLSelectElement> =>
-({
-  target: {
-    id,
-    value,
-  } as HTMLSelectElement,
-  currentTarget: {} as HTMLSelectElement,
-  preventDefault: vi.fn(),
-  stopPropagation: vi.fn(),
-} as unknown as React.ChangeEvent<HTMLSelectElement>);
+  ({
+    target: {
+      id,
+      value,
+    } as HTMLSelectElement,
+    currentTarget: {} as HTMLSelectElement,
+    preventDefault: vi.fn(),
+    stopPropagation: vi.fn(),
+  }) as unknown as React.ChangeEvent<HTMLSelectElement>;
 
 describe("activityForm.services", () => {
   let mockFormData: ActivityFormData;
@@ -236,7 +236,7 @@ describe("activityForm.services", () => {
         mockEvent,
         mockFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(mockEvent.preventDefault).toHaveBeenCalled();
@@ -247,11 +247,11 @@ describe("activityForm.services", () => {
         mockEvent,
         mockFormData,
         undefined,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Vous devez être connecté pour ajouter une activité."
+        "Vous devez être connecté pour ajouter une activité.",
       );
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
@@ -266,12 +266,10 @@ describe("activityForm.services", () => {
         mockEvent,
         incompleteFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
-      expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs."
-      );
+      expect(toast.error).toHaveBeenCalledWith("Le titre est requis.");
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
 
@@ -285,12 +283,10 @@ describe("activityForm.services", () => {
         mockEvent,
         incompleteFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
-      expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs."
-      );
+      expect(toast.error).toHaveBeenCalledWith("La date est requise.");
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
 
@@ -304,11 +300,11 @@ describe("activityForm.services", () => {
         mockEvent,
         incompleteFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs."
+        "Le type d'activité est requis.",
       );
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
@@ -323,11 +319,11 @@ describe("activityForm.services", () => {
         mockEvent,
         incompleteFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs."
+        "Le type d'activité est requis.",
       );
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
@@ -342,11 +338,11 @@ describe("activityForm.services", () => {
         mockEvent,
         incompleteFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs."
+        "La quantité doit être un nombre positif.",
       );
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
@@ -361,11 +357,11 @@ describe("activityForm.services", () => {
         mockEvent,
         invalidFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "La quantité doit être un nombre positif."
+        "La quantité doit être un nombre positif.",
       );
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
@@ -380,11 +376,11 @@ describe("activityForm.services", () => {
         mockEvent,
         invalidFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "L'équivalent CO2 doit être un nombre positif ou nul."
+        "L'équivalent CO2 doit être un nombre positif ou nul.",
       );
       expect(mockCreateActivity).not.toHaveBeenCalled();
     });
@@ -399,12 +395,12 @@ describe("activityForm.services", () => {
         mockEvent,
         invalidFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(mockCreateActivity).not.toHaveBeenCalled();
       expect(toast.error).toHaveBeenCalledWith(
-        "Veuillez remplir tous les champs."
+        "La quantité doit être un nombre positif.",
       );
     });
 
@@ -415,7 +411,7 @@ describe("activityForm.services", () => {
         mockEvent,
         mockFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(mockCreateActivity).toHaveBeenCalledWith({
@@ -432,7 +428,7 @@ describe("activityForm.services", () => {
       });
 
       expect(toast.success).toHaveBeenCalledWith(
-        "Activité ajoutée avec succès !"
+        "Activité ajoutée avec succès !",
       );
       expect(result).toBe("success");
     });
@@ -445,11 +441,11 @@ describe("activityForm.services", () => {
         mockEvent,
         mockFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(toast.error).toHaveBeenCalledWith(
-        "Une erreur est survenue lors de l'ajout de l'activité. Veuillez réessayer."
+        "Une erreur est survenue lors de l'ajout de l'activité. Veuillez réessayer.",
       );
       expect(result).toBeUndefined();
     });
@@ -457,7 +453,7 @@ describe("activityForm.services", () => {
     it("should log error to console when submission fails", async () => {
       const consoleErrorSpy = vi
         .spyOn(console, "error")
-        .mockImplementation(() => { });
+        .mockImplementation(() => {});
       const genericError = new Error("Network error");
       mockCreateActivity.mockRejectedValueOnce(genericError);
 
@@ -465,12 +461,12 @@ describe("activityForm.services", () => {
         mockEvent,
         mockFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Erreur lors de l'ajout de l'activité:",
-        genericError
+        genericError,
       );
 
       consoleErrorSpy.mockRestore();
@@ -492,7 +488,7 @@ describe("activityForm.services", () => {
       // Test category change with callback
       const categoryChangeEvent = createMockSelectEventHelper(
         "category_id",
-        "2"
+        "2",
       );
 
       handleActivityChange(categoryChangeEvent, mockFormData, mockSetFormData);
@@ -521,7 +517,7 @@ describe("activityForm.services", () => {
         mockEvent,
         completeFormData,
         mockUser,
-        mockCreateActivity
+        mockCreateActivity,
       );
 
       expect(mockCreateActivity).toHaveBeenCalledWith({
@@ -538,7 +534,7 @@ describe("activityForm.services", () => {
       });
 
       expect(toast.success).toHaveBeenCalledWith(
-        "Activité ajoutée avec succès !"
+        "Activité ajoutée avec succès !",
       );
       expect(result).toBe("success");
     });
