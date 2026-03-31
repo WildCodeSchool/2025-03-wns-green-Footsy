@@ -30,9 +30,12 @@ import Login from "./pages/login/Login";
 import Settings from "./pages/settings/Settings";
 import SignUp from "./pages/signUp/SignUp";
 import TestCharte from "./pages/testsCharte/TestsCharte";
+import CGU from "./pages/cgu/CGU";
+import Community from "./pages/community/community";
 
 import "./reset.css";
 import "./index.css";
+import Information from "./pages/information/information";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -61,16 +64,8 @@ const router = createBrowserRouter([
 
       // Public information routes (accessible to all)
       {
-        path: "information",
-        element: <h1>Informations Page - To be implemented</h1>,
-      },
-      {
-        path: "credits",
-        element: <h1>Credits Page - To be implemented</h1>,
-      },
-      {
         path: "CGU",
-        element: <h1>CGU Page - To be implemented</h1>,
+        element: <CGU />,
       },
       {
         path: "charte",
@@ -91,8 +86,12 @@ const router = createBrowserRouter([
           },
           {
             path: "community",
-            element: <h1>Community Page - To be implemented</h1>,
+            element: <Community />,
           },
+          {
+        path: "information",
+        element: <Information />,
+      },
         ],
       },
 
@@ -145,7 +144,7 @@ createRoot(rootElement).render(
         <UserProvider>
           <RouterProvider router={router} />
           <ToastContainer
-            position="bottom-right"
+            position="top-right"
             autoClose={3000}
             limit={5}
             closeOnClick
