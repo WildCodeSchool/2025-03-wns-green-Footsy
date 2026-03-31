@@ -21,6 +21,14 @@ export default function SignUp() {
                     <h2 className={`${classes.cgu__title} ${classes[`cgu__title--${mode}`]
                         }`}>Conditions Générales d'Utilisation
                         & Politique de Confidentialité</h2>
+                    <Link to="/" className={classes.cgu__actions__link}>
+                        <MainButton
+                            type="button"
+                            mode={mode}
+                            content="Retour"
+                            accent={false}
+                        />
+                    </Link>
                     <CGUDetails />
                     <Link to="/" className={classes.cgu__actions__link}>
                         <MainButton
